@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{AE7CFEE7-4058-4E3C-ADC2-AE7480EE2028}</ProjectGuid>
+    <RootNamespace>ButcherPete</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ButcherPete</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>17.0.35004.147</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\common;$(SolutionDir)\fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FOSE_PLUGIN_EXAMPLE_EXPORTS;FALLOUT_VERSION=0x01070030;RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>
+      </MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ForcedIncludeFiles>fose_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\mods\$(TargetName)\fose\plugins"
+copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\mods\$(TargetName)\fose\plugins"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\common;$(SolutionDir)\fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FOSE_PLUGIN_EXAMPLE_EXPORTS;FALLOUT_VERSION=0x01070030;RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>fose_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MinimalRebuild />
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetPath)" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\mods\$(TargetName)\fose\plugins"
+copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\mods\$(TargetName)\fose\plugins"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="common\common.vcxproj">
+      <Project>{20c6411c-596f-4b85-be4e-8bc91f59d8a6}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="fose\GameAPI.cpp" />
+    <ClCompile Include="fose\GameBSExtraData.cpp" />
+    <ClCompile Include="fose\GameData.cpp" />
+    <ClCompile Include="fose\GameExtraData.cpp" />
+    <ClCompile Include="fose\GameForms.cpp" />
+    <ClCompile Include="fose\GameInterface.cpp" />
+    <ClCompile Include="fose\GameObjects.cpp" />
+    <ClCompile Include="fose\GameOSDepend.cpp" />
+    <ClCompile Include="fose\GameRTTI.cpp" />
+    <ClCompile Include="fose\GameSettings.cpp" />
+    <ClCompile Include="fose\GameTiles.cpp" />
+    <ClCompile Include="fose\GameTypes.cpp" />
+    <ClCompile Include="fose\Utilities.cpp" />
+    <ClCompile Include="fose\SafeWrite.cpp" />
+    <ClCompile Include="dllmain.c">
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </ForcedIncludeFiles>
+      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </ForcedIncludeFiles>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fose\GameAPI.h" />
+    <ClInclude Include="fose\GameBSExtraData.h" />
+    <ClInclude Include="fose\GameData.h" />
+    <ClInclude Include="fose\GameEffects.h" />
+    <ClInclude Include="fose\GameExtraData.h" />
+    <ClInclude Include="fose\GameForms.h" />
+    <ClInclude Include="fose\GameInterface.h" />
+    <ClInclude Include="fose\GameMenus.h" />
+    <ClInclude Include="fose\GameObjects.h" />
+    <ClInclude Include="fose\GameOSDepend.h" />
+    <ClInclude Include="fose\GameRTTI.h" />
+    <ClInclude Include="fose\GameSettings.h" />
+    <ClInclude Include="fose\GameTiles.h" />
+    <ClInclude Include="fose\GameTypes.h" />
+    <ClInclude Include="fose\Utilities.h" />
+    <ClInclude Include="fose\SafeWrite.h" />
+    <ClInclude Include="main.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

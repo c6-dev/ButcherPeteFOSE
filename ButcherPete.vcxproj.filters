@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="fose">
+      <UniqueIdentifier>{73718d94-89f5-4587-a383-7f1630b888ce}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="fose\GameAPI.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameBSExtraData.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameData.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameExtraData.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameForms.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameInterface.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameObjects.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameOSDepend.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameRTTI.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameSettings.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\GameTypes.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\SafeWrite.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\Utilities.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="fose\GameTiles.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fose\GameAPI.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameBSExtraData.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameData.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameEffects.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameExtraData.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameForms.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameInterface.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameObjects.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameOSDepend.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameRTTI.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameSettings.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameTypes.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\SafeWrite.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\Utilities.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="fose\GameMenus.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameTiles.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
+  </ItemGroup>
+</Project>

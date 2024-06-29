@@ -1,0 +1,4 @@
+LIBRARY	"ButcherPete"
+EXPORTS
+FOSEPlugin_Query
+FOSEPlugin_Load
