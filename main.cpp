@@ -22,7 +22,7 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 
 	info->infoVersion = PluginInfo::kInfoVersion;
 	info->name = "Butcher Pete FOSE";
-	info->version = 1;
+	info->version = 100;
 	// version checks
 	if (fose->isNogore)
 	{
@@ -35,9 +35,9 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 		return false;
 	}
 
-	if(!fose->isEditor && fose->runtimeVersion != FALLOUT_VERSION)
+	if(!fose->isEditor && fose->runtimeVersion != FALLOUT_VERSION_1_7)
 	{
-		_ERROR("incorrect runtime version (got %08X need %08X)", fose->runtimeVersion, FALLOUT_VERSION);
+		_ERROR("incorrect runtime version (got %08X need %08X)", fose->runtimeVersion, FALLOUT_VERSION_1_7);
 		return false;
 	}
 
