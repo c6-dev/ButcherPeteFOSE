@@ -149,9 +149,9 @@ static ParamInfo kParams_OneActorRef[1] =
 	{	"actor reference",	kParamType_Actor,	0	},
 };
 
-static ParamInfo kParams_OneOptionalActorRef[1] =
+static ParamInfo kParams_OneActorRef[1] =
 {
-	{	"actor reference",	kParamType_Actor,	1	},
+	{	"actor reference",	kParamType_Actor,	0	},
 };
 
 static ParamInfo kParams_Axis[1] = 

@@ -1,12 +1,12 @@
 #pragma once
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 
-DEFINE_CMD_ALT_COND_PLUGIN(IsOwned, , , 1, kParams_OneOptionalActorRef);
+DEFINE_COMMAND_PLUGIN(IsOwned, , 1, 1, kParams_OneActorRef);
 DEFINE_COMMAND_PLUGIN(AddItemOwnership, , 1, 4, kParams_OneForm_OneFloat_OneForm_OneOptionalRank);
 DEFINE_COMMAND_PLUGIN(GetWorldspaceFlag, , 0, 2, kParams_OneWorldspace_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWorldspaceFlag, , 0, 3, kParams_OneWorldspace_TwoInts);
-DEFINE_CMD_ALT_COND_PLUGIN(GetPCCanFastTravel, , , 0, NULL);
-DEFINE_CMD_ALT_COND_PLUGIN(GetRadiationLevelAlt, , , 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, , 0, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
 
 TESForm* GetOwner(BaseExtraList* xDataList)
 {
@@ -25,53 +25,47 @@ SInt32 GetFactionRank(Actor* actor, TESFaction* faction) {
 	 return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction, actor == PlayerCharacter::GetSingleton());
 }
 
-bool Cmd_IsOwned_Eval(COMMAND_ARGS_EVAL) {
-	*result = 0.0;
-	Actor* actor = (Actor*)arg1;
-
-	if (!thisObj || !actor) return true;
-
-	SInt32 requiredRank = 0;
-
-	TESForm* owner = GetOwner(&thisObj->extraDataList);
-
-	if (owner) {
-		requiredRank = GetRequiredRank(&thisObj->extraDataList);
-		if (requiredRank == -1) requiredRank = 0;
-		
-	}
-	else {
-		owner = GetCellOwner(thisObj->parentCell);
-		if (owner) {
-			requiredRank = GetRequiredRank(&thisObj->parentCell->extraDataList);
-			if (requiredRank == -1) requiredRank = 0;
-		}
-	}
-
-	if (owner) {
-		if (owner->refID == actor->baseForm->refID) {
-			*result = 1.0;
-		}
-		else {
-			TESFaction* faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
-			if (faction) {
-				*result = (GetFactionRank(actor, faction) >= requiredRank) ? 1.0 : 0.0;
-			}
-		}
-	}
-	if (IsConsoleMode())
-		Console_Print("IsOwned >> %.f", *result);
-
-	return true;
-}
-
 bool Cmd_IsOwned_Execute(COMMAND_ARGS) {
 	*result = 0;
-	Actor* anNPC = NULL;
+	Actor* actor = NULL;
 	if (!thisObj) return true;
 
-	if (ExtractArgs(EXTRACT_ARGS, &anNPC)) {
-		Cmd_IsOwned_Eval(thisObj, (void*)anNPC, 0, result);
+	if (ExtractArgs(EXTRACT_ARGS, &actor)) {
+
+		if (!actor) return true;
+
+		SInt32 requiredRank = 0;
+
+		TESForm* owner = GetOwner(&thisObj->extraDataList);
+
+		if (owner) {
+			requiredRank = GetRequiredRank(&thisObj->extraDataList);
+			if (requiredRank == -1) requiredRank = 0;
+
+		}
+		else {
+			owner = GetCellOwner(thisObj->parentCell);
+			if (owner) {
+				requiredRank = GetRequiredRank(&thisObj->parentCell->extraDataList);
+				if (requiredRank == -1) requiredRank = 0;
+			}
+		}
+
+		if (owner) {
+			if (owner->refID == actor->baseForm->refID) {
+				*result = 1.0;
+			}
+			else {
+				TESFaction* faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
+				if (faction) {
+					*result = (GetFactionRank(actor, faction) >= requiredRank) ? 1.0 : 0.0;
+				}
+			}
+		}
+
+	}
+	if (IsConsoleMode()) {
+		Console_Print("IsOwned >> %.f", *result);
 	}
 	return true;
 }
@@ -144,7 +138,7 @@ bool Cmd_SetWorldspaceFlag_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_GetPCCanFastTravel_Eval(COMMAND_ARGS_EVAL)
+bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 {
 	// Credits to Jazz for the "silence QueueUIMessage" trick (see AddNoteNS).
 	SafeWrite8((UInt32)0x61B850, 0xC3);	// RETN
@@ -155,10 +149,6 @@ bool Cmd_GetPCCanFastTravel_Eval(COMMAND_ARGS_EVAL)
 		Console_Print("GetPCCanFastTravel >> %.f", *result);
 	}
 	return true;
-}
-bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
-{
-	return Cmd_GetPCCanFastTravel_Eval(thisObj, 0, 0, result);
 }
 
 float GetRadiationLevel(Actor* actor)
@@ -182,11 +172,6 @@ bool Cmd_GetRadiationLevelAlt_Execute(COMMAND_ARGS) {
 		Console_Print("GetRadiationLevelAlt >> %.2f", *result);
 	}
 	return true;
-}
-bool Cmd_GetRadiationLevelAlt_Eval(COMMAND_ARGS_EVAL) {
-	*result = GetRadiationLevel((Actor*)thisObj);
-	return true;
-
 }
 
 _declspec(naked) void uGridsLoadingCrashHook()
