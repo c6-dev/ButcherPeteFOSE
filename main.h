@@ -190,5 +190,6 @@ _declspec(naked) void uGridsLoadingCrashHook()
 }
 
 void WritePatches() {
-	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook));
+	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
+	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
 }
