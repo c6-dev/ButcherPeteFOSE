@@ -245,7 +245,7 @@ struct FOSECommandTableInterface
 	UInt32	version;
 	const CommandInfo*	(* Start)(void);
 	const CommandInfo*	(* End)(void);
-	const CommandInfo*	(* GetByOpcode)(UInt32 opcode);
+	CommandInfo*	(* GetByOpcode)(UInt32 opcode);
 	const CommandInfo*	(* GetByName)(const char* name);
 	UInt32				(* GetReturnType)(const CommandInfo* cmd);		// return type enum defined in CommandTable.h
 	UInt32				(* GetRequiredFOSEVersion)(const CommandInfo* cmd);

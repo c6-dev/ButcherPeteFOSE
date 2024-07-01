@@ -57,6 +57,13 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetPCCanFastTravel);
 	REG_CMD(GetRadiationLevelAlt);
 	if (!fose->isEditor) WritePatches();
+	FOSECommandTableInterface* cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
+	if (cmdTableInterface) {
+		CommandInfo* info = cmdTableInterface->GetByOpcode(0x1428);
+		info->execute = Hook_ListAddForm_Execute;
+		info = cmdTableInterface->GetByOpcode(0x142A);
+		info->execute = Hook_ListAddReference_Execute;
+	}
 	return true;
 }
 

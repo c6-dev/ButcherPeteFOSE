@@ -188,6 +188,46 @@ _declspec(naked) void uGridsLoadingCrashHook()
 		jmp eax
 	}
 }
+bool Hook_ListAddReference_Execute(COMMAND_ARGS)
+{
+	*result = eListInvalid;
+	BGSListForm* pListForm = NULL;
+	UInt32 n = eListEnd;
+
+	if (ExtractArgs(EXTRACT_ARGS, &pListForm, &n)) {
+		if (!pListForm || !thisObj) return true;
+
+		UInt32 index = pListForm->AddAt(thisObj, n);
+		if (index != eListInvalid) {
+			*result = index;
+		}
+		if (IsConsoleMode()) {
+			Console_Print("Index: %d", index);
+		}
+	}
+	return true;
+}
+
+bool Hook_ListAddForm_Execute(COMMAND_ARGS)
+{
+	*result = eListInvalid;
+	BGSListForm* pListForm = NULL;
+	TESForm* pForm = NULL;
+	UInt32 n = eListEnd;
+
+	ExtractArgsEx(EXTRACT_ARGS_EX, &pListForm, &pForm, &n);
+	if (pListForm && pForm) {
+		UInt32 index = pListForm->AddAt(pForm, n);
+		if (index != eListInvalid) {
+			*result = index;
+		}
+		if (IsConsoleMode()) {
+			Console_Print("Index: %d", index);
+		}
+	}
+
+	return true;
+}
 
 void WritePatches() {
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
