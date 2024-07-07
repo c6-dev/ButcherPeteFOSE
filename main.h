@@ -151,7 +151,7 @@ bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 	return true;
 }
 
-float GetRadiationLevel(Actor* actor)
+float GetRadiationLevel(Actor* actor, bool scaleByResist)
 {
 	if (actor->IsActor()) {
 		if (HighProcess* hiProc = (HighProcess*)actor->baseProcess; hiProc && !hiProc->uiProcessLevel) {
@@ -159,7 +159,7 @@ float GetRadiationLevel(Actor* actor)
 				return hiProc->fWaterRadsSec + hiProc->rads238 + hiProc->GetRadsSec();
 			}
 			else {
-				return actor->GetRadiationLevel();
+				return actor->GetRadiationLevel(scaleByResist);
 			}
 		}
 	}
@@ -167,12 +167,30 @@ float GetRadiationLevel(Actor* actor)
 }
 
 bool Cmd_GetRadiationLevelAlt_Execute(COMMAND_ARGS) {
-	*result = GetRadiationLevel((Actor*)thisObj);
+	*result = GetRadiationLevel((Actor*)thisObj, true);
 	if (IsConsoleMode()) {
 		Console_Print("GetRadiationLevelAlt >> %.2f", *result);
 	}
 	return true;
 }
+
+
+bool Hook_GetRadiationLevel_Eval(COMMAND_ARGS_EVAL) {
+	if (thisObj->IsActor() && thisObj != PlayerCharacter::GetSingleton()) {
+		*result = GetRadiationLevel((Actor*)thisObj, false);
+		return true;
+	}
+	else {
+		CdeclCall<bool>(0x513C30, thisObj, 0, 0, result);
+		return true;
+	}
+}
+
+bool Hook_GetRadiationLevel_Execute(COMMAND_ARGS) {
+	Hook_GetRadiationLevel_Eval(thisObj, 0, 0, result);
+	return true;
+}
+
 
 _declspec(naked) void uGridsLoadingCrashHook()
 {

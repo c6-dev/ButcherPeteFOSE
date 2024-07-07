@@ -1425,7 +1425,7 @@ public:
 	UInt32				sitSleepState;
 
 	bool IsEssential() { return ThisCall<bool>(0x6F4A10, this); }
-	float GetRadiationLevel();
+	float GetRadiationLevel(bool scaleByResist);
 	TESActorBase* GetActorBase();
 };
 

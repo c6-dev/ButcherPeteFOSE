@@ -32,7 +32,7 @@ float GetThresholdedAV(Actor* actor, int avCode) {
 	return ThisCall<float>(0x5A28E0, &actor->avOwner, avCode);
 }
 
-float Actor::GetRadiationLevel()
+float Actor::GetRadiationLevel(bool scaleByResist)
 {
 	float result = 0;
 	if (inWater)
@@ -63,7 +63,7 @@ float Actor::GetRadiationLevel()
 			}
 		}
 	}
-	if (result)
+	if (result && scaleByResist)
 		result *= 1.0F - (GetThresholdedAV(this, eActorVal_RadResistance) * 0.01F);
 	if (result < 0.0) result = 0.0;
 	return result;

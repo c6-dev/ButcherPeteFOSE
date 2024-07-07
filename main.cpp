@@ -59,10 +59,17 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	if (!fose->isEditor) WritePatches();
 	FOSECommandTableInterface* cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
 	if (cmdTableInterface) {
+
 		CommandInfo* info = cmdTableInterface->GetByOpcode(0x1428);
 		info->execute = Hook_ListAddForm_Execute;
+
 		info = cmdTableInterface->GetByOpcode(0x142A);
 		info->execute = Hook_ListAddReference_Execute;
+
+		info = cmdTableInterface->GetByOpcode(0x11F7);
+		info->eval = Hook_GetRadiationLevel_Eval;
+		info->execute = Hook_GetRadiationLevel_Execute;
+
 	}
 	return true;
 }
