@@ -129,3 +129,5 @@ __forceinline T_Ret CdeclCall(UInt32 _addr, Args ...args)
 
 #define GameHeapAlloc(size) ThisCall<void*>(0x86B930, (void*)0x1090A78, size)
 #define GameHeapFree(ptr) ThisCall<void*>(0x86BA60, (void*)0x1090A78, ptr)
+
+char* __fastcall GetNextToken(char* str, char delim);

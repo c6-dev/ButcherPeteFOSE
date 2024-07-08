@@ -57,6 +57,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetPCCanFastTravel);
 	REG_CMD(GetRadiationLevelAlt);
 	REG_CMD(GetButcherPeteVersion);
+	REG_CMD(MessageExAlt);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

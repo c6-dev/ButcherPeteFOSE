@@ -1,4 +1,5 @@
 #pragma once
+
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 
 DEFINE_COMMAND_PLUGIN(IsOwned, , 1, 1, kParams_OneActorRef);
@@ -7,8 +8,42 @@ DEFINE_COMMAND_PLUGIN(GetWorldspaceFlag, , 0, 2, kParams_OneWorldspace_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWorldspaceFlag, , 0, 3, kParams_OneWorldspace_TwoInts);
 DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
-DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, 0, NULL);
+DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, NULL);
+DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
+
 int g_version = 110;
+
+char* s_strArgBuffer;
+char* s_strValBuffer;
+const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
+
+bool Cmd_MessageExAlt_Execute(COMMAND_ARGS) {
+	*result = 0;
+
+	float displayTime;
+	if (!ExtractFormatStringArgs(1, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageExAlt.numParams, &displayTime)) return true;
+	const char* msgIcon = nullptr;
+	const char* msgSound = nullptr;
+	while (true)
+	{
+		char* barPtr = GetNextToken(s_strValBuffer, '|');
+		if (!*barPtr) break;
+		if (*s_strValBuffer == '$')
+			msgSound = s_strValBuffer + 1;
+		else if (*s_strValBuffer == '#')
+		{
+			char iconIdx = s_strValBuffer[1] - '0';
+			if ((iconIdx >= 0) && (iconIdx <= 6))
+				msgIcon = (const char*)kMsgIconsPathAddr[iconIdx];
+		}
+		else msgIcon = s_strValBuffer;
+		s_strValBuffer = barPtr;
+	}
+	s_strValBuffer[0x203] = 0;
+	CdeclCall<void>(0x61B850, s_strValBuffer, 0, msgIcon, msgSound, displayTime);
+	return true;
+}
+
 TESForm* GetOwner(BaseExtraList* xDataList)
 {
 	return ThisCall<TESForm*>(0x40ABC0, xDataList);
@@ -261,6 +296,9 @@ bool Cmd_GetButcherPeteVersion_Eval(COMMAND_ARGS_EVAL) {
 	return true;
 }
 void WritePatches() {
+	s_strArgBuffer = (char*)malloc(0x4000);
+	s_strValBuffer = (char*)malloc(0x10000);
+
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
 	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
 }

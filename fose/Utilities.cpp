@@ -440,3 +440,35 @@ double genrand_res53(void)
 
 };
 
+
+__declspec(naked) char* __fastcall GetNextToken(char* str, char delim)
+{
+	__asm
+	{
+		mov		dh, dl
+		movd	xmm7, edx
+		pshuflw	xmm7, xmm7, 0
+		unpcklpd	xmm7, xmm7
+		ALIGN 16
+		lookup:
+		movups	xmm6, [ecx]
+			add		ecx, 0x10
+			xorps	xmm5, xmm5
+			pcmpeqb	xmm5, xmm6
+			pcmpeqb	xmm6, xmm7
+			por		xmm5, xmm6
+			pmovmskb	eax, xmm5
+			bsf		eax, eax
+			jz		lookup
+			lea		eax, [eax + ecx - 0x10]
+			ALIGN 16
+			nextNon:
+		cmp[eax], dl
+			jnz		done
+			mov[eax], 0
+			inc		eax
+			jmp		nextNon
+			done :
+		retn
+	}
+}

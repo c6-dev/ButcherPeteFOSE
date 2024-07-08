@@ -248,3 +248,9 @@ static ParamInfo kParams_OneWorldspace_TwoInts[3] =
 	{ "flag",		kParamType_Integer,		0},
 	{ "flag",		kParamType_Integer,		0},
 };
+
+ParamInfo kParams_OneFloat_OneFormatString[] =
+{
+	{"float", kParamType_Float, 0},
+	FORMAT_STRING_PARAMS
+};
