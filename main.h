@@ -267,5 +267,5 @@ void WritePatches() {
 
 void WriteEditorPatches()
 {
-	SafeWriteBuf(0xD4A9F8, "GetButcherPeteVersion\0", 22);
+	SafeWriteBuf(0xD4A838, "GetButcherPeteVersion\0", 22);
 }
