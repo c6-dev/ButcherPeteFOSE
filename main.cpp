@@ -58,6 +58,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetRadiationLevelAlt);
 	REG_CMD(GetButcherPeteVersion);
 	REG_CMD(MessageExAlt);
+	REG_CMD(MessageBoxEx);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

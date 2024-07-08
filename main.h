@@ -1,6 +1,7 @@
 #pragma once
 
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
+#undef MessageBoxEx
 
 DEFINE_COMMAND_PLUGIN(IsOwned, , 1, 1, kParams_OneActorRef);
 DEFINE_COMMAND_PLUGIN(AddItemOwnership, , 1, 4, kParams_OneForm_OneFloat_OneForm_OneOptionalRank);
@@ -10,12 +11,45 @@ DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
 DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, NULL);
 DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
+DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
 
 int g_version = 110;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
 const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
+
+bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS) {
+	*result = 0;
+	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
+		return true;
+
+	//extract the buttons
+	const char* b[10] = { nullptr };
+	UInt32 btnIdx = 0;
+
+	for (char* ch = s_strValBuffer; *ch && btnIdx < 10; ch++)
+	{
+		if (*ch == '|')
+		{
+			*ch = '\0';
+			b[btnIdx++] = ch + 1;
+		}
+	}
+
+	if (!btnIdx)		
+		b[0] = "Ok";
+
+	if (thisObj && !(thisObj->flags & TESForm::kFormFlags_DontSaveForm))		// if not temporary object and not quest script
+		*(UInt32*)0x1071B80 = thisObj->refID;
+	else
+		*(UInt32*)0x1071B80 = scriptObj->refID;
+
+	*(UInt8*)0xF50B78 = 0xFF;	// overwrite any previously pressed button
+	CdeclCall<void>(0x619700, s_strValBuffer, 0, 0, 0x51E270, 0, 0x17, b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], NULL);
+
+	return true;
+}
 
 bool Cmd_MessageExAlt_Execute(COMMAND_ARGS) {
 	*result = 0;
