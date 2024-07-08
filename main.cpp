@@ -59,13 +59,14 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetButcherPeteVersion);
 	REG_CMD(MessageExAlt);
 	REG_CMD(MessageBoxEx);
+	REG_CMD(IsKeyPressedAlt);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}
 	else {
 		WritePatches();
 	}
-	FOSECommandTableInterface* cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
+	cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
 	if (cmdTableInterface) {
 
 
@@ -85,6 +86,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 		info->eval = Cmd_GetButcherPeteVersion_Eval;
 		info->execute = Cmd_GetButcherPeteVersion_Execute;
 
+		cmd_IsKeyPressed = cmdTableInterface->GetByOpcode(0x143A);
 	}
 	return true;
 }

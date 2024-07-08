@@ -12,6 +12,7 @@ DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
 DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, NULL);
 DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
 DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
+DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
 
 int g_version = 110;
 
@@ -19,6 +20,24 @@ char* s_strArgBuffer;
 char* s_strValBuffer;
 const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
 
+FOSECommandTableInterface* cmdTableInterface = nullptr;
+CommandInfo* cmd_IsKeyPressed = nullptr;
+
+bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS) {
+	int keyCode;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &keyCode)) {
+		if (keyCode < 255)
+		{
+			keyCode = ScancodeToVirtualKey(keyCode);
+			if (!(keyCode == NOKEY)) *result = (GetAsyncKeyState(keyCode) & 0x8000) ? true : false;
+		}
+		else {
+			cmd_IsKeyPressed->eval(thisObj, &keyCode, nullptr, result);
+		}
+	}
+	return true;
+}
 bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS) {
 	*result = 0;
 	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
