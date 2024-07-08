@@ -14,7 +14,7 @@ DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
 DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
 DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
 
-int g_version = 110;
+int g_version = 120;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
