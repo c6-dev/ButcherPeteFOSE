@@ -250,6 +250,9 @@ bool Hook_ListAddForm_Execute(COMMAND_ARGS)
 
 bool Cmd_GetButcherPeteVersion_Execute(COMMAND_ARGS) {
 	*result = g_version;
+	if (IsConsoleMode()) {
+		Console_Print("GetButcherPeteVersion >> %.f", *result);
+	}
 	return true;
 }
 
