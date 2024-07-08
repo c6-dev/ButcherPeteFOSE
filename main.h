@@ -7,7 +7,8 @@ DEFINE_COMMAND_PLUGIN(GetWorldspaceFlag, , 0, 2, kParams_OneWorldspace_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWorldspaceFlag, , 0, 3, kParams_OneWorldspace_TwoInts);
 DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
-
+DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, 0, NULL);
+int g_version = 110;
 TESForm* GetOwner(BaseExtraList* xDataList)
 {
 	return ThisCall<TESForm*>(0x40ABC0, xDataList);
@@ -247,7 +248,21 @@ bool Hook_ListAddForm_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool Cmd_GetButcherPeteVersion_Execute(COMMAND_ARGS) {
+	*result = g_version;
+	return true;
+}
+
+bool Cmd_GetButcherPeteVersion_Eval(COMMAND_ARGS_EVAL) {
+	*result = g_version;
+	return true;
+}
 void WritePatches() {
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
 	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
+}
+
+void WriteEditorPatches()
+{
+	SafeWriteBuf(0xD4A9F8, "GetButcherPeteVersion\0", 22);
 }

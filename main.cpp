@@ -22,7 +22,7 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 
 	info->infoVersion = PluginInfo::kInfoVersion;
 	info->name = "Butcher Pete FOSE";
-	info->version = 100;
+	info->version = g_version;
 	// version checks
 	if (fose->isNogore)
 	{
@@ -44,7 +44,7 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 	
 	return true;
 }
-
+const char* fnName = "GetButcherPeteVersion";
 
 bool FOSEPlugin_Load(const FOSEInterface * fose)
 {
@@ -56,19 +56,32 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetWorldspaceFlag);
 	REG_CMD(GetPCCanFastTravel);
 	REG_CMD(GetRadiationLevelAlt);
-	if (!fose->isEditor) WritePatches();
+	REG_CMD(GetButcherPeteVersion);
+	if (fose->isEditor) {
+		WriteEditorPatches();
+	}
+	else {
+		WritePatches();
+	}
 	FOSECommandTableInterface* cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
 	if (cmdTableInterface) {
 
+
+		// fix memory corruption in fose functions
 		CommandInfo* info = cmdTableInterface->GetByOpcode(0x1428);
 		info->execute = Hook_ListAddForm_Execute;
 
 		info = cmdTableInterface->GetByOpcode(0x142A);
 		info->execute = Hook_ListAddReference_Execute;
 
+		// fix GetRadiationLevel not working on NPCs
 		info = cmdTableInterface->GetByOpcode(0x11F7);
 		info->eval = Hook_GetRadiationLevel_Eval;
 		info->execute = Hook_GetRadiationLevel_Execute;
+
+		info = cmdTableInterface->GetByOpcode(0x116A);
+		info->eval = Cmd_GetButcherPeteVersion_Eval;
+		info->execute = Cmd_GetButcherPeteVersion_Execute;
 
 	}
 	return true;
