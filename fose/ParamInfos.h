@@ -254,3 +254,14 @@ ParamInfo kParams_OneFloat_OneFormatString[] =
 	{"float", kParamType_Float, 0},
 	FORMAT_STRING_PARAMS
 };
+
+static ParamInfo kParams_OneString_OneForm[] =
+{
+	{	"string",	kParamType_String,	0	},
+	{	"object",	kParamType_AnyForm,	0	},
+};
+
+static ParamInfo kParams_OneForm[] =
+{
+	{	"object",	kParamType_AnyForm,	0	},
+};

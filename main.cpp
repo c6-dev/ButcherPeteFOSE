@@ -61,12 +61,14 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(MessageBoxEx);
 	REG_CMD(IsKeyPressedAlt);
 	REG_CMD(GetKiller);
+	REG_CMD(SetTexturePath);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}
 	else {
 		WritePatches();
 	}
+
 	cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
 	if (cmdTableInterface) {
 

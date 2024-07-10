@@ -14,6 +14,7 @@ DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
 DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
 DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
 DEFINE_COMMAND_PLUGIN(GetKiller, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(SetTexturePath, , 0, 2, kParams_OneString_OneForm);
 
 int g_version = 130;
 
@@ -23,6 +24,35 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+
+
+bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	char path[MAX_PATH];
+	TESForm* form = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &path, &form)) {
+		if (IS_TYPE(form, TESObjectREFR)) {
+			form = ((TESObjectREFR*)form)->baseForm;
+		} 
+		TESTexture* tex = DYNAMIC_CAST(form, TESForm, TESTexture);
+		if (tex) {
+				tex->ddsPath.Set(path);
+				*result = 1;
+			
+		}
+		else {
+			TESModelTextureSwap* texs = DYNAMIC_CAST(form, TESForm, TESModelTextureSwap);
+			if (texs)
+			{
+				texs->SetPath(path);
+				*result = 1;
+			}
+		}
+	}
+	return true;
+}
 
 bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
 	Actor* actor = (Actor*)thisObj;
