@@ -48,7 +48,7 @@ const char* fnName = "GetButcherPeteVersion";
 
 bool FOSEPlugin_Load(const FOSEInterface * fose)
 {
-	fose->SetOpcodeBase(0x2200);
+	fose->SetOpcodeBase(0x2220);
 	g_pluginHandle = fose->GetPluginHandle();
 	REG_CMD(IsOwned);
 	REG_CMD(AddItemOwnership);
@@ -60,6 +60,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(MessageExAlt);
 	REG_CMD(MessageBoxEx);
 	REG_CMD(IsKeyPressedAlt);
+	REG_CMD(GetKiller);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

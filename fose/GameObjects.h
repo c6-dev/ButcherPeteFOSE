@@ -1407,7 +1407,9 @@ public:
 
 	bhkRagdollController* ragDollController;			// 0A4
 	bhkRagdollPenetrationUtil* ragDollPentrationUtil;	// 0A8
-	UInt32				unk0AC[(0xF8 - 0x0AC) >> 2];	// 0AC
+	UInt32				unk0AC[(0xB8 - 0x0AC) >> 2];	// 0AC
+	Actor*				killer;							// 0B8
+	UInt32				unk0BC[(0xF8 - 0x0BC) >> 2];	// 0BC
 	bool				inCombat;						// 0F8
 	UInt32				lifeState;						// 0FC
 	UInt32				unk100[(0x138 - 0x0100) >> 2];	// 100

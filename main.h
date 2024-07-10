@@ -13,8 +13,9 @@ DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, NULL);
 DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
 DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
 DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(GetKiller, , 1, 0, NULL);
 
-int g_version = 120;
+int g_version = 130;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -22,6 +23,20 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
+	Actor* actor = (Actor*)thisObj;
+	TESObjectREFR* killer = nullptr;
+	if (actor->IsActor() && (actor->lifeState == 1 || actor->lifeState == 2)) {
+		killer = actor->killer;
+		*(UInt32*)result = killer->refID;
+		if (IsConsoleMode()) {
+			Console_Print("GetKiller >> 0x%X", killer->refID);
+		}
+	}
+		
+	return true;
+}
 
 bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS) {
 	int keyCode;
