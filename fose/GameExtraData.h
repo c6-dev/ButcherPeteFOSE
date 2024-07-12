@@ -128,7 +128,7 @@ enum {
 	kExtraData_FollowerSwimBreadcrumbs  	= 0x8B,
 };
 
-#define GetByTypeCast(xDataList, Type) DYNAMIC_CAST(xDataList.GetByType(kExtraData_ ## Type), BSExtraData, Extra ## Type);
+#define GetByTypeCast(xDataList, Type) DYNAMIC_CAST(xDataList.GetByType(kExtraData_ ## Type), BSExtraData, Extra ## Type)
 
 
 // 014

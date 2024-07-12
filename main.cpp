@@ -65,6 +65,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetTexturePath);
 	REG_CMD(GetCrosshairRefEx);
 	REG_CMD(GetLockedAlt);
+	REG_CMD(IsLoadDoor);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

@@ -17,6 +17,7 @@ DEFINE_COMMAND_PLUGIN(GetKiller, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetTexturePath, , 0, 2, kParams_OneString_OneForm);
 DEFINE_COMMAND_PLUGIN(GetCrosshairRefEx, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetLockedAlt, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(IsLoadDoor, , 1, 0, NULL);
 
 int g_version = 130;
 
@@ -26,6 +27,18 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+bool Cmd_IsLoadDoor_Execute(COMMAND_ARGS) {
+	*result = 0;
+
+	if (GetByTypeCast(thisObj->extraDataList, Teleport) || GetByTypeCast(thisObj->extraDataList, RandomTeleportMarker)) {
+		*result = 1;
+	}
+	if (IsConsoleMode()) {
+		Console_Print("IsLoadDoor >> %.f", *result);
+	}
+	return true;
+}
 
 bool IsUnlockedOrHacked(TESObjectREFR* obj) {
 	BGSTerminal* terminal = (BGSTerminal*)obj->baseForm;
