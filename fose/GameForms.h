@@ -491,6 +491,56 @@ public:
 	// return a new base form which is the clone of this form
 	TESForm* CloneForm(bool bPersist = true) const;
 };
+struct Condition
+{
+	enum CompareOperator
+	{
+		kCompareOp_Equal = 0x0,
+		kCompareOp_NotEqual = 0x1,
+		kCompareOp_GreaterThan = 0x2,
+		kCompareOp_GreaterThanOrEqual = 0x3,
+		kCompareOp_LessThan = 0x4,
+		kCompareOp_LessThanOrEqual = 0x5,
+	};
+
+	struct Params
+	{
+		UInt32			opcode;				// 08
+		union
+		{
+			float		value;
+			UInt32		number;
+			TESForm* form;
+		}				parameter1;			// 0C
+		union
+		{
+			float		value;
+			UInt32		number;
+			TESForm* form;
+		}				parameter2;			// 10
+	};
+
+	UInt8			type;				// 00
+	UInt8			pad01[3];			// 01
+	union
+	{
+		float		value;
+		UInt32		global;
+	}				comparisonValue;	// 04
+	Params			params;				// 08
+	UInt32			runOnType;			// 14	Subject, Target, Reference, CombatTarget, LinkedReference
+	TESObjectREFR* reference;			// 18
+
+	bool Evaluate(TESObjectREFR* runOnRef, TESForm* arg2, bool* result);
+	CompareOperator GetCompareOperator() { return static_cast<CompareOperator>((type & 0xE0) >> 5); }
+	float GetComparisonValue() { return ThisCall<float>(0x681490, this); };
+};
+STATIC_ASSERT(sizeof(Condition) == 0x1C);
+
+struct ConditionList : tList<Condition>
+{
+	bool Evaluate(TESObjectREFR* runOnRef, TESForm* arg2, bool* result, bool arg4);
+};
 
 class TESObject : public TESForm
 {
@@ -2117,7 +2167,54 @@ STATIC_ASSERT(sizeof(TESObjectACTI) == 0x84);
 class BGSTalkingActivator;
 
 // BGSTerminal (9C)
-class BGSTerminal;
+class BGSTerminal : public TESObjectACTI
+{
+public:
+	BGSTerminal();
+	~BGSTerminal();
+
+	enum
+	{
+		kTerminalFlagLeveled = 1 << 0,
+		kTerminalFlagUnlocked = 1 << 1,
+		kTerminalFlagAltColors = 1 << 2,
+		kTerminalFlagHideWelcome = 1 << 3,
+	};
+
+	enum
+	{
+		kEntryFlagAddNote = 1 << 0,
+		kEntryFlagForceRedraw = 1 << 1,
+	};
+
+	struct TermData
+	{
+		UInt8 difficulty;       // 0: very easy, 1: easy, 2: average, 3: hard, 4: very hard, 5: requires key
+		UInt8 terminalFlags;
+		UInt8 type;             // 0-9, corresponds to GECK types 1-10
+	};
+
+	struct MenuEntry
+	{
+		String entryText;
+		String resultText;
+		Script* resScript;
+		UInt8 restOfScript[78];
+		ConditionList conditions;
+		void* displayNote;
+		BGSTerminal* subMenu;
+		UInt8 entryFlags;
+		UInt8 pad75[3];
+	};
+	STATIC_ASSERT(sizeof(MenuEntry) == 0x78);
+
+	String				desc;			// 090	DESC
+	tList<MenuEntry>	menuEntries;	// 098
+	void*			password;		// 0A0	PNAM
+	TermData			data;			// 0A4	DNAM
+};
+
+STATIC_ASSERT(sizeof(BGSTerminal) == 0x9C);
 
 // 180
 class TESObjectARMO : public TESBoundObject

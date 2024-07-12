@@ -136,6 +136,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="fose\GameSettings.cpp" />
     <ClCompile Include="fose\GameTiles.cpp" />
     <ClCompile Include="fose\GameTypes.cpp" />
+    <ClCompile Include="fose\netimmerse.cpp" />
     <ClCompile Include="fose\Utilities.cpp" />
     <ClCompile Include="fose\SafeWrite.cpp" />
     <ClCompile Include="dllmain.c">
@@ -161,6 +162,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\GameSettings.h" />
     <ClInclude Include="fose\GameTiles.h" />
     <ClInclude Include="fose\GameTypes.h" />
+    <ClInclude Include="fose\netimmerse.h" />
     <ClInclude Include="fose\Utilities.h" />
     <ClInclude Include="fose\SafeWrite.h" />
     <ClInclude Include="main.h" />

@@ -112,7 +112,12 @@ public:
 	static bool	IsMenuVisible(UInt32 menuType);
 	static Menu* GetMenuByType(UInt32 menuType);
 	static Tile::Value* GetMenuComponentValue(char* componentPath);
-
+	enum KeyModifier : UInt32
+	{
+		kAltHeld = 0x1,
+		kControlHeld = 0x2,
+		kShiftHeld = 0x4,
+	};
 	UInt32				flags;							// 000
 	SceneGraph			* sceneGraph004;				// 004
 	SceneGraph			* sceneGraph008;				// 008
@@ -150,13 +155,32 @@ public:
 	UInt32				unk0F0;							// 0F0
 	UInt32				unk0F4;							// 0F4
 	UInt32				unk0F8;							// 0F8
-	TESObjectREFR		* crosshairRef;					// 0FC
-	UInt32				unk100[(0x174 - 0x100) >> 2];	// 100
-	FOPipboyManager		* pipboyManager;				// 174
+	TESObjectREFR		*crosshairRef;					// 0FC
+	UInt32				unk100[4];
+	UInt8				byte110;
+	UInt8				pad111[3];
+	UInt32				menuStack[10];
+	void*				ptr13C;
+	UInt32				unk140;
+	UInt32				unk144;
+	UInt8				byte148;
+	UInt8				isShift;
+	UInt8				byte14A;
+	UInt8				byte14B;
+	KeyModifier			keyModifiers;
+	UInt32				currentKey;
+	UInt32				unk154;
+	UInt32				unk158;
+	UInt32				unk15C[5];
+	UInt8				byte170;
+	UInt8				byte171;
+	UInt8				byte172;
+	UInt8				byte173;
+	FOPipboyManager		*pipboyManager;				// 174
 	UInt32				unk178;							// 178
 	NiTArray<UInt32>	array17C;						// 17C NiTPrimitiveArray@PackedMenu@BGSMenuPacker
 	UInt32				unk18C[(0x394 - 0x18C) >> 2];	// 18C
-	NiObject			* unk394;						// 394 seen NiSourceTexture
+	NiObject			*unk394;						// 394 seen NiSourceTexture
 	UInt32				unk398[(0x454 - 0x398) >> 2];	// 398
 	NiTArray<UInt32>	array454;						// 454 NiTPrimitiveArray@TextureType@BSTextureManager
 	NiTArray<UInt32>	array464;						// 464 NiTPrimitiveArray@FilterMode@NiTexturingProperty
@@ -164,4 +188,4 @@ public:
 };
 
 STATIC_ASSERT(sizeof(InterfaceManager) == 0x484);
-STATIC_ASSERT(offsetof(InterfaceManager, debugSelection) == 0x070);
+STATIC_ASSERT(offsetof(InterfaceManager, pipboyManager) == 0x174);

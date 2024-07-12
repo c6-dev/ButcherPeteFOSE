@@ -3,6 +3,9 @@
 #include <list>
 #include "Utilities.h"
 
+
+
+
 // 8
 class String
 {
@@ -752,62 +755,104 @@ STATIC_ASSERT(sizeof(BSSimpleList<void *>) == 0xC);
 	const UInt32 _NiTMap_Lookup = 0;
 #endif
 
-// 10
-template <typename T_Data>
-class NiTMapBase
-{
-public:
-	NiTMapBase();
-	virtual ~NiTMapBase();
 
-	virtual void	Unk_01(void);
-	virtual void	Unk_02(void);
-	virtual void	Unk_03(void);
-	virtual void	Unk_04(void);
-	virtual void	Unk_05(void);
-	virtual void	Unk_06(void);
+	template <typename T_Key, typename T_Data> struct NiTMapEntry
+	{
+		NiTMapEntry* next;
+		T_Key			key;
+		T_Data			data;
+	};
 
-	DEFINE_MEMBER_FN_LONG(NiTMapBase, Lookup, bool, _NiTMap_Lookup, void* key, T_Data** dataOut);
+	template <typename T_Key, typename T_Data>
+	class NiTMapBase
+	{
+	public:
+		NiTMapBase();
+		~NiTMapBase();
 
-	// void		** vtbl				// 00
-	UInt32		m_numBuckets;		// 04
-	void		** m_buckets;		// 08
-	UInt32		m_numItems;			// 0C
-};
+		typedef NiTMapEntry<T_Key, T_Data> Entry;
 
-template <typename T>
-struct NiTArray
-{
-	void	* _vtbl;	// 00
-	T		* data;		// 04
-	UInt16	unk08;		// 08 - init'd to size of preallocation
-	UInt16	length;		// 0A - init'd to 0
-	UInt16	unk0C;		// 0C - init'd to 0
-	UInt16	unk0E;		// 0E - init'd to size of preallocation
+		virtual NiTMapBase* Destructor(bool doFree);
+		virtual UInt32		CalculateBucket(T_Key key);
+		virtual bool		Equal(T_Key key1, T_Key key2);
+		virtual void		FillEntry(Entry* entry, T_Key key, T_Data data);
+		virtual	void		Unk_004(void* arg0);
+		virtual	void		Unk_005();
+		virtual	void		Unk_006();
 
-	T operator[](UInt32 idx) {
-		if (idx < length)
-			return data[idx];
-		return NULL;
-	}
+		UInt32		numBuckets;	// 04
+		Entry**		buckets;	// 08
+		UInt32		numItems;	// 0C
 
-	T Get(UInt32 idx) { return (*this)[idx]; }
-};
+		class Iterator
+		{
+			friend NiTMapBase;
 
-template <typename T>
-struct BSSimpleArray
-{
-	void	* _vtbl;		// 00
-	T		* data;			// 04
-	UInt32	size;			// 08
-	UInt32	alloc;			// 0C
+			NiTMapBase* m_table;
+			Entry* m_entry;
+			UInt32			m_bucket;
 
-	// this only compiles for pointer types
-	T operator[](UInt32 idx) { if (idx < size) 
-		return data[idx]; 
-	return NULL; }
-};
+			void FindValid()
+			{
+				for (; m_bucket < m_table->numBuckets; m_bucket++)
+				{
+					m_entry = m_table->buckets[m_bucket];
+					if (m_entry) break;
+				}
+			}
 
+		public:
+			Iterator(NiTMapBase* table) : m_table(table), m_entry(NULL), m_bucket(0) { FindValid(); }
+
+			bool Done() const { return m_entry == NULL; }
+			void Next()
+			{
+				m_entry = m_entry->next;
+				if (!m_entry)
+				{
+					m_bucket++;
+					FindValid();
+				}
+			}
+			T_Data Get() const { return m_entry->data; }
+			T_Key Key() const { return m_entry->key; }
+		};
+
+		Entry* Get(T_Key key);
+	};
+	template <typename T>
+	struct BSSimpleArray
+	{
+		void* _vtbl;		// 00
+		T* data;			// 04
+		UInt32	size;			// 08
+		UInt32	alloc;			// 0C
+
+		// this only compiles for pointer types
+		T operator[](UInt32 idx) {
+			if (idx < size)
+				return data[idx];
+			return NULL;
+		}
+	};
+	template <typename T>
+	struct NiTArray
+	{
+		void* _vtbl;	// 00
+		T* data;		// 04
+		UInt16	unk08;		// 08 - init'd to size of preallocation
+		UInt16	length;		// 0A - init'd to 0
+		UInt16	unk0C;		// 0C - init'd to 0
+		UInt16	unk0E;		// 0E - init'd to size of preallocation
+
+		T operator[](UInt32 idx) {
+			if (idx < length)
+				return data[idx];
+			return NULL;
+		}
+
+		T Get(UInt32 idx) { return (*this)[idx]; }
+	};
 // this is a NiTPointerMap <UInt32, T_Data>
 // todo: generalize key
 template <typename T_Data>
@@ -996,3 +1041,37 @@ public:
 	const Iterator Begin() const { return Iterator((NiTPointerMap<T_Data>*)this); }
 };
 
+template <typename T_Key, typename T_Data>
+__declspec(naked) NiTMapEntry<T_Key, T_Data>* NiTMapBase<T_Key, T_Data>::Get(T_Key key)
+{
+	__asm
+	{
+		push	esi
+		push	edi
+		mov		esi, ecx
+		mov		eax, [esp + 0xC]
+		push	eax
+		mov		eax, [ecx]
+		call	dword ptr[eax + 4]
+		mov		ecx, [esi + 8]
+		mov		edi, [ecx + eax * 4]
+		findEntry:
+		test	edi, edi
+			jz		done
+			mov		eax, [esp + 0xC]
+			push	dword ptr[edi + 4]
+			push	eax
+			mov		ecx, esi
+			mov		eax, [ecx]
+			call	dword ptr[eax + 8]
+			test	al, al
+			jnz		done
+			mov		edi, [edi]
+			jmp		findEntry
+			done :
+		mov		eax, edi
+			pop		edi
+			pop		esi
+			retn	4
+	}
+}

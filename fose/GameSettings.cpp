@@ -70,8 +70,9 @@ bool Setting::Set(double newVal)
 
 bool GameSettingCollection::GetGameSetting(char* settingName, Setting** out)
 {
-	NiTMapBase<Setting>* map = &settingMap;
-	return CALL_MEMBER_FN(map, Lookup)(settingName, out);
+	NiTMapBase <const char*, Setting*>* map = &settingMap;
+	out = &map->Get(settingName)->data;
+	return true;
 }
 
 GameSettingCollection * GameSettingCollection::GetSingleton()

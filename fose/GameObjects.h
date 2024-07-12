@@ -2,6 +2,7 @@
 
 #include "GameForms.h"
 #include "GameBSExtraData.h"
+#include "netimmerse.h"
 
 #if RUNTIME
 
@@ -1449,6 +1450,15 @@ public:
 };
 STATIC_ASSERT(sizeof(Character) == 0x1B0);
 // 9BC
+
+struct CompassTarget
+{
+	Actor* target;
+	UInt8 isHostile;
+	UInt8 isUndetected;
+};
+STATIC_ASSERT(sizeof(CompassTarget) == 8);
+
 class PlayerCharacter : public Character
 {
 public:
@@ -1465,6 +1475,11 @@ public:
 		kControlFlag_RolloverText	= 1 << 5,
 		kControlFlag_Sneak			= 1 << 6,
 	};
+	struct WobbleNodes
+	{
+		NiNode* wobbleAnimNodes[12];
+		NiNode* wobbleAnimNodes2[12];
+	};
 
 	// lotsa data
 	UInt32								unk188[(0x570-0x1B0) >> 2];		// 188
@@ -1474,8 +1489,9 @@ public:
 	ImageSpaceModifierInstanceDOF		* unk57C;						// 57C
 	ImageSpaceModifierInstanceDRB		* unk580;						// 580
 	UInt32								unk584[(0x5A8 - 0x584) >> 2];	// 584
-	bool								bThirdPerson;					// 5A8
-	UInt8								unk5A9[3];	
+	bool								bIs3rdPerson;
+	bool								bThirdPerson;					// 5A9
+	UInt8								unk5A9[2];	
 	UInt32								unk5AC[(0x5DC - 0x5AC) >> 2];	// 5AC
 	UInt32								disabledControlFlags;			// 5DC
 	UInt32								unk5E0;							// 5E0
@@ -1501,7 +1517,27 @@ public:
 	float								flycamPosX;						// 720
 	float								flycamPosY;						// 724
 	float								flycamPosZ;						// 728
-	UInt8								unk72C[(0x9A4 - 0x72C)];		// 72C
+	UInt8								unk72C[440];
+	Actor*								autoAimActor;
+	float								kBulletAutoAim[3];
+	UInt32								unk8F4;
+	bool								bIsActorWithinPickDistance;
+	Actor*								reticleActor;
+	tList<CompassTarget>				*compassTargets;
+	float								fPipboyLightHeldTime;
+	float								fAmmoSwapTimer;
+	bool								bShouldOpenPipboy;
+	char								byteD55;
+	char								byteD56;
+	char								byteD57;
+	NiPoint3							ptD58;
+	void*								pCombatGroup;
+	int									iTeammateCount;
+	float								fCombatYieldRetryTimer;
+	PlayerCharacter::WobbleNodes		wobbleAnims;
+	NiVector3							kCamera1stPos;
+	NiVector3							kCameraPos;
+	void*								spRigidBody;
 	bool								pcInCombat;						// 9A4
 	bool								pcUnseen;						// 9A5
 	UInt8								unk9A6[(0x9BC - 0x9A6)];		// 9A6
@@ -1510,8 +1546,8 @@ public:
 }; 
 
 STATIC_ASSERT(sizeof(PlayerCharacter) == 0x9BC);
-STATIC_ASSERT(offsetof(PlayerCharacter, questObjective) == 0x618);
-STATIC_ASSERT(offsetof(PlayerCharacter, bThirdPerson) == 0x5A8);
+STATIC_ASSERT(offsetof(PlayerCharacter, fCombatYieldRetryTimer) == 0x924);
+STATIC_ASSERT(offsetof(PlayerCharacter, bThirdPerson) == 0x5A9);
 STATIC_ASSERT(offsetof(PlayerCharacter, disabledControlFlags) == 0x5DC);
 
 

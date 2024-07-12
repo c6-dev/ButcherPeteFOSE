@@ -57,7 +57,7 @@ public:
 
 	// void				** vtbl							// 000
 	UInt32				unk004[(0x10C - 0x004) >> 2];	// 004
-	NiTMapBase<Setting>	settingMap;						// 10C BSTCaseInsensitiveStringMap
+	NiTMapBase<const char*, Setting*>	settingMap;						// 10C BSTCaseInsensitiveStringMap
 	UInt8				unk11C;							// 11C
 	UInt8				pad11D[3];
 

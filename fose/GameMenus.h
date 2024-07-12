@@ -304,3 +304,139 @@ struct DialogueItem
 
 };
 STATIC_ASSERT(sizeof(DialogueItem) == 0x1C);
+
+
+class HUDMainMenu : Menu
+{
+public:
+	HUDMainMenu();
+	~HUDMainMenu();
+
+	struct QueuedMessage
+	{
+		char	msgText[0x204];			// 000
+		char	iconPate[MAX_PATH];		// 204
+		char	soundPath[MAX_PATH];	// 308
+		float	displayTime;			// 40C
+	};
+
+	struct SubtitleData;
+
+	UInt32 unk028;
+	TileImage* hitPointsMeter;
+	TileText* hitPointsJustifyRightText;
+	TileRect* hitPoints_CompassWindow_IconGroup034;
+	TileRect* hitPoints_CompassWindow_IconGroup038;
+	TileRect* hitPoints_CompassWindow_IconGroup03C;
+	TileImage* hitPoints_CompassWindow;
+	TileImage* actionPoints_Meter044;
+	TileText* actionPoints_JustifyRightText048;
+	TileText* actionPoints_JustifyRightText04C;
+	TileImage* actionPoints_Meter050;
+	TileImage* actionPoints_MeterBackground;
+	TileText* actionPoints_JustifyRightText058;
+	TileRect* questReminder_QuestStages;
+	TileRect* questReminder_QuestAdded;
+	TileText* regionLocation_JustifyLeftText064;
+	TileText* regionLocation_JustifyLeftText068;
+	TileImage* raditionMeter_RadiationBracket;
+	TileImage* raditionMeter_RadiationPointer;
+	TileText* raditionMeter_RadiationTextValue;
+	TileText* raditionMeter_RadiationText;
+	TileImage* enemyHealth_EnemyHealthBracket;
+	TileImage* enemyHealth_Meter;
+	TileText* enemyHealth_JustifyCenterText;
+	TileText* sneakLabel;
+	TileImage* messages_messageIcon;
+	TileText* messages_JustifyLeftText;
+	TileImage* messages_MessageBracket;
+	TileText* tile098;
+	TileRect* tileTakePrompt;
+	TileText* tile0A0;
+	TileImage* tile0A4;
+	TileText* itemName;
+	TileText* tileLockedStr;
+	TileText* tileEmptyContainerStr;
+	TileText* tilePickupWeightStr;
+	TileText* tilePickupWG;
+	TileText* tilePickupValueStr;
+	TileText* tilePickupVAL;
+	TileImage* tilePickupBorder;
+	TileRect* hotkeys_hotkeySelector;
+	TileText* hotkeys_JustifyCenterText;
+	TileImage* hitPoints_leftBracket;
+	TileImage* actionPoints_rightBracket;
+	TileImage* xpMeter_XPBracket;
+	TileText* xpMeter_XPAmount;
+	TileText* xpMeter_XPLabel;
+	TileImage* xpMeter_XPPointer;
+	TileText* xpMeter_XPLastLevel;
+	TileText* xpMeter_XPNextLevel;
+	TileText* xpMeter_XPLevelUp;
+	TileImage* reticleCenter_ReticleCenter;
+	TileImage* crippledFace;
+	TileImage* crippleHead;
+	TileImage* crippledTorso;
+	TileImage* crippledLeftArm;
+	TileImage* crippledRightArm;
+	TileImage* crippledLeftLeg;
+	TileImage* crippledRightLeg;
+	TileRect* actionPoints;
+	TileRect* hitPoints;
+	TileRect* radiationMeter;
+	TileRect* enemyHealth;
+	TileRect* questReminder;
+	TileRect* regionLocation;
+	TileRect* reticleCenter;
+	TileRect* sneakMeter;
+	TileRect* messages;
+	TileRect* info;
+	TileRect* subtibles;
+	TileRect* hotkeys;
+	TileRect* xpMeter;
+	void* breathMeter;
+	TileRect* Explosive_positioning;
+	TileRect* crippledLimbIndicator;
+	TileImage* cndArrows;
+	UInt32 unk184;
+	float flt188;
+	tList<QueuedMessage> queuedMessages;
+	UInt32 currMsgKey;
+	SubtitleData* subtitlesArr[4];
+	char* subtitleString;
+	UInt32 unk1AC[2];
+	TESObjectREFR* crosshairRef;
+	UInt32 visibilityFlags;
+	UInt32 unk1C0;
+	UInt32 unk1C4;
+	TileRect* hotkeys_HotkeySelector;
+	TileRect* hotkeys_HotkeySelector_Item0;
+	UInt32 unk1D0;
+	TileRect* hotkeys_HotkeySelector_Item2;
+	TileRect* hotkeys_HotkeySelector_Item3;
+	TileRect* hotkeys_HotkeySelector_Item4;
+	TileRect* hotkeys_HotkeySelector_Item5;
+	TileRect* hotkeys_HotkeySelector_Item6;
+	TileRect* hotkeys_HotkeySelector_Item7;
+	UInt32 unk1EC[5];
+	void* niContSeq;
+	UInt8 byte204;
+	UInt8 autoDisplayObjectives;
+	UInt8 pad206[2];
+	UInt32 unk208;
+	UInt32 unk20C;
+	UInt32 unk210;
+	UInt32 unk214;
+	UInt32 maxCompassAngle;
+	Actor* healthTarget;
+	UInt32 unk220;
+	void* unk224[12];
+	UInt32 unk244;
+	UInt32 unk248[4];
+	UInt32 list258[2];
+	UInt8 byte260;
+	UInt8 byte261;
+	UInt8 pad262[2];
+	static HUDMainMenu* GetSingleton() { return *(HUDMainMenu**)0x10762B4; }
+};
+STATIC_ASSERT(sizeof(HUDMainMenu) == 0x244);

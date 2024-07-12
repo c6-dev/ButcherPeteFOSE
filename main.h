@@ -15,6 +15,8 @@ DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
 DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
 DEFINE_COMMAND_PLUGIN(GetKiller, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetTexturePath, , 0, 2, kParams_OneString_OneForm);
+DEFINE_COMMAND_PLUGIN(GetCrosshairRefEx, , 0, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetLockedAlt, , 1, 0, NULL);
 
 int g_version = 130;
 
@@ -25,7 +27,62 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
 
+bool IsUnlockedOrHacked(TESObjectREFR* obj) {
+	BGSTerminal* terminal = (BGSTerminal*)obj->baseForm;
+	bool isUnlocked = (terminal->data.terminalFlags & 2) != 0;
+	ExtraTerminalState* xState = (ExtraTerminalState*)obj->extraDataList.GetByType(kExtraData_TerminalState);
+	if (xState) {
+		if ((xState->lockedOut & 0x80) != 0 || xState->lockLevel == -2 || xState->lockLevel == -1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	return isUnlocked;
+}
+bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS) {
+	*result = 0;
+	if (thisObj->baseForm->typeID == kFormType_Terminal) {
+		if (ThisCall<UInt32>(0x774660, PlayerCharacter::GetSingleton(), thisObj) == 2) {
+			*result = 2;
+		}
+		else if (!IsUnlockedOrHacked(thisObj)) {
+			*result = 1;
+		}
+	}
+	if (IsConsoleMode()) {
+		Console_Print("GetLockedAlt >> %.f", *result);
+	}
+	return true;
+}
 
+
+bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS) {
+	*result = 0;
+	TESObjectREFR* ref = HUDMainMenu::GetSingleton()->crosshairRef;
+	if (ref) {
+		*(UInt32*)result = ref->refID;
+	}
+	else {
+		PlayerCharacter* player = PlayerCharacter::GetSingleton();
+		__m128 vec = _mm_set_ps(0.0f, player->kCamera1stPos.z, player->kCamera1stPos.y, player->kCamera1stPos.x);
+		if (player->bThirdPerson) {
+			vec = _mm_add_ps(vec, _mm_set_ps(0.0f, player->ptD58.z, player->ptD58.y, player->ptD58.x));
+		}
+		NiNode* rootNode = player->loadedData->rootNode;
+		NiPoint3 pos(rootNode->m_kWorld.rotate.cr[0][1], rootNode->m_kWorld.rotate.cr[1][1], rootNode->m_kWorld.rotate.cr[2][1]);
+		InterfaceManager* g_interfaceManager = InterfaceManager::GetSingleton();
+		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->ptr13C, &vec, &pos, 0x46400000, &vec.m128_u32[3], &vec.m128_u32[3]);
+		if (ref) {
+			*(UInt32*)result = ref->refID;
+		}
+	}
+	if (IsConsoleMode()) {
+		Console_Print("GetCrosshairRefEx >> 0x%X", ref->refID);
+	}
+	return true;
+}
 
 bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
 {

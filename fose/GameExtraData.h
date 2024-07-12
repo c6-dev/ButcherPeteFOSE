@@ -903,15 +903,7 @@ class ExtraSound : public BSExtraData
 	UInt32	unk014;		// 014
 };
 
-// 010
-class ExtraTerminalState : public BSExtraData
-{
-public:
-	ExtraTerminalState();
-	virtual ~ExtraTerminalState();
 
-	UInt32	unk00C;		// 00C
-};
 
 // 010
 class ExtraLinkedRef : public BSExtraData
@@ -1473,4 +1465,17 @@ class ExtraFollowerSwimBreadcrumbs : public BSExtraData
 
 STATIC_ASSERT(sizeof(ExtraDismemberedLimbs) == 0x30);
 
+
+class ExtraTerminalState : public BSExtraData
+{
+public:
+	ExtraTerminalState();
+	virtual ~ExtraTerminalState();
+
+	UInt8 lockedOut;
+	SInt8 lockLevel;
+	UInt16 pad;
+};
+
+STATIC_ASSERT(sizeof(ExtraTerminalState) == 0x10);
 

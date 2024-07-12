@@ -7,6 +7,7 @@
 #include "GameExtraData.h"
 #include <string>
 #include "SafeWrite.h"
+#include "GameMenus.h"
 #include "main.h"
 #include "ParamInfos.h"
 
@@ -62,6 +63,8 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(IsKeyPressedAlt);
 	REG_CMD(GetKiller);
 	REG_CMD(SetTexturePath);
+	REG_CMD(GetCrosshairRefEx);
+	REG_CMD(GetLockedAlt);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

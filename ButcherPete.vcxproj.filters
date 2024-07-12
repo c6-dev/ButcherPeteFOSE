@@ -50,6 +50,9 @@
     <ClCompile Include="fose\GameTiles.cpp">
       <Filter>fose</Filter>
     </ClCompile>
+    <ClCompile Include="fose\netimmerse.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -99,6 +102,9 @@
       <Filter>fose</Filter>
     </ClInclude>
     <ClInclude Include="fose\GameTiles.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\netimmerse.h">
       <Filter>fose</Filter>
     </ClInclude>
   </ItemGroup>
