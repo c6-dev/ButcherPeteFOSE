@@ -335,7 +335,7 @@ bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 	SafeWrite8((UInt32)0x61B850, 0xC3);	// RETN
 	const auto canFastTravelAddr = GetRelJumpAddr(0x6680D3); // call the function indirectly for compatibility with Stewie tweaks, kudos to Stewie.
 	*result = ThisCall<bool>(canFastTravelAddr, PlayerCharacter::GetSingleton());
-	SafeWrite16((UInt32)0x61B850, 0x6AFF);	// PUSH 0FFFFFFFFh
+	SafeWrite16((UInt32)0x61B850, 0xFF6A);	// PUSH 0FFFFFFFFh
 	if (IsConsoleMode()) {
 		Console_Print("GetPCCanFastTravel >> %.f", *result);
 	}
