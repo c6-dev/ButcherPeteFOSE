@@ -68,6 +68,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(IsLoadDoor);
 	REG_CMD(GetLightingTemplateTraitNumeric);
 	REG_CMD(SetLightingTemplateTraitNumeric);
+	REG_CMD(SetBipedIconPathAlt);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

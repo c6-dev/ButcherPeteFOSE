@@ -20,7 +20,7 @@ DEFINE_COMMAND_PLUGIN(GetLockedAlt, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(IsLoadDoor, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetLightingTemplateTraitNumeric, , 0, 2, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, , 0, 3, kParams_OneForm_OneInt_OneFloat);
-
+DEFINE_COMMAND_PLUGIN(SetBipedIconPathAlt, , 0, 3, kParams_OneString_OneInt_OneForm);
 int g_version = 140;
 
 char* s_strArgBuffer;
@@ -29,6 +29,23 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+bool Cmd_SetBipedIconPathAlt_Execute(COMMAND_ARGS) {
+	UInt32 isFemale = 0;
+	TESForm* form = NULL;
+	char newPath[MAX_PATH];
+	*result = 0;
+	if (ExtractArgsEx(EXTRACT_ARGS_EX, &newPath, &isFemale, &form)) {
+		TESBipedModelForm* bipedModel = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		if (bipedModel) {
+			bipedModel->icon[isFemale].ddsPath.Set(newPath);
+			*result = 1;
+		}
+	}
+
+	return true;
+}
+
 
 bool Cmd_SetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
 	*result = 0;

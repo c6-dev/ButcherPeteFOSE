@@ -278,3 +278,10 @@ static ParamInfo kParams_OneForm_OneInt_OneFloat[3] =
 	{ "Integer", kParamType_Integer, 0 },
 	{ "Float", kParamType_Float, 0 }
 };
+
+static ParamInfo kParams_OneString_OneInt_OneForm[3] =
+{
+	{ "string",	kParamType_String,	0 },
+	{ "int",	kParamType_Integer, 0 },
+	{ "form",	kParamType_AnyForm,	0 },
+};
