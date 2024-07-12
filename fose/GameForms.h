@@ -3711,7 +3711,20 @@ public:
 	BGSLightingTemplate();
 	~BGSLightingTemplate();
 
-	UInt32	unk018[(0x44 - 0x18) >> 2];
+	struct Data {
+		UInt8			ambientRGB[4];			// 18
+		UInt8			directionalRGB[4];		// 1C
+		UInt8			fogRGB[4];				// 20
+		float			fogNear;			// 24
+		float			fogFar;				// 28
+		UInt32			directionalXY;		// 2C
+		UInt32			directionalZ;		// 30
+		float			directionalFade;	// 34
+		float			fogClipDist;		// 38
+		float			fogPower;			// 3C
+		TESObjectCELL* getValuesFrom;		// 40
+	};
+	Data data;
 };
 
 STATIC_ASSERT(sizeof(BGSLightingTemplate) == 0x44);

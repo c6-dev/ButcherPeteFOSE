@@ -265,3 +265,16 @@ static ParamInfo kParams_OneForm[] =
 {
 	{	"object",	kParamType_AnyForm,	0	},
 };
+
+static ParamInfo kParams_OneForm_OneInt[2] =
+{
+	{	"form",	kParamType_AnyForm,	0	},
+	{	"int",	kParamType_Integer, 0	},
+};
+
+static ParamInfo kParams_OneForm_OneInt_OneFloat[3] =
+{
+	{ "Form", kParamType_AnyForm, 0 },
+	{ "Integer", kParamType_Integer, 0 },
+	{ "Float", kParamType_Float, 0 }
+};

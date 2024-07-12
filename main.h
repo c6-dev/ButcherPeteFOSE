@@ -18,8 +18,10 @@ DEFINE_COMMAND_PLUGIN(SetTexturePath, , 0, 2, kParams_OneString_OneForm);
 DEFINE_COMMAND_PLUGIN(GetCrosshairRefEx, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetLockedAlt, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(IsLoadDoor, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetLightingTemplateTraitNumeric, , 0, 2, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, , 0, 3, kParams_OneForm_OneInt_OneFloat);
 
-int g_version = 130;
+int g_version = 140;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -27,6 +29,107 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+bool Cmd_SetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
+	*result = 0;
+	UInt32 traitID = 0;
+	BGSLightingTemplate* tmpl = nullptr;
+	float value = 0.0;
+	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID, &value) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0) {
+		switch (traitID) {
+		case 1:
+		case 2:
+		case 3:
+			tmpl->data.ambientRGB[traitID - 1] = value;
+			break;
+		case 4:
+		case 5:
+		case 6:
+			tmpl->data.directionalRGB[traitID - 4] = value;
+			break;
+		case 7:
+		case 8:
+		case 9:
+			tmpl->data.fogRGB[traitID - 7] = value;
+			break;
+		case 10:
+			tmpl->data.fogNear = value;
+			break;
+		case 11:
+			tmpl->data.fogFar = value;
+			break;
+		case 12:
+			tmpl->data.directionalXY = value;
+			break;
+		case 13:
+			tmpl->data.directionalZ = value;
+			break;
+		case 14:
+			tmpl->data.directionalFade = value;
+			break;
+		case 15:
+			tmpl->data.fogClipDist = value;
+			break;
+		case 16:
+			tmpl->data.fogPower = value;
+			break;
+		default:
+			return true;
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
+	*result = 0;
+	UInt32 traitID = 0;
+	BGSLightingTemplate* tmpl = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0) {
+		switch (traitID) {
+		case 1:
+		case 2:
+		case 3:
+			*result = tmpl->data.ambientRGB[traitID - 1];
+			break;
+		case 4:
+		case 5:
+		case 6:
+			*result = tmpl->data.directionalRGB[traitID - 4];
+			break;
+		case 7:
+		case 8:
+		case 9:
+			*result = tmpl->data.fogRGB[traitID - 7];
+			break;
+		case 10:
+			*result = tmpl->data.fogNear;
+			break;
+		case 11:
+			*result = tmpl->data.fogFar;
+			break;
+		case 12:
+			*result = tmpl->data.directionalXY;
+			break;
+		case 13:
+			*result = tmpl->data.directionalZ;
+			break;
+		case 14:
+			*result = tmpl->data.directionalFade;
+			break;
+		case 15:
+			*result = tmpl->data.fogClipDist;
+			break;
+		case 16:
+			*result = tmpl->data.fogPower;
+			break;
+		default:
+			return true;
+		}
+		if (IsConsoleMode()) Console_Print("GetLightingTemplateTraitNumeric %d >> %f", traitID, *result);
+	}
+	return true;
+}
+
 
 bool Cmd_IsLoadDoor_Execute(COMMAND_ARGS) {
 	*result = 0;
