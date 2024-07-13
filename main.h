@@ -1,5 +1,5 @@
 #pragma once
-
+#include <unordered_map>
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 #undef MessageBoxEx
 
@@ -21,14 +21,72 @@ DEFINE_COMMAND_PLUGIN(IsLoadDoor, , 1, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetLightingTemplateTraitNumeric, , 0, 2, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, , 0, 3, kParams_OneForm_OneInt_OneFloat);
 DEFINE_COMMAND_PLUGIN(SetBipedIconPathAlt, , 0, 3, kParams_OneString_OneInt_OneForm);
+DEFINE_COMMAND_PLUGIN(SetCustomMapMarkerIcon, , 0, 2, kParams_OneForm_OneString);
+DEFINE_COMMAND_PLUGIN(PatchFreezeTime, , 0, 0, NULL);
+
 int g_version = 140;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
+std::unordered_map<UInt32, char*> markerIconMap;
 const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
 
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 CommandInfo* cmd_IsKeyPressed = nullptr;
+
+char** defaultMarkerList = (char**)0xF6B13C;
+
+bool timePatched = false;
+
+bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS) {
+	if (!timePatched) {
+		timePatched = true;
+		SafeWrite16(0x6E48A6, 0x9090);
+	}
+	return true;
+}
+char* __fastcall GetMapMarker(TESObjectREFR* thisObj, UInt16 mapMarkerType) {
+	auto it = markerIconMap.find(thisObj->refID);
+	if (it != markerIconMap.end()) return it->second;
+	return defaultMarkerList[mapMarkerType];
+}
+
+
+void SetMapMarkerIcon(TESObjectREFR* marker, char* iconPath) {
+	auto pos = markerIconMap.find(marker->refID);
+	char* pathCopy = new char[strlen(iconPath) + 1];
+	strcpy(pathCopy, iconPath);
+
+	if (pos != markerIconMap.end()) {
+		delete[] pos->second;
+		pos->second = pathCopy;
+	}
+	else {
+		markerIconMap.insert({ marker->refID, pathCopy });
+	}
+}
+
+bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS) {
+	TESObjectREFR* form;
+	char iconPath[MAX_PATH];
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form->baseForm->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker)))) return true;
+	if (IS_TYPE(form, BGSListForm)) {
+		ListNode<TESForm>* iterator = ((BGSListForm*)form)->list.Head();
+		while (iterator) {
+			TESObjectREFR* ref = (TESObjectREFR*)(iterator->data);
+			if (ref->GetIsReference() && ref->baseForm->refID == 0x10 && GetExtraType(ref->extraDataList, MapMarker)) {
+				SetMapMarkerIcon(ref, iconPath);
+			}
+			iterator = iterator->next;
+		}
+	}
+	else {
+		SetMapMarkerIcon(form, iconPath);
+	}
+	if (IsConsoleMode()) Console_Print("SetCustomMapMarkerIcon >> %u, %s", form->refID, iconPath);
+	return true;
+}
+
 
 bool Cmd_SetBipedIconPathAlt_Execute(COMMAND_ARGS) {
 	UInt32 isFemale = 0;
@@ -657,6 +715,17 @@ TESPackage* __fastcall GetAIPackageHook(Actor* actor) {
 	}
 	return package;
 }
+
+__declspec (naked) void GetMapMarkerHook() {
+	//UInt32 static const retAddr = 0x079D337;
+	__asm
+	{
+		mov edx, eax
+		mov ecx, edi
+		jmp GetMapMarker
+	}
+}
+
 void WritePatches() {
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
@@ -664,6 +733,10 @@ void WritePatches() {
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
 	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
 	WriteRelCall(0x5110A5, (UInt32)GetAIPackageHook);
+
+	// SetCustomMapMarkerIcon
+	SafeWrite16(0x6654DB, 0x9090);
+	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook);
 }
 
 void WriteEditorPatches()

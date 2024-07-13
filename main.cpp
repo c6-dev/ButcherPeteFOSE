@@ -69,6 +69,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetLightingTemplateTraitNumeric);
 	REG_CMD(SetLightingTemplateTraitNumeric);
 	REG_CMD(SetBipedIconPathAlt);
+	REG_CMD(SetCustomMapMarkerIcon);
+	REG_CMD(PatchFreezeTime);
+
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

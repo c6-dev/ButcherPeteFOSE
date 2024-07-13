@@ -129,7 +129,7 @@ enum {
 };
 
 #define GetByTypeCast(xDataList, Type) DYNAMIC_CAST(xDataList.GetByType(kExtraData_ ## Type), BSExtraData, Extra ## Type)
-
+#define GetExtraType(xDataList, Type) (Extra ## Type*)(xDataList).GetByType(kExtraData_ ## Type)
 
 // 014
 class ExtraHavok : public BSExtraData
