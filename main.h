@@ -735,8 +735,9 @@ void WritePatches() {
 	WriteRelCall(0x5110A5, (UInt32)GetAIPackageHook);
 
 	// SetCustomMapMarkerIcon
-	SafeWrite16(0x6654DB, 0x9090);
-	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook);
+	SafeWrite16(0x6654DB, 0x9090); // nop 2b
+	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
+	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
 }
 
 void WriteEditorPatches()
