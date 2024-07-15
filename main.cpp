@@ -71,6 +71,8 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetBipedIconPathAlt);
 	REG_CMD(SetCustomMapMarkerIcon);
 	REG_CMD(PatchFreezeTime);
+	REG_CMD(SetHotkeyItem);
+	REG_CMD(ClearHotkey);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

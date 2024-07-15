@@ -291,3 +291,9 @@ static ParamInfo kParams_OneForm_OneString[2] =
 	{ "Form", kParamType_AnyForm, 0 },
 	{ "String", kParamType_String, 0 },
 };
+
+static ParamInfo kParams_SetHotkeyItem[2] =
+{
+	{	"hotkey",	kParamType_Integer,		0	},
+	{	"item",		kParamType_AnyForm,		0	},
+};

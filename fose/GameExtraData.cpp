@@ -57,6 +57,7 @@ static const UInt32 s_ExtraCountVtbl = 0x00DB5874;
 static const UInt32 s_ExtraOwnershipVtbl = 0xDB5850;
 static const UInt32 s_ExtraRankVtbl = 0xDB5868;
 static const UInt32 s_ExtraScriptVtbl = 0xDB58BC;
+static const UInt32 s_ExtraHotkeyVtbl = 0xDB58D4;
 
 STATIC_ASSERT(sizeof(ExtraHealth) == 0x10);
 STATIC_ASSERT(sizeof(ExtraLock) == 0x10);
@@ -220,4 +221,22 @@ void ExtraScript::EventCreate(UInt32 eventCode, TESObjectREFR* container)
 		if (eventList->m_eventList && pEvent)
 			eventList->m_eventList->AddAt(pEvent, 0);
 	}
+}
+
+ExtraHotkey* ExtraHotkey::Create()
+{
+	ExtraHotkey* xHotkey = (ExtraHotkey*)BSExtraData::Create(kExtraData_Hotkey, sizeof(ExtraHotkey), s_ExtraHotkeyVtbl);
+	xHotkey->index = 0;
+	return xHotkey;
+}
+
+ExtraContainerChanges::ExtendDataList* ExtraContainerChanges::EntryData::Add(ExtraDataList* newList)
+{
+	if (extendData)
+		extendData->AddAt(newList, eListEnd);
+	else
+		/* ExtendDataList* */ extendData = ExtraContainerChangesExtendDataListCreate(newList);
+	ExtraCount* xCount = (ExtraCount*)newList->GetByType(kExtraData_Count);
+	countDelta += xCount ? xCount->count : 1;
+	return extendData;
 }

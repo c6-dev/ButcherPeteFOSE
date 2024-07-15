@@ -23,6 +23,8 @@ DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, , 0, 3, kParams_OneForm_O
 DEFINE_COMMAND_PLUGIN(SetBipedIconPathAlt, , 0, 3, kParams_OneString_OneInt_OneForm);
 DEFINE_COMMAND_PLUGIN(SetCustomMapMarkerIcon, , 0, 2, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(PatchFreezeTime, , 0, 0, NULL);
+DEFINE_COMMAND_PLUGIN(SetHotkeyItem, , 0, 2, kParams_SetHotkeyItem);
+DEFINE_COMMAND_PLUGIN(ClearHotkey, , 0, 1, kParams_OneInt);
 
 int g_version = 140;
 
@@ -37,6 +39,118 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	int hotkeynum;
+	TESForm* itemform = NULL;
+	ExtraDataList* found = NULL;
+	ExtraHotkey* xHotkey = NULL;
+
+	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum, &itemform))
+		return true;
+	if (--hotkeynum < 8)
+	{
+		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		if (xChanges)
+		{
+			// Remove the hotkey if it exists on another object.
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			{
+				if (itemIter->type->refID != itemform->refID)
+				{
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+					{
+						xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
+						if (xHotkey && xHotkey->index == hotkeynum)
+						{
+							found = iter.Get();
+							break;
+						}
+					}
+					if (found)
+						break;
+				};
+			}
+			if (found) {
+				found->RemoveByType(kExtraData_Hotkey);
+				found = NULL;
+			}
+
+			xHotkey = NULL;
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			{
+				if (itemIter->type && itemIter->type->refID == itemform->refID)
+				{
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+					{
+						xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
+						if (xHotkey) {
+							xHotkey->index = hotkeynum; // If the item already has a hotkey, just change the index.
+							break;
+						}
+					}
+					if (!xHotkey)
+					{
+						ExtraHotkey* zHotkey = ExtraHotkey::Create();
+						if (zHotkey)
+						{
+							zHotkey->index = hotkeynum;
+							if (!itemIter->extendData)
+								itemIter.Get()->Add(ExtraDataList::Create());
+							if (itemIter->extendData)
+							{
+								if (!itemIter->extendData->Count())
+									itemIter->extendData->AddAt(ExtraDataList::Create(), 0);
+								if (itemIter->extendData->Count())
+									itemIter->extendData->GetNthItem(0)->Add(zHotkey);
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	int hotkeynum;
+	ExtraDataList* found = NULL;
+	ExtraHotkey* xHotkey = NULL;
+	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum))
+		return true;
+	if (--hotkeynum < 8)
+	{
+		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		if (xChanges)
+		{
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			{
+				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+				{
+					xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
+					if (xHotkey && xHotkey->index == hotkeynum)
+					{
+						found = iter.Get();
+						break;
+					}
+				}
+				if (found)
+					break;
+			}
+			if (found)
+				found->RemoveByType(kExtraData_Hotkey);
+		}
+	}
+	return true;
+}
 
 bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS) {
 	if (!timePatched) {

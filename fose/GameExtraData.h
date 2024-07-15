@@ -345,6 +345,7 @@ public:
 		static EntryData* Create(TESForm* item, SInt32 count = 1);
 		EntryData* Copy(EntryData* from);
 		float GetWeight();
+		ExtendDataList* Add(ExtraDataList* newList);
 	};
 
 	struct EntryDataList : tList<EntryData>
@@ -852,6 +853,7 @@ public:
 	virtual ~ExtraHotkey();
 
 	UInt8	index;		// 00C (is 0-7)
+	static ExtraHotkey* Create();
 };
 
 // 030
