@@ -101,6 +101,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 		info->eval = Cmd_GetButcherPeteVersion_Eval;
 		info->execute = Cmd_GetButcherPeteVersion_Execute;
 
+		info = cmdTableInterface->GetByOpcode(0x14AC);
+		info->execute = Hook_GetHotkeyItem_Execute;
+
 		cmd_IsKeyPressed = cmdTableInterface->GetByOpcode(0x143A);
 	}
 	return true;

@@ -743,6 +743,52 @@ bool Hook_ListAddForm_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool Hook_GetHotkeyItem_Execute(COMMAND_ARGS)
+{
+	UInt32* refResult = (UInt32*)result;
+	*refResult = 0;
+
+	UInt32 hotkeyNum;	// passed as 1 - 8, stored by game as 0-7
+	if (ExtractArgs(EXTRACT_ARGS, &hotkeyNum) && --hotkeyNum < 8)
+	{
+		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		if (xChanges)
+		{
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin();
+				!itemIter.End();
+				++itemIter)
+			{
+				if (itemIter.Get()) {
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin();
+						!iter.End();
+						++iter)
+					{
+						if (iter.Get()) {
+							ExtraHotkey* xHotKey = (ExtraHotkey*)iter.Get()->GetByType(kExtraData_Hotkey);
+							if (xHotKey && xHotKey->index == hotkeyNum)
+							{
+								*refResult = itemIter->type->refID;
+								if (IsConsoleMode())
+									Console_Print("GetHotkeyItem >> %08x (%s)", *refResult, GetFullName(itemIter->type));
+
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// not found
+	if (IsConsoleMode())
+		Console_Print("GetHotkeyItem >> Hotkey not assigned");
+
+	return true;
+}
+
+
 bool Cmd_GetButcherPeteVersion_Execute(COMMAND_ARGS) {
 	*result = g_version;
 	if (IsConsoleMode()) {
