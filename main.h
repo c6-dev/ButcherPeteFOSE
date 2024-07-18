@@ -26,7 +26,7 @@ DEFINE_COMMAND_PLUGIN(PatchFreezeTime, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetHotkeyItem, , 0, 2, kParams_SetHotkeyItem);
 DEFINE_COMMAND_PLUGIN(ClearHotkey, , 0, 1, kParams_OneInt);
 
-int g_version = 140;
+int g_version = 150;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
