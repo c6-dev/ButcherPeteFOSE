@@ -25,7 +25,8 @@ DEFINE_COMMAND_PLUGIN(SetCustomMapMarkerIcon, , 0, 2, kParams_OneForm_OneString)
 DEFINE_COMMAND_PLUGIN(PatchFreezeTime, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetHotkeyItem, , 0, 2, kParams_SetHotkeyItem);
 DEFINE_COMMAND_PLUGIN(ClearHotkey, , 0, 1, kParams_OneInt);
-
+DEFINE_COMMAND_PLUGIN(ClearMessageQueue, , 0, 0, NULL);
+DEFINE_COMMAND_PLUGIN(ResetFallTime, , 1, 0, NULL);
 int g_version = 150;
 
 char* s_strArgBuffer;
@@ -39,6 +40,31 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+
+bool Cmd_ResetFallTime_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if (thisObj->IsActor()) {
+		BaseProcess* proc = ((Actor*)thisObj)->baseProcess;
+		if (proc->uiProcessLevel <= 1) {
+			bhkCharacterController* charCtrl = proc->GetCharacterController();
+			if (charCtrl) {
+				charCtrl->fallStartHeight = thisObj->posZ;
+				charCtrl->fallTime = 0;
+				*result = 1;
+			}
+		}
+	}
+	return true;
+}
+
+bool Cmd_ClearMessageQueue_Execute(COMMAND_ARGS) {
+	HUDMainMenu::GetSingleton()->ClearMessageQueue();
+	*result = 1;
+	return true;
+}
+
 
 bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 {

@@ -103,6 +103,7 @@ struct PackageInfo
 	float			unk10;			// 10	Initialized to -1.0	. Set to GameHour on start so some time
 	UInt32			flags;			// 14	Flags, bit0 would be not created and initialized
 };
+class bhkCharacterController;
 class BaseProcess
 {
 public:
@@ -316,7 +317,7 @@ public:
 	virtual void	Unk_9F(void);
 	virtual void	Unk_A0(void);
 	virtual void	Unk_A1();
-	virtual void	Unk_A2();
+	virtual bhkCharacterController*	GetCharacterController();
 	virtual void	Unk_A3();
 	virtual void	Unk_A4();
 	virtual void	Unk_A5();
@@ -780,7 +781,7 @@ struct FurnitureMark
 	UInt8 eType;
 	UInt8 gap0F;
 };
-
+class bhkCharacterController;
 
 class MiddleHighProcess : public MiddleLowProcess
 {
@@ -840,7 +841,7 @@ public:
 	bool bIsWeaponOut;
 	UInt8 byt136;
 	UInt8 byt137;
-	void* spCharCtrl;
+	bhkCharacterController* spCharCtrl;
 	KnockState eKnockedState;
 	UInt8 ucSitSleepState;
 	UInt8 gap13E[2];

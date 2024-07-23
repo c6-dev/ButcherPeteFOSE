@@ -438,5 +438,17 @@ public:
 	UInt8 byte261;
 	UInt8 pad262[2];
 	static HUDMainMenu* GetSingleton() { return *(HUDMainMenu**)0x10762B4; }
+
+	void ClearMessageQueue()
+	{
+		if (!queuedMessages.Empty())
+		{
+			queuedMessages.DeleteAll();
+			currMsgKey = 0;
+			messages_messageIcon->SetFloat(kTileValue_alpha, 0);
+			messages_JustifyLeftText->SetFloat(kTileValue_alpha, 0);
+			messages_MessageBracket->SetFloat(kTileValue_alpha, 0);
+		}
+	}
 };
 STATIC_ASSERT(sizeof(HUDMainMenu) == 0x244);

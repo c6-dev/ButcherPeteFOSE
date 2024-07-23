@@ -814,3 +814,34 @@ public:
 
 	TESAnimGroup* animGroup;		// 74
 };
+
+// 660 TODO
+__declspec(align(16)) class bhkCharacterController
+{
+public:
+	bhkCharacterController();
+	~bhkCharacterController();
+
+	UInt32 unk00[0x3B0 >> 2];
+	float velocityTime;
+	float rotMod;
+	float rotModTime;
+	float calculatePitchTimer;
+	float acrobatics; // from oblivion, init'd to 1 in NV
+	float center;
+	float waterHeight;
+	float jumpHeight;
+	float fallStartHeight;
+	float fallTime;
+	float gravity;
+	float pitchAngle;
+	float rollAngle;
+	float pitchMult;
+	float scale;
+	float swimFloatHeight;
+	UInt32 actorHeight;
+	float speedPct;
+	UInt32 unk56C[(0x4F0 - 0x3F8) >> 2];
+}; 
+STATIC_ASSERT(sizeof(bhkCharacterController) == 0x4F0);
+STATIC_ASSERT(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
