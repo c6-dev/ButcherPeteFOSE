@@ -1241,7 +1241,7 @@ public:
 	virtual void		Unk_AC(void);
 	virtual void		Unk_AD(void);
 	virtual void		Unk_AE(void);
-	virtual float		Unk_AF(UInt32 arg1);
+	virtual float		AdjustRot(UInt32 arg1);
 	virtual void		Unk_B0(void);
 	virtual void		Unk_B1(void);
 	virtual void		Unk_B2(void);
@@ -1530,7 +1530,7 @@ public:
 	char								byteD55;
 	char								byteD56;
 	char								byteD57;
-	NiPoint3							ptD58;
+	NiPoint3							camera3rdPos;
 	void*								pCombatGroup;
 	int									iTeammateCount;
 	float								fCombatYieldRetryTimer;

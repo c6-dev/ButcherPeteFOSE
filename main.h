@@ -370,15 +370,23 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS) {
 		*(UInt32*)result = ref->refID;
 	}
 	else {
+		float fDistance = 0;
+		bool bResult = false;
 		PlayerCharacter* player = PlayerCharacter::GetSingleton();
-		__m128 vec = _mm_set_ps(0.0f, player->kCamera1stPos.z, player->kCamera1stPos.y, player->kCamera1stPos.x);
+		NiPoint3 pos(player->kCamera1stPos);
 		if (player->bThirdPerson) {
-			vec = _mm_add_ps(vec, _mm_set_ps(0.0f, player->ptD58.z, player->ptD58.y, player->ptD58.x));
+			pos += player->camera3rdPos;
 		}
-		NiNode* rootNode = player->loadedData->rootNode;
-		NiPoint3 pos(rootNode->m_kWorld.rotate.cr[0][1], rootNode->m_kWorld.rotate.cr[1][1], rootNode->m_kWorld.rotate.cr[2][1]);
+		NiMatrix33 zMatrix = NiMatrix33();
+		zMatrix.MakeZRotation(player->AdjustRot(0));
+		NiMatrix33 xMatrix = NiMatrix33();
+		xMatrix.MakeXRotation(player->rotX);
+
+		NiMatrix33 outMatrix = zMatrix.TransposeTimes(xMatrix);
+		NiPoint3 rot = outMatrix.GetCol(1);
+
 		InterfaceManager* g_interfaceManager = InterfaceManager::GetSingleton();
-		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->ptr13C, &vec, &pos, 0x46400000, &vec.m128_u32[3], &vec.m128_u32[3]);
+		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->viewCaster, &pos, &rot, 0x46400000, &fDistance, &bResult);
 		if (ref) {
 			*(UInt32*)result = ref->refID;
 		}
@@ -440,7 +448,7 @@ bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS) {
 			if (!(keyCode == NOKEY)) *result = (GetAsyncKeyState(keyCode) & 0x8000) ? true : false;
 		}
 		else {
-			cmd_IsKeyPressed->eval(thisObj, &keyCode, nullptr, result);
+			cmd_IsKeyPressed->eval(thisObj, (void*)keyCode, nullptr, result);
 		}
 	}
 	return true;

@@ -160,7 +160,7 @@ public:
 	UInt8				byte110;
 	UInt8				pad111[3];
 	UInt32				menuStack[10];
-	void*				ptr13C;
+	void*				viewCaster;
 	UInt32				unk140;
 	UInt32				unk144;
 	UInt8				byte148;

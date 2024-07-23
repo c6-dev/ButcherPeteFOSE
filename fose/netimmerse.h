@@ -46,18 +46,322 @@ struct NiRTTI
 	const char* name;
 	NiRTTI* parent;
 };
+// 0C
+class NiPoint3 {
+public:
+	float x;
+	float y;
+	float z;
 
-// 24
-struct NiMatrix33
-{
-	float	cr[3][3];
 
-	void ExtractAngles(float& rotX, float& rotY, float& rotZ);
-	void RotationMatrix(float rotX, float rotY, float rotZ);
-	void Rotate(float rotX, float rotY, float rotZ);
-	void MultiplyMatrices(NiMatrix33& matA, NiMatrix33& matB);
-	void Dump(const char* title = NULL);
+	NiPoint3() : x(0.f), y(0.f), z(0.f) {};
+	NiPoint3(const float x, const float y, const float z) : x(x), y(y), z(z) {};
+	NiPoint3(const float f) : x(f), y(f), z(f) {};
+	NiPoint3(const NiPoint3& src) : x(src.x), y(src.y), z(src.z) {};
+	NiPoint3(const NiPoint3* src) : x(src->x), y(src->y), z(src->z) {};
+
+
+
+	inline const float operator[] (UInt32 i) const { return ((float*)&x)[i]; };
+	inline float operator[] (UInt32 i) { return ((float*)&x)[i]; };
+
+	operator float* () const { return (float*)this; };
+
+	// Point operations
+
+	NiPoint3& operator= (const NiPoint3& pt) {
+		x = pt.x;
+		y = pt.y;
+		z = pt.z;
+		return *this;
+	};
+
+	NiPoint3& operator= (const NiPoint3* pt) {
+		x = pt->x;
+		y = pt->y;
+		z = pt->z;
+		return *this;
+	};
+
+	NiPoint3 operator+ (const NiPoint3& pt) const { return NiPoint3(x + pt.x, y + pt.y, z + pt.z); };
+	NiPoint3& operator+= (const NiPoint3& pt) {
+		x += pt.x;
+		y += pt.y;
+		z += pt.z;
+		return *this;
+	};
+
+	NiPoint3 operator- (const NiPoint3& pt) const { return NiPoint3(x - pt.x, y - pt.y, z - pt.z); };
+	NiPoint3 operator- () const { return NiPoint3(-x, -y, -z); };
+	NiPoint3& operator-= (const NiPoint3& pt) {
+		x -= pt.x;
+		y -= pt.y;
+		z -= pt.z;
+		return *this;
+	};
+
+	float operator* (const NiPoint3& pt) const { return x * pt.x + y * pt.y + z * pt.z; };
+
+	// Scalar operations
+
+	NiPoint3 operator* (float fScalar) const { return NiPoint3(fScalar * x, fScalar * y, fScalar * z); };
+	friend NiPoint3 operator* (float fScalar, const NiPoint3& pt) { return NiPoint3(fScalar * pt.x, fScalar * pt.y, fScalar * pt.z); };
+	NiPoint3& operator*= (float fScalar) {
+		x *= fScalar;
+		y *= fScalar;
+		z *= fScalar;
+		return *this;
+	};
+
+
+
+	NiPoint3 operator/ (float fScalar) const {
+		float fInvScalar = 1.0f / fScalar;
+		return NiPoint3(fInvScalar * x, fInvScalar * y, fInvScalar * z);
+	};
+
+	NiPoint3& operator/= (float fScalar) {
+		x /= fScalar;
+		y /= fScalar;
+		z /= fScalar;
+		return *this;
+	};
+
+	// 0x457990
+	__forceinline float Length() const {
+		[[msvc::flatten]]
+		return std::sqrt(x * x + y * y + z * z);
+	}
+
+	static float __fastcall Length_Hook(NiPoint3* apThis) {
+		return apThis->Length();
+	};
+
+	__forceinline float SqrLength() const {
+		return x * x + y * y + z * z;
+	}
+
+	__forceinline float Dot(const NiPoint3& pt) const {
+		return x * pt.x + y * pt.y + z * pt.z;
+	}
+
+	__forceinline NiPoint3 Cross(const NiPoint3& pt) const {
+		return NiPoint3(y * pt.z - z * pt.y, z * pt.x - x * pt.z, x * pt.y - y * pt.x);
+	}
+
+	__forceinline float Unitize() {
+		float fLength = Length();
+
+		if (fLength > 1e-06f) {
+			float fRecip = 1.0f / fLength;
+			x *= fRecip;
+			y *= fRecip;
+			z *= fRecip;
+		}
+		else
+		{
+			x = 0.0f;
+			y = 0.0f;
+			z = 0.0f;
+			fLength = 0.0f;
+		}
+		return fLength;
+	}
+
+	inline NiPoint3 UnitCross(const NiPoint3& pt) const {
+		NiPoint3 cross(y * pt.z - z * pt.y, z * pt.x - x * pt.z, x * pt.y - y * pt.x);
+		float fLength = cross.Length();
+		if (fLength > 1e-06f)
+			return cross / fLength;
+		else
+			return NiPoint3(0.0f, 0.0f, 0.0f);
+	}
+
+	inline float Distance(const NiPoint3& pt) const {
+		return (*this - pt).Length();
+	}
+
+	static void PointsPlusEqualFloatTimesPoints(NiPoint3* pkDst, float f, const NiPoint3* pkSrc, unsigned int uiVerts) {
+		for (UInt32 i = 0; i < uiVerts; i++) {
+			pkDst[i] += f * pkSrc[i];
+		}
+	}
+
+	void Lerp(const NiPoint3& to, const NiPoint3& from, const double by) {
+		x = to.x * (1 - by) + from.x * by;
+		y = to.y * (1 - by) + from.y * by;
+		z = to.z * (1 - by) + from.z * by;
+	}
+
+	NiPoint3& Lerp(const NiPoint3& to, const NiPoint3& from, const NiPoint3& by) {
+		x = to.x * (1 - by.x) + from.x * by.x;
+		y = to.y * (1 - by.y) + from.y * by.y;
+		z = to.z * (1 - by.z) + from.z * by.z;
+		return *this;
+	}
+
+	float GetLargest() const {
+		float largest = x;
+		if (y > largest)
+			largest = y;
+		if (z > largest)
+			largest = z;
+		return largest;
+	}
+
+	static float Sign(NiPoint3 p1, NiPoint3 p2, NiPoint3 p3) {
+		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+	}
+
+	static bool PointInTriangle(NiPoint3 pt, NiPoint3 v1, NiPoint3 v2, NiPoint3 v3) {
+		bool b1 = Sign(pt, v1, v2) < 0.0;
+		bool b2 = Sign(pt, v2, v3) < 0.0;
+		bool b3 = Sign(pt, v3, v1) < 0.0;
+
+		return (b1 == b2) && (b2 == b3);
+	}
+
+	static NiPoint3 GetTriangleCenter(NiPoint3 v1, NiPoint3 v2, NiPoint3 v3) {
+		return NiPoint3((v1.x + v2.x + v3.x) / 3.0f, (v1.y + v2.y + v3.y) / 3.0f, (v1.z + v2.z + v3.z) / 3.0f);
+	}
+
+	static const NiPoint3 UNIT_X;
+	static const NiPoint3 UNIT_Y;
+	static const NiPoint3 UNIT_Z;
+	static const NiPoint3 UNIT_ALL;
+	static const NiPoint3 ZERO;
 };
+
+STATIC_ASSERT(sizeof(NiPoint3) == 0xC);
+typedef NiPoint3 NiVector3;
+// 24
+class NiMatrix3 {
+public:
+	float	m_pEntry[3][3];
+
+	NiMatrix3() { memset(m_pEntry, 0, sizeof(m_pEntry)); }
+	NiMatrix3(float m00, float m10, float m20, float m01, float m11, float m21, float m02, float m12, float m22)
+	{
+		m_pEntry[0][0] = m00;
+		m_pEntry[0][1] = m10;
+		m_pEntry[0][2] = m20;
+		m_pEntry[1][0] = m01;
+		m_pEntry[1][1] = m11;
+		m_pEntry[1][2] = m21;
+		m_pEntry[2][0] = m02;
+		m_pEntry[2][1] = m12;
+		m_pEntry[2][2] = m22;
+	}
+	bool operator==(const NiMatrix3& mat) const;
+	NiMatrix3 operator+(const NiMatrix3& mat) const;
+	NiMatrix3 operator-(const NiMatrix3& mat) const;
+	NiMatrix3 operator*(const NiMatrix3& mat) const;
+	NiMatrix3 operator*(float fScalar) const;
+	NiPoint3 operator*(const NiPoint3& pt) const;
+	friend NiPoint3 operator*(const NiPoint3& pt, const NiMatrix3& mat);
+
+	NiMatrix3 operator/(float fScalar) const;
+
+	void MakeXRotation(float fAngle);
+
+	void MakeYRotation(float fAngle);
+
+	void MakeZRotation(float fAngle);
+
+	void MakeRotation(float fAngle, float x, float y, float z);
+	void MakeRotation(float angle, const NiPoint3& axis);
+
+	void FromEulerAnglesXYZ(float fXAngle, float fYAngle, float fZAngle);
+	bool ToEulerAnglesXYZ(float& arfXAngle, float& arfYAngle, float& arfZAngle) const;
+
+	__forceinline void SetCol(UInt32 uiCol, const NiPoint3& col) {
+		m_pEntry[0][uiCol] = col.x;
+		m_pEntry[1][uiCol] = col.y;
+		m_pEntry[2][uiCol] = col.z;
+	}
+	__forceinline void GetCol(UInt32 uiCol, float& f0, float& f1, float& f2) const {
+
+		f0 = m_pEntry[0][uiCol];
+		f1 = m_pEntry[1][uiCol];
+		f2 = m_pEntry[2][uiCol];
+
+	}
+
+	__forceinline void GetCol(UInt32 uiCol, NiPoint3& col) const {
+
+		col.x = m_pEntry[0][uiCol];
+		col.y = m_pEntry[1][uiCol];
+
+	}
+
+	__forceinline NiPoint3 GetCol(UInt32 uiCol) const {
+		NiPoint3 col;
+
+		col.x = m_pEntry[0][uiCol];
+		col.y = m_pEntry[1][uiCol];
+		col.z = m_pEntry[2][uiCol];
+
+		return col;
+	}
+
+	NiMatrix3(const NiPoint3& col0, const NiPoint3& col1, const NiPoint3& col2) {
+		SetCol(0, col0);
+		SetCol(1, col1);
+		SetCol(2, col2);
+	}
+
+	__forceinline void GetRow(UInt32 uiRow, NiPoint3& row) const {
+
+		row.x = m_pEntry[uiRow][0];
+		row.y = m_pEntry[uiRow][1];
+		row.z = m_pEntry[uiRow][2];
+
+	}
+
+	float* GetRow(UInt32 uiRow) {
+		NiPoint3 row;
+		return &m_pEntry[uiRow][0];
+
+	}
+
+	__forceinline void SetRow(UInt32 uiRow, float f0, float f1, float f2) {
+		m_pEntry[uiRow][0] = f0;
+		m_pEntry[uiRow][1] = f1;
+		m_pEntry[uiRow][2] = f2;
+	}
+
+	__forceinline float GetEntry(UInt32 uiRow, UInt32 uiCol) const {
+
+		return m_pEntry[uiRow][uiCol];
+
+	}
+
+	__forceinline void SetEntry(UInt32 uiRow, UInt32 uiCol, float fValue) {
+
+		m_pEntry[uiRow][uiCol] = fValue;
+
+	}
+
+	__forceinline NiMatrix3 Transpose() {
+		NiPoint3 row[3];
+
+		GetRow(0, row[0]);
+		GetRow(1, row[1]);
+		GetRow(2, row[2]);
+
+		return NiMatrix3(row[0], row[1], row[2]);
+	}
+
+	NiMatrix3 TransposeTimes(const NiMatrix3& mat) const;
+	bool Inverse(NiMatrix3& inv) const;
+
+
+};
+
+
+STATIC_ASSERT(sizeof(NiMatrix3) == 0x24);
+
+typedef NiMatrix3 NiMatrix33;
 
 struct NiQuaternion;
 
@@ -87,53 +391,7 @@ __forceinline __m128 __vectorcall operator^(__m128 a, __m128 b)
 {
 	return _mm_xor_ps(a, b);
 }
-// 0C
-struct NiVector3
-{
-	float	x, y, z;
 
-	NiVector3() {}
-	__forceinline NiVector3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
-	__forceinline NiVector3(const NiVector3& rhs) { *this = rhs; }
-	__forceinline explicit NiVector3(const __m128 rhs) { SetPS(rhs); }
-
-	__forceinline void operator=(NiVector3&& rhs)
-	{
-		x = rhs.x;
-		y = rhs.y;
-		z = rhs.z;
-	}
-	__forceinline void operator=(const NiVector3& rhs)
-	{
-		_mm_storeu_si64(this, _mm_loadu_si64(&rhs));
-		z = rhs.z;
-	}
-
-
-	__forceinline NiVector3& SetPS(const __m128 rhs)
-	{
-		_mm_storeu_si64(this, _mm_castps_si128(rhs));
-		_mm_store_ss(&z, _mm_unpackhi_ps(rhs, rhs));
-		return *this;
-	}
-
-	__forceinline __m128 operator+(__m128 packedPS) const { return PS() + packedPS; }
-	__forceinline __m128 operator-(__m128 packedPS) const { return PS() - packedPS; }
-	__forceinline __m128 operator*(float s) const { return PS() * _mm_set_ps1(s); }
-	__forceinline __m128 operator*(__m128 packedPS) const { return PS() * packedPS; }
-
-	__forceinline NiVector3& operator+=(__m128 packedPS) { return SetPS(*this + packedPS); }
-	__forceinline NiVector3& operator-=(__m128 packedPS) { return SetPS(*this - packedPS); }
-	__forceinline NiVector3& operator*=(float s) { return SetPS(*this * s); }
-	__forceinline NiVector3& operator*=(__m128 packedPS) { return SetPS(*this * packedPS); }
-
-	inline operator float* () { return &x; }
-
-	__forceinline __m128 PS() const { return _mm_loadu_ps(&x); }
-	__forceinline __m128 PS2() const { return _mm_castsi128_ps(_mm_loadu_si64(this)); }
-
-};
-typedef NiVector3 NiPoint3;
 
 // 10 - always aligned?
 struct NiVector4
