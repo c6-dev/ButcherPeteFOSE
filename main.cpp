@@ -75,6 +75,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(ClearHotkey);
 	REG_CMD(ClearMessageQueue);
 	REG_CMD(ResetFallTime);
+	REG_CMD(GetKillXP);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

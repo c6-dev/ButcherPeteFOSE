@@ -1508,10 +1508,7 @@ public:
 	UInt32								unk61C[(0x68C - 0x61C) >> 2];	// 61C
 	float								timeGrenadeHeld;				// 68C
 	UInt8								unk690[(0x704 - 0x690)];		// 690
-	UInt8								gameDifficulty;					// 704
-	UInt8								byte705;						// 705
-	UInt8								byte706;						// 706
-	UInt8								byte707;						// 707
+	UInt32								gameDifficulty;					// 704
 	UInt8								unk708[(0x718 - 0x708)];		// 708
 	float								flycamZRot;						// 718
 	float								flycamXRot;						// 71C

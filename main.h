@@ -27,6 +27,7 @@ DEFINE_COMMAND_PLUGIN(SetHotkeyItem, , 0, 2, kParams_SetHotkeyItem);
 DEFINE_COMMAND_PLUGIN(ClearHotkey, , 0, 1, kParams_OneInt);
 DEFINE_COMMAND_PLUGIN(ClearMessageQueue, , 0, 0, NULL);
 DEFINE_COMMAND_PLUGIN(ResetFallTime, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetKillXP, , 1, 0, NULL);
 int g_version = 150;
 
 char* s_strArgBuffer;
@@ -41,6 +42,21 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
+{
+	if (thisObj->IsActor()) {
+		PlayerCharacter* player = PlayerCharacter::GetSingleton();
+		Actor* actor = (Actor*)thisObj;
+		int level = ThisCall<int>(0x6F4CD0, actor);
+		int typeReward = CdeclCall<int>(0x5A3A70, actor->baseForm->typeID != kFormType_Creature, level);
+		double difficultyMult = CdeclCall<double>(0x585650, (float)typeReward, player->gameDifficulty);
+		*result = floor(difficultyMult);
+		if (IsConsoleMode()) {
+			Console_Print("GetKillXP >> %.f", *result);
+		}
+	}
+	return true;
+}
 
 bool Cmd_ResetFallTime_Execute(COMMAND_ARGS)
 {
