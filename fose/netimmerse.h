@@ -10,7 +10,6 @@ class NiDefaultAVObjectPalette;
 class NiSourceTexture;
 class bhkNiCollisionObject;
 class hkpWorldObject;
-struct hkVector4;
 class NiLight;
 class BSCubeMapCamera;
 class NiFrustumPlanes;
@@ -39,6 +38,38 @@ struct NiSphere;
 class NiProperty;
 class NiInterpolator;
 class NiControllerSequence;
+
+struct alignas(16) AlignedVector4
+{
+	float	x, y, z, w;
+
+	AlignedVector4() {}
+	__forceinline AlignedVector4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
+	__forceinline AlignedVector4(const AlignedVector4& rhs) { *this = rhs; }
+	__forceinline explicit AlignedVector4(const __m128 rhs) { SetPS(rhs); }
+
+	__forceinline void operator=(AlignedVector4&& rhs)
+	{
+		x = rhs.x;
+		y = rhs.y;
+		z = rhs.z;
+		w = rhs.w;
+	}
+	__forceinline void operator=(const AlignedVector4& rhs) { SetPS(rhs.PS()); }
+
+	__forceinline AlignedVector4& SetPS(const __m128 rhs)
+	{
+		_mm_store_ps(&x, rhs);
+		return *this;
+	}
+
+	inline operator float* () { return &x; }
+
+	__forceinline __m128 PS() const { return _mm_load_ps(&x); }
+};
+typedef AlignedVector4 hkVector4;
+
+STATIC_ASSERT(sizeof(hkVector4) == 0x10);
 
 // 08
 struct NiRTTI
@@ -815,19 +846,21 @@ public:
 	TESAnimGroup* animGroup;		// 74
 };
 
-// 660 TODO
-__declspec(align(16)) class bhkCharacterController
+
+// 0x4F0 TODO
+class bhkCharacterController
 {
 public:
-	bhkCharacterController();
-	~bhkCharacterController();
-
-	UInt32 unk00[0x3B0 >> 2];
+	UInt32 unk00[0x350 >> 2];
+	UInt32 wantState;
+	UInt32 unk354[0x38 >> 2];
+	hkVector4 velocity;
+	hkVector4 kVelocityMod;
 	float velocityTime;
 	float rotMod;
 	float rotModTime;
 	float calculatePitchTimer;
-	float acrobatics; // from oblivion, init'd to 1 in NV
+	float acrobatics;
 	float center;
 	float waterHeight;
 	float jumpHeight;
@@ -839,9 +872,10 @@ public:
 	float pitchMult;
 	float scale;
 	float swimFloatHeight;
-	UInt32 actorHeight;
+	float actorHeight;
 	float speedPct;
-	UInt32 unk56C[(0x4F0 - 0x3F8) >> 2];
+	UInt32 unk3F8[0xF0 >> 2];
 }; 
 STATIC_ASSERT(sizeof(bhkCharacterController) == 0x4F0);
+STATIC_ASSERT(offsetof(bhkCharacterController, velocity) == 0x390);
 STATIC_ASSERT(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);

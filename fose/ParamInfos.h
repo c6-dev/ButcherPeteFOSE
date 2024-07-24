@@ -326,3 +326,8 @@ static ParamInfo kParams_SetHotkeyItem[2] =
 	{	"hotkey",	kParamType_Integer,		0	},
 	{	"item",		kParamType_AnyForm,		0	},
 };
+
+static ParamInfo kParams_OneOptionalAxis[1] =
+{
+	{ "axis", kParamType_Axis, 1}
+};

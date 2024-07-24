@@ -30,6 +30,7 @@ DEFINE_COMMAND_PLUGIN(ClearMessageQueue, 0, NULL);
 DEFINE_COMMAND_PLUGIN(ResetFallTime, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetKillXP, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetIsRagdolled, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetActorVelocity, 1, kParams_OneOptionalAxis);
 
 int g_version = 150;
 
@@ -45,6 +46,31 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
+{
+	char axis = 0;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &axis)) {
+		BaseProcess* proc = ((Actor*)thisObj)->baseProcess;
+		if (proc->uiProcessLevel > 1) return true;
+		bhkCharacterController* charCtrl = proc->GetCharacterController();
+		if (!charCtrl) return true;
+		if (axis) {
+			*result = charCtrl->velocity[axis - 'X'];
+		}
+		else {
+			__m128 vec = charCtrl->velocity.PS();
+			__m128 sq = _mm_mul_ps(vec, vec);
+			sq = _mm_hadd_ps(sq, sq);
+			sq = _mm_hadd_ps(sq, sq); 
+			*result = sqrt(_mm_cvtss_f32(sq));
+		}
+		if (IsConsoleMode()) {
+			Console_Print("GetActorVelocity >> %.5f", *result);
+		}
+	}
+	return true;
+}
 
 bool Cmd_GetIsRagdolled_Execute(COMMAND_ARGS)
 {
