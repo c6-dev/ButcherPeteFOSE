@@ -375,6 +375,8 @@ public:
 //	void		** _vtbl;	// 000
 };
 
+class BGSDestructibleObjectForm;
+
 // 018
 class TESForm : public BaseFormComponent
 {
@@ -490,6 +492,7 @@ public:
 
 	// return a new base form which is the clone of this form
 	TESForm* CloneForm(bool bPersist = true) const;
+	BGSDestructibleObjectForm* GetDestructibleForm() { return CdeclCall<BGSDestructibleObjectForm*>(0x44A380, this); }
 };
 struct Condition
 {
@@ -934,6 +937,21 @@ public:
 	UInt8	padding[3];
 	// 008
 };
+class BGSExplosion;
+class BGSDebris;
+
+struct DestructionStage
+{
+
+	UInt8				dmgStage;		// 00
+	UInt8				healthPrc;		// 01
+	UInt16				flags;			// 02
+	UInt32				selfDmgSec;		// 04
+	BGSExplosion* explosion;		// 08
+	BGSDebris* debris;		// 0C
+	UInt32				debrisCount;	// 10
+	TESModelTextureSwap* replacement;	// 14
+};
 
 // 008
 class BGSDestructibleObjectForm : public BaseFormComponent
@@ -942,7 +960,17 @@ public:
 	BGSDestructibleObjectForm();
 	~BGSDestructibleObjectForm();
 
-	void	* unk004;
+	struct Data
+	{
+		UInt32				health;		// 00
+		UInt8				stageCount;	// 04
+		bool				targetable;	// 05
+		UInt8				unk06[2];	// 06
+		DestructionStage** stages;	// 08
+		UInt32				unk0C;		// 0C
+		UInt32				unk10;		// 10
+	};
+	Data* data;
 };
 
 // 00C

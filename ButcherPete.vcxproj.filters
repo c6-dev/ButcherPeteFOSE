@@ -107,6 +107,7 @@
     <ClInclude Include="fose\netimmerse.h">
       <Filter>fose</Filter>
     </ClInclude>
+    <ClInclude Include="fn_destruction_data.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

@@ -1431,6 +1431,7 @@ public:
 	bool IsEssential() { return ThisCall<bool>(0x6F4A10, this); }
 	float GetRadiationLevel(bool scaleByResist);
 	TESActorBase* GetActorBase();
+	SInt8 GetKnockedState() { return (baseProcess && (baseProcess->uiProcessLevel <= 1)) ? ((MiddleHighProcess*)baseProcess)->eKnockedState : -1; }
 };
 
 STATIC_ASSERT(offsetof(Actor, cvOwner) == 0x0A0);

@@ -1,33 +1,36 @@
 #pragma once
 #include <unordered_map>
+#include "fn_destruction_data.h"
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 #undef MessageBoxEx
 
-DEFINE_COMMAND_PLUGIN(IsOwned, , 1, 1, kParams_OneActorRef);
-DEFINE_COMMAND_PLUGIN(AddItemOwnership, , 1, 4, kParams_OneForm_OneFloat_OneForm_OneOptionalRank);
-DEFINE_COMMAND_PLUGIN(GetWorldspaceFlag, , 0, 2, kParams_OneWorldspace_OneInt);
-DEFINE_COMMAND_PLUGIN(SetWorldspaceFlag, , 0, 3, kParams_OneWorldspace_TwoInts);
-DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, , 0, 0, NULL);
-DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(IsOwned, 1, kParams_OneActorRef);
+DEFINE_COMMAND_PLUGIN(AddItemOwnership, 1, kParams_OneForm_OneFloat_OneForm_OneOptionalRank);
+DEFINE_COMMAND_PLUGIN(GetWorldspaceFlag, 0, kParams_OneWorldspace_OneInt);
+DEFINE_COMMAND_PLUGIN(SetWorldspaceFlag, 0, kParams_OneWorldspace_TwoInts);
+DEFINE_COMMAND_PLUGIN(GetPCCanFastTravel, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetRadiationLevelAlt, 1, NULL);
 DEFINE_CMD_ALT_COND_PLUGIN(GetButcherPeteVersion, , , 0, NULL);
-DEFINE_COMMAND_PLUGIN(MessageExAlt, , 0, 22, kParams_OneFloat_OneFormatString);
-DEFINE_COMMAND_PLUGIN(MessageBoxEx, , 0, 21, kParams_FormatString);
-DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, , 0, 1, kParams_OneInt);
-DEFINE_COMMAND_PLUGIN(GetKiller, , 1, 0, NULL);
-DEFINE_COMMAND_PLUGIN(SetTexturePath, , 0, 2, kParams_OneString_OneForm);
-DEFINE_COMMAND_PLUGIN(GetCrosshairRefEx, , 0, 0, NULL);
-DEFINE_COMMAND_PLUGIN(GetLockedAlt, , 1, 0, NULL);
-DEFINE_COMMAND_PLUGIN(IsLoadDoor, , 1, 0, NULL);
-DEFINE_COMMAND_PLUGIN(GetLightingTemplateTraitNumeric, , 0, 2, kParams_OneForm_OneInt);
-DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, , 0, 3, kParams_OneForm_OneInt_OneFloat);
-DEFINE_COMMAND_PLUGIN(SetBipedIconPathAlt, , 0, 3, kParams_OneString_OneInt_OneForm);
-DEFINE_COMMAND_PLUGIN(SetCustomMapMarkerIcon, , 0, 2, kParams_OneForm_OneString);
-DEFINE_COMMAND_PLUGIN(PatchFreezeTime, , 0, 0, NULL);
-DEFINE_COMMAND_PLUGIN(SetHotkeyItem, , 0, 2, kParams_SetHotkeyItem);
-DEFINE_COMMAND_PLUGIN(ClearHotkey, , 0, 1, kParams_OneInt);
-DEFINE_COMMAND_PLUGIN(ClearMessageQueue, , 0, 0, NULL);
-DEFINE_COMMAND_PLUGIN(ResetFallTime, , 1, 0, NULL);
-DEFINE_COMMAND_PLUGIN(GetKillXP, , 1, 0, NULL);
+DEFINE_COMMAND_PLUGIN(MessageExAlt, 0,  kParams_OneFloat_OneFormatString);
+DEFINE_COMMAND_PLUGIN(MessageBoxEx, 0, kParams_FormatString);
+DEFINE_COMMAND_PLUGIN(IsKeyPressedAlt, 0, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(GetKiller, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetTexturePath, 0, kParams_OneString_OneForm);
+DEFINE_COMMAND_PLUGIN(GetCrosshairRefEx, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetLockedAlt, 1, NULL);
+DEFINE_COMMAND_PLUGIN(IsLoadDoor, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetLightingTemplateTraitNumeric, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetLightingTemplateTraitNumeric, 0, kParams_OneForm_OneInt_OneFloat);
+DEFINE_COMMAND_PLUGIN(SetBipedIconPathAlt, 0, kParams_OneString_OneInt_OneForm);
+DEFINE_COMMAND_PLUGIN(SetCustomMapMarkerIcon, 0, kParams_OneForm_OneString);
+DEFINE_COMMAND_PLUGIN(PatchFreezeTime, 0, NULL);
+DEFINE_COMMAND_PLUGIN(SetHotkeyItem, 0, kParams_SetHotkeyItem);
+DEFINE_COMMAND_PLUGIN(ClearHotkey, 0, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(ClearMessageQueue, 0, NULL);
+DEFINE_COMMAND_PLUGIN(ResetFallTime, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetKillXP, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetIsRagdolled, 1, NULL);
+
 int g_version = 150;
 
 char* s_strArgBuffer;
@@ -41,6 +44,15 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+
+bool Cmd_GetIsRagdolled_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if (thisObj->IsActor() && (((Actor*)thisObj)->GetKnockedState() == 1))
+		*result = 1;
+	return true;
+}
 
 bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
 {

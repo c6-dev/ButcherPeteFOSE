@@ -76,6 +76,18 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(ClearMessageQueue);
 	REG_CMD(ResetFallTime);
 	REG_CMD(GetKillXP);
+	REG_CMD(GetIsRagdolled);
+	REG_CMD(GetDestructionDataHealth);
+	REG_CMD(SetDestructionDataHealth);
+	REG_CMD(GetDestructionDataTargetable);
+	REG_CMD(SetDestructionDataTargetable);
+	REG_CMD(GetDestructionDataNumStages);
+	REG_CMD(GetNthDestructionStageTrait);
+	REG_CMD(SetNthDestructionStageTrait);
+	REG_CMD(GetNthDestructionStageExplosion);
+	REG_CMD(SetNthDestructionStageExplosion);
+	REG_CMD(GetNthDestructionStageDebris);
+	REG_CMD(SetNthDestructionStageDebris);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

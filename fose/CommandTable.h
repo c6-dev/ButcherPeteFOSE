@@ -150,9 +150,6 @@ struct ParamInfo
 #define DEFINE_COMMAND_EXP(name, description, refRequired, paramInfo) \
 	DEFINE_CMD_ALT_EXP(name, , description, refRequired, paramInfo)	
 
-#define DEFINE_COMMAND_PLUGIN(name, description, refRequired, numParams, paramInfo) \
-	DEFINE_CMD_FULL(name, , description, refRequired, numParams, paramInfo, NULL)
-
 #define DEFINE_COMMAND_ALT_PLUGIN(name, altName, description, refRequired, numParams, paramInfo) \
 	DEFINE_CMD_FULL(name, altName, description, refRequired, numParams, paramInfo, NULL)
 
@@ -183,6 +180,22 @@ struct ParamInfo
 #define DEFINE_CMD_COND(name, description, refRequired, paramInfo) \
 	DEFINE_CMD_ALT_COND(name, , description, refRequired, paramInfo)
 
+
+#define DEFINE_COMMAND_PLUGIN(name, refRequired, paramInfo) \
+	extern bool Cmd_##name##_Execute(COMMAND_ARGS); \
+	static CommandInfo kCommandInfo_##name = { \
+	#name, \
+	nullptr, \
+	0, \
+	nullptr, \
+	refRequired, \
+	sizeof(paramInfo) / sizeof(ParamInfo), \
+	paramInfo, \
+	Cmd_##name##_Execute, \
+	nullptr, \
+	nullptr, \
+	0 \
+	};
 typedef bool (* Cmd_Execute)(COMMAND_ARGS);
 bool Cmd_Default_Execute(COMMAND_ARGS);
 

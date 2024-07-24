@@ -148,6 +148,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="fn_destruction_data.h" />
     <ClInclude Include="fose\GameAPI.h" />
     <ClInclude Include="fose\GameBSExtraData.h" />
     <ClInclude Include="fose\GameData.h" />
