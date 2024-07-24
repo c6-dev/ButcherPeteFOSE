@@ -415,7 +415,13 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS) {
 		float fDistance = 0;
 		bool bResult = false;
 		PlayerCharacter* player = PlayerCharacter::GetSingleton();
+		NiNode* g_camera1st = *(NiNode**)0x107BA78;
 		NiPoint3 pos(player->kCamera1stPos);
+		if (!g_camera1st) {
+			pos = player->GetPos();
+			double scaledHeight = ThisCall<double>(0x4E6D80, player);
+			pos.z = scaledHeight * player->eyeHeight + pos.z;
+		}
 		if (player->bThirdPerson) {
 			pos += player->camera3rdPos;
 		}

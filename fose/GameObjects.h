@@ -1150,7 +1150,7 @@ public:
 	virtual void* GetValidBip01Names(void);	// 007A	Character only
 	virtual void* CallGetValidBip01Names(void);
 	virtual void		SetValidBip01Names(void* validBip01Names);
-	virtual void		GetPos();				// GetPos or GetDistance
+	virtual NiPoint3*		GetPos();				// GetPos or GetDistance
 	virtual void		Unk_7E(UInt32 arg0);
 	virtual void		Unk_7F(void);
 	virtual void		Unk_80(UInt32 arg0);
@@ -1500,7 +1500,8 @@ public:
 	UInt32								unk5E8;							// 5E8
 	UInt32								unk5EC;							// 5EC
 	NiNode								* unk5F0;						// 5F0
-	UInt32								unk5F4[(0x604-0x5F4) >> 2];		// 5F4
+	float								eyeHeight;						// 5F4
+	UInt32								unk5F8[(0x604-0x5F8) >> 2];		// 5F8
 	TESTopic							* topic;						// 604
 	UInt32								unk608[3];						// 608
 	TESQuest							* quest;						// 614
@@ -1523,13 +1524,13 @@ public:
 	Actor*								reticleActor;
 	tList<CompassTarget>				*compassTargets;
 	float								fPipboyLightHeldTime;
-	float								fAmmoSwapTimer;
 	bool								bShouldOpenPipboy;
 	char								byteD55;
 	char								byteD56;
 	char								byteD57;
 	NiPoint3							camera3rdPos;
 	void*								pCombatGroup;
+	int									unk91C;
 	int									iTeammateCount;
 	float								fCombatYieldRetryTimer;
 	PlayerCharacter::WobbleNodes		wobbleAnims;
@@ -1547,7 +1548,7 @@ STATIC_ASSERT(sizeof(PlayerCharacter) == 0x9BC);
 STATIC_ASSERT(offsetof(PlayerCharacter, fCombatYieldRetryTimer) == 0x924);
 STATIC_ASSERT(offsetof(PlayerCharacter, bThirdPerson) == 0x5A9);
 STATIC_ASSERT(offsetof(PlayerCharacter, disabledControlFlags) == 0x5DC);
-
+STATIC_ASSERT(offsetof(PlayerCharacter, camera3rdPos) == 0x90C);
 
 struct VATSCameraData
 {
