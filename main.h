@@ -34,7 +34,7 @@ DEFINE_COMMAND_PLUGIN(GetActorVelocity, 1, kParams_OneOptionalAxis);
 DEFINE_COMMAND_PLUGIN(IsDLLLoaded, 0, kParams_OneString_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(RefreshIdle, 1, kParams_OneOptionalInt);
 
-int g_version = 150;
+int g_version = 160;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
