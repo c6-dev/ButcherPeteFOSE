@@ -445,9 +445,9 @@ public:
 		{
 			queuedMessages.DeleteAll();
 			currMsgKey = 0;
-			messages_messageIcon->SetFloat(kTileValue_alpha, 0);
-			messages_JustifyLeftText->SetFloat(kTileValue_alpha, 0);
-			messages_MessageBracket->SetFloat(kTileValue_alpha, 0);
+			if (messages_messageIcon) messages_messageIcon->SetFloat(kTileValue_alpha, 0);
+			if (messages_JustifyLeftText) messages_JustifyLeftText->SetFloat(kTileValue_alpha, 0);
+			if (messages_MessageBracket) messages_MessageBracket->SetFloat(kTileValue_alpha, 0);
 		}
 	}
 };
