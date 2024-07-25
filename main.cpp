@@ -89,6 +89,8 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetNthDestructionStageDebris);
 	REG_CMD(SetNthDestructionStageDebris);
 	REG_CMD(GetActorVelocity);
+	REG_CMD(RefreshIdle);
+	REG_CMD(IsDLLLoaded);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

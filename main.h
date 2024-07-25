@@ -31,6 +31,8 @@ DEFINE_COMMAND_PLUGIN(ResetFallTime, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetKillXP, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetIsRagdolled, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetActorVelocity, 1, kParams_OneOptionalAxis);
+DEFINE_COMMAND_PLUGIN(IsDLLLoaded, 0, kParams_OneString_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(RefreshIdle, 1, kParams_OneOptionalInt);
 
 int g_version = 150;
 
@@ -45,6 +47,44 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_RefreshIdle_Execute(COMMAND_ARGS) {
+	*result = 0;
+	UInt32 stopAnim = 0;
+	Actor* actor = (Actor*)thisObj;
+	ExtractArgs(EXTRACT_ARGS, &stopAnim);
+	if (actor->baseProcess->GetForcedIdleForm()) {
+		actor->baseProcess->ResetQueuedIdleFlags();
+		actor->baseProcess->SetForcedIdleForm(NULL);
+		if (stopAnim > 0) ThisCall<void>(0x460090, actor->GetAnimData(), 1, 1); // SpecialIdleFree
+		*result = 1;
+	}
+	return true;
+}
+bool Cmd_IsDLLLoaded_Execute(COMMAND_ARGS) {
+	*result = 0;
+	int checkOutsideOfGameFolder = 0;
+	char dllName[MAX_PATH];
+	char dllPath[MAX_PATH];
+	char fnvPath[MAX_PATH];
+	if (ExtractArgs(EXTRACT_ARGS, &dllName, &checkOutsideOfGameFolder)) {
+		strncat(dllName, ".dll", 4);
+		HMODULE module = GetModuleHandle(dllName);
+		if (module) {
+			if (!checkOutsideOfGameFolder) {
+				GetModuleFileNameA(module, dllPath, MAX_PATH);
+				GetModuleFileNameA(NULL, fnvPath, MAX_PATH);
+				fnvPath[strlen(fnvPath) - 13] = '\0';
+				if (strstr(dllPath, fnvPath) != NULL) *result = 1;
+			}
+			else {
+				*result = 1;
+			}
+		}
+		if (IsConsoleMode()) Console_Print("IsDLLLoaded \"%s\" >> %.f", dllName, *result);
+	}
+	return true;
+}
 
 bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
 {

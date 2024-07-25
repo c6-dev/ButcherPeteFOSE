@@ -268,42 +268,15 @@ bool NiMatrix3::ToEulerAnglesXYZ(float& arfXAngle, float& arfYAngle, float& arfZ
 
 NiMatrix3 NiMatrix3::TransposeTimes(const NiMatrix3& mat) const {
 	NiMatrix3 prd;
-	prd.m_pEntry[0][0] =
-		m_pEntry[0][0] * mat.m_pEntry[0][0] +
-		m_pEntry[0][1] * mat.m_pEntry[1][0] +
-		m_pEntry[0][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[1][0] =
-		m_pEntry[1][0] * mat.m_pEntry[0][0] +
-		m_pEntry[1][1] * mat.m_pEntry[1][0] +
-		m_pEntry[1][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[2][0] =
-		m_pEntry[2][0] * mat.m_pEntry[0][0] +
-		m_pEntry[2][1] * mat.m_pEntry[1][0] +
-		m_pEntry[2][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[0][1] =
-		m_pEntry[0][0] * mat.m_pEntry[0][1] +
-		m_pEntry[0][1] * mat.m_pEntry[1][1] +
-		m_pEntry[0][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[1][1] =
-		m_pEntry[1][0] * mat.m_pEntry[0][1] +
-		m_pEntry[1][1] * mat.m_pEntry[1][1] +
-		m_pEntry[1][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[2][1] =
-		m_pEntry[2][0] * mat.m_pEntry[0][1] +
-		m_pEntry[2][1] * mat.m_pEntry[1][1] +
-		m_pEntry[2][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[0][2] =
-		m_pEntry[0][0] * mat.m_pEntry[0][2] +
-		m_pEntry[0][1] * mat.m_pEntry[1][2] +
-		m_pEntry[0][2] * mat.m_pEntry[2][2];
-	prd.m_pEntry[1][2] =
-		m_pEntry[1][0] * mat.m_pEntry[0][2] +
-		m_pEntry[1][1] * mat.m_pEntry[1][2] +
-		m_pEntry[1][2] * mat.m_pEntry[2][2];
-	prd.m_pEntry[2][2] =
-		m_pEntry[2][0] * mat.m_pEntry[0][2] +
-		m_pEntry[2][1] * mat.m_pEntry[1][2] +
-		m_pEntry[2][2] * mat.m_pEntry[2][2];
+	prd.m_pEntry[0][0] = m_pEntry[0][0] * mat.m_pEntry[0][0] + m_pEntry[0][1] * mat.m_pEntry[1][0] + m_pEntry[0][2] * mat.m_pEntry[2][0];
+	prd.m_pEntry[1][0] = m_pEntry[1][0] * mat.m_pEntry[0][0] + m_pEntry[1][1] * mat.m_pEntry[1][0] + m_pEntry[1][2] * mat.m_pEntry[2][0];
+	prd.m_pEntry[2][0] = m_pEntry[2][0] * mat.m_pEntry[0][0] + m_pEntry[2][1] * mat.m_pEntry[1][0] + m_pEntry[2][2] * mat.m_pEntry[2][0];
+	prd.m_pEntry[0][1] = m_pEntry[0][0] * mat.m_pEntry[0][1] + m_pEntry[0][1] * mat.m_pEntry[1][1] + m_pEntry[0][2] * mat.m_pEntry[2][1];
+	prd.m_pEntry[1][1] = m_pEntry[1][0] * mat.m_pEntry[0][1] + m_pEntry[1][1] * mat.m_pEntry[1][1] + m_pEntry[1][2] * mat.m_pEntry[2][1];
+	prd.m_pEntry[2][1] = m_pEntry[2][0] * mat.m_pEntry[0][1] + m_pEntry[2][1] * mat.m_pEntry[1][1] + m_pEntry[2][2] * mat.m_pEntry[2][1];
+	prd.m_pEntry[0][2] = m_pEntry[0][0] * mat.m_pEntry[0][2] + m_pEntry[0][1] * mat.m_pEntry[1][2] + m_pEntry[0][2] * mat.m_pEntry[2][2];
+	prd.m_pEntry[1][2] = m_pEntry[1][0] * mat.m_pEntry[0][2] + m_pEntry[1][1] * mat.m_pEntry[1][2] + m_pEntry[1][2] * mat.m_pEntry[2][2];
+	prd.m_pEntry[2][2] = m_pEntry[2][0] * mat.m_pEntry[0][2] + m_pEntry[2][1] * mat.m_pEntry[1][2] + m_pEntry[2][2] * mat.m_pEntry[2][2];
 
 	return prd;
 }

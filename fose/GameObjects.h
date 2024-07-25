@@ -542,9 +542,9 @@ public:
 	virtual void Unk_180();
 	virtual void Unk_181();
 	virtual UInt32 GetFadeState();
-	virtual void Unk_183();
-	virtual void Unk_184();
-	virtual void Unk_185();
+	virtual void SetQueuedIdleFlag(UInt32 flags);
+	virtual UInt32 GetQueuedIdleFlags();
+	virtual void ResetQueuedIdleFlags();
 	virtual void Unk_186();
 	virtual void Unk_187();
 	virtual void Unk_188();
@@ -606,8 +606,8 @@ public:
 	virtual void Unk_1C0();
 	virtual void Unk_1C1();
 	virtual void Unk_1C2();
-	virtual void Unk_1C3();
-	virtual void Unk_1C4();
+	virtual TESIdleForm* GetForcedIdleForm();
+	virtual void SetForcedIdleForm(TESIdleForm* form);
 	virtual void Unk_1C5();
 	virtual void Unk_1C6();
 	virtual void Unk_1C7();
@@ -1064,7 +1064,7 @@ public:
 	DialogueItem* dialogueItem454;
 	UInt8 bHiding;
 	UInt8 bIsDoingSayTo;
-	UInt8 gap45A;
+	UInt8 gap45A; 
 	UInt8 gap45B;
 	void* spPathingRequest0;
 	void* spPathingRequest1;
@@ -1073,7 +1073,8 @@ public:
 };
 
 STATIC_ASSERT(sizeof(HighProcess) == 0x45C);
-
+STATIC_ASSERT(offsetof(HighProcess, forcedIdleForm) == 0x348);
+STATIC_ASSERT(offsetof(HighProcess, queuedIdleFlags) == 0x414);
 class bhkRagdollController;
 class bhkRagdollPenetrationUtil;
 class PlayerMover;
