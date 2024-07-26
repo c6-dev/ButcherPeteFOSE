@@ -705,6 +705,7 @@ public:
 	void SetWorldTranslate(const NiPoint3& pos);
 	void SetWorldTranslate(const NiPoint3* pos);
 	const NiPoint3& GetWorldTranslate() const;
+	TESObjectREFR* GetParentRef() const;
 };
 
 class NiCamera : NiAVObject
@@ -724,6 +725,37 @@ public:
 	NiTArray<NiAVObject*>	m_children;		// 9C
 };
 STATIC_ASSERT(sizeof(NiNode) == 0xAC);
+
+class BSFadeNode : public NiNode
+{
+public:
+	BSFadeNode();
+	~BSFadeNode();
+
+	enum Type : UInt32
+	{
+		kObject = 0x1,
+		kItem = 0x2,
+		kActor = 0x3,
+		kLODFadeOutMax = 0xA,
+	};
+
+	float fNearDistSqr;
+	float fFarDistSqr;
+	float fLastFade;
+	float fCurrentFade;
+	float boundRadius;
+	float fTimeSinceUpdate;
+	BSFadeNode::Type fadeType;
+	UInt32 iFrameCounter;
+	TESObjectREFR* linkedObj;
+	UInt32 unkD0;
+	UInt32 unkD4;
+	UInt32 unkD8;
+	UInt32 unkDC;
+	UInt32 unkE0;
+};
+STATIC_ASSERT(sizeof(BSFadeNode) == 0xE4);
 
 // 34
 class NiTimeController : public NiObject

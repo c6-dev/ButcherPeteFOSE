@@ -91,6 +91,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetActorVelocity);
 	REG_CMD(RefreshIdle);
 	REG_CMD(IsDLLLoaded);
+	REG_CMD(StopSound);
+	REG_CMD(StopSoundAlt);
+	REG_CMD(IsSoundPlaying);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

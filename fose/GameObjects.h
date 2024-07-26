@@ -1741,7 +1741,7 @@ public:
 	NiTPointerMap<BSGameSound>		playingSounds;		// 054
 	NiTPointerMap<void>		playingSoundInfos1;	// 064
 	NiTPointerMap<void>		playingSoundInfos2;	// 074
-	NiTPointerMap<void>		soundPlayingObjects;// 084
+	NiTPointerMap<NiAVObject>		soundPlayingObjects;// 084
 	DList<BSGameSound>			cachedSounds;		// 094
 	UInt32						unk0A0;				// 0A0
 	UInt32						unk0A4;				// 0A4

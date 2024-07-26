@@ -33,7 +33,9 @@ DEFINE_COMMAND_PLUGIN(GetIsRagdolled, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetActorVelocity, 1, kParams_OneOptionalAxis);
 DEFINE_COMMAND_PLUGIN(IsDLLLoaded, 0, kParams_OneString_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(RefreshIdle, 1, kParams_OneOptionalInt);
-
+DEFINE_COMMAND_PLUGIN(StopSound, 0, kParams_OneForm);
+DEFINE_COMMAND_PLUGIN(StopSoundAlt, 0, kParams_TwoForms_OneOptionalFloat);
+DEFINE_COMMAND_PLUGIN(IsSoundPlaying, 0, kParams_OneForm_OneOptionalForm);
 int g_version = 160;
 
 char* s_strArgBuffer;
@@ -47,6 +49,81 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sourceRef, float fadeOutTime)
+{
+	BSAudioManager* audioMngr = BSAudioManager::Get();
+	BSGameSound* gameSound;
+	char soundPath[250] = "data\\sound\\";
+	strcat(soundPath, soundForm->soundFile.path.m_data);
+
+	if (sourceRef)
+	{
+		if (!sourceRef->loadedData || !sourceRef->loadedData->rootNode)
+			return false;
+		auto playingObjMap = &audioMngr->soundPlayingObjects;
+		NiAVObject* soundObj;
+		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
+		{
+			if (!(gameSound = sndIter.Get()) ||  strcmp(soundPath, gameSound->filePath) != 0 || !(soundObj = playingObjMap->Lookup(sndIter.Key())) || (soundObj->GetParentRef() != sourceRef))
+				continue;
+			if (!doStop) return true;
+			if (fadeOutTime == -1) {
+				gameSound->stateFlags &= 0xFFFFFF0F;
+				gameSound->stateFlags |= 0x10;
+			}
+			else {
+				int time = fadeOutTime * 1000.0;
+				ThisCall<void>(0xBD3020, BSAudioManager::Get(), gameSound->mapKey, time, 0x26); // BSAudioManager::StopSound_FadeOutTime
+			}
+		}
+	}
+	else
+	{
+		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
+		{
+			if (!(gameSound = sndIter.Get()) || strcmp(soundPath, gameSound->filePath) != 0)
+				continue;
+			if (!doStop) return true;
+			gameSound->stateFlags &= 0xFFFFFF0F;
+			gameSound->stateFlags |= 0x10;
+		}
+	}
+	return false;
+}
+
+bool Cmd_IsSoundPlaying_Execute(COMMAND_ARGS)
+{
+	TESSound* soundForm;
+	TESObjectREFR* sourceRef = nullptr;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &soundForm, &sourceRef) && PlayingSoundsIterator(soundForm, false, sourceRef, -1)) {
+		*result = 1;
+	}
+	if (IsConsoleMode()) {
+		Console_Print("IsSoundPlaying >> %.f", *result);
+	}
+	return true;
+}
+
+bool Cmd_StopSoundAlt_Execute(COMMAND_ARGS)
+{
+	TESSound* soundForm;
+	TESObjectREFR* sourceRef = nullptr;
+	float fadeOutTime = -1;
+	if (ExtractArgs(EXTRACT_ARGS, &soundForm, &sourceRef, &fadeOutTime))
+		PlayingSoundsIterator(soundForm, true, sourceRef, fadeOutTime);
+	return true;
+}
+
+bool Cmd_StopSound_Execute(COMMAND_ARGS)
+{
+	TESSound* soundForm;
+	if (ExtractArgs(EXTRACT_ARGS, &soundForm)) {
+		PlayingSoundsIterator(soundForm, true, nullptr, -1);
+	}
+	return true;
+}
 
 bool Cmd_RefreshIdle_Execute(COMMAND_ARGS) {
 	*result = 0;

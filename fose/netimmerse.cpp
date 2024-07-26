@@ -1,9 +1,21 @@
 #include "netimmerse.h"
-
+#include "GameForms.h"
 void NiAVObject::SetLocalTranslate(const NiPoint3& pos) {
 	m_kLocal.translate.x = pos.x;
 	m_kLocal.translate.y = pos.y;
 	m_kLocal.translate.z = pos.z;
+}
+
+TESObjectREFR* NiAVObject::GetParentRef() const
+{
+	if (IS_TYPE(this, BSFadeNode)) {
+		TESObjectREFR* obj = ((BSFadeNode*)this)->linkedObj;
+		if (obj) return obj;
+	}
+	if (this->m_parent) {
+		return this->m_parent->GetParentRef();
+	}
+	return nullptr;
 }
 
 bool NiMatrix3::operator==(const NiMatrix3& mat) const {
