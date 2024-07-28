@@ -15,6 +15,26 @@ ScriptEventList* TESObjectREFR::GetEventList() const
 	return 0;
 }
 
+NiAVObject* TESObjectREFR::GetNiBlock2(const char* blockName) const
+{
+	if (this->loadedData && this->loadedData->rootNode && *blockName) {
+		return this->loadedData->rootNode->GetBlock(blockName);
+	}
+	return nullptr;
+}
+
+hkpRigidBody* TESObjectREFR::GetRigidBody(const char* blockName) const
+{
+	NiAVObject* block = this->GetNiBlock2(blockName);
+	if (block && block->m_collisionObject && block->m_collisionObject->worldObj && block->m_collisionObject->worldObj->phkObject) {
+		hkpRigidBody* rigidBody = block->m_collisionObject->worldObj->phkObject;
+		if (rigidBody->m_collidable.m_broadPhaseHandle.m_type == 1) {
+			return rigidBody;
+		}
+	}
+	return nullptr;
+}
+
 
 static PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x0107A104;
 

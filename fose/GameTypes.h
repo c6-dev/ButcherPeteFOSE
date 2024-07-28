@@ -835,23 +835,53 @@ STATIC_ASSERT(sizeof(BSSimpleList<void *>) == 0xC);
 			return NULL;
 		}
 	};
-	template <typename T>
+template <typename T_Data>
 	struct NiTArray
 	{
-		void* _vtbl;	// 00
-		T* data;		// 04
-		UInt16	unk08;		// 08 - init'd to size of preallocation
-		UInt16	length;		// 0A - init'd to 0
-		UInt16	unk0C;		// 0C - init'd to 0
-		UInt16	unk0E;		// 0E - init'd to size of preallocation
+		virtual NiTArray* Destroy(UInt32 doFree);
 
-		T operator[](UInt32 idx) {
-			if (idx < length)
+		T_Data* data;			// 04
+		UInt16		capacity;		// 08 - init'd to size of preallocation
+		UInt16		firstFreeEntry;	// 0A - index of the first free entry in the block of free entries at the end of the array (or numObjs if full)
+		UInt16		numObjs;		// 0C - init'd to 0
+		UInt16		growSize;		// 0E - init'd to size of preallocation
+
+		T_Data operator[](UInt32 idx)
+		{
+			if (idx < firstFreeEntry)
 				return data[idx];
 			return NULL;
 		}
 
-		T Get(UInt32 idx) { return (*this)[idx]; }
+		T_Data Get(UInt32 idx) { return data[idx]; }
+
+		UInt16 Length() { return firstFreeEntry; }
+		void AddAtIndex(UInt32 index, T_Data* item);	// no bounds checking
+		void SetCapacity(UInt16 newCapacity);	// grow and copy data if needed
+
+		class Iterator
+		{
+			friend NiTArray;
+
+			T_Data* pData;
+			UInt32		count;
+
+		public:
+			explicit operator bool() const { return count != 0; }
+			void operator++()
+			{
+				pData++;
+				count--;
+			}
+
+			T_Data& operator*() const { return *pData; }
+			T_Data& operator->() const { return *pData; }
+			T_Data& Get() const { return *pData; }
+
+			Iterator(NiTArray& source) : pData(source.data), count(source.firstFreeEntry) {}
+		};
+
+		Iterator Begin() { return Iterator(*this); }
 	};
 // this is a NiTPointerMap <UInt32, T_Data>
 // todo: generalize key

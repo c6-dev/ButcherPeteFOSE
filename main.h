@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include "havok.h"
 #include "fn_destruction_data.h"
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 #undef MessageBoxEx
@@ -36,6 +37,7 @@ DEFINE_COMMAND_PLUGIN(RefreshIdle, 1, kParams_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(StopSound, 0, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(StopSoundAlt, 0, kParams_TwoForms_OneOptionalFloat);
 DEFINE_COMMAND_PLUGIN(IsSoundPlaying, 0, kParams_OneForm_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(GetCollisionObjProperty, 1, kParams_OneString_OneInt);
 int g_version = 160;
 
 char* s_strArgBuffer;
@@ -49,6 +51,46 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
+{
+	char blockName[0x40];
+	UInt32 propID;
+	if (ExtractArgs(EXTRACT_ARGS, &blockName, &propID) && (propID <= 8))
+		if (hkpRigidBody* rigidBody = thisObj->GetRigidBody(blockName))
+		{
+			switch (propID)
+			{
+			case 0:
+				*result = rigidBody->m_material.m_friction;
+				break;
+			case 1:
+				*result = rigidBody->m_material.m_restitution;
+				break;
+			case 2:
+				*result = rigidBody->m_motion.m_motionState.linearDamping;
+				break;
+			case 3:
+				*result = rigidBody->m_motion.m_motionState.angularDamping;
+				break;
+			case 4:
+			case 5:
+			case 6:
+				*result = rigidBody->m_motion.m_inertiaAndMassInv[propID - 4];
+				break;
+			case 7:
+				if (rigidBody->m_motion.m_inertiaAndMassInv[3] > 0)
+					*result = 1.0 / rigidBody->m_motion.m_inertiaAndMassInv[3];
+				break;
+			case 8:
+				*result = rigidBody->m_motion.m_type;
+				break;
+			}
+		}
+	return true;
+}
+
+
 
 bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sourceRef, float fadeOutTime)
 {

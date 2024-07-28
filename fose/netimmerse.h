@@ -39,6 +39,31 @@ class NiProperty;
 class NiInterpolator;
 class NiControllerSequence;
 
+class NiMemObject {
+public:
+};
+class NiGlobalStringTable {
+public:
+	static char* AddString(const char* string);
+	static void IncRefCount(char* string);
+	static void DecRefCount(char* string);
+};
+class NiFixedString : public NiMemObject {
+public:
+	NiFixedString() : m_kHandle(nullptr) {};
+	NiFixedString(const char* string);
+	~NiFixedString();
+
+	char* m_kHandle;
+
+	NiFixedString& operator=(const char* string);
+	NiFixedString& operator=(NiFixedString& string);
+	bool operator==(const NiFixedString& string);
+	bool operator==(const char* string);
+
+	operator char* () { return m_kHandle; }
+};
+
 struct alignas(16) AlignedVector4
 {
 	float	x, y, z, w;
@@ -507,11 +532,6 @@ struct NiPlane
 };
 
 
-class NiMemObject
-{
-	NiMemObject();
-	~NiMemObject();
-};
 
 // 08
 class NiRefObject : public NiMemObject
@@ -608,7 +628,7 @@ public:
 	virtual void	Unk_24(NiMatrix33* arg1, NiVector3* arg2, bool arg3);
 	virtual void	Unk_25(UInt32 arg1);
 	virtual void	Unk_26(UInt32 arg1);
-	virtual void	Unk_27(UInt32 arg1);
+	virtual NiAVObject*	GetObjectByName(NiFixedString* str);
 	virtual void	Unk_28(UInt32 arg1, UInt32 arg2, UInt32 arg3);
 	virtual void	Unk_29(UInt32 arg1, UInt32 arg2);
 	virtual void	Unk_2A(UInt32 arg1, UInt32 arg2);
@@ -722,7 +742,12 @@ STATIC_ASSERT(sizeof(NiCamera) == 0x114);
 
 class NiNode : public NiAVObject {
 public:
+	NiNode();
+	~NiNode();
 	NiTArray<NiAVObject*>	m_children;		// 9C
+
+	NiAVObject* GetBlock(const char* blockName);
+
 };
 STATIC_ASSERT(sizeof(NiNode) == 0xAC);
 

@@ -94,6 +94,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(StopSound);
 	REG_CMD(StopSoundAlt);
 	REG_CMD(IsSoundPlaying);
+	REG_CMD(GetCollisionObjProperty);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

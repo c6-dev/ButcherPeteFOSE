@@ -322,3 +322,66 @@ bool NiMatrix3::Inverse(NiMatrix3& inv) const {
 	return true;
 
 }
+
+ NiAVObject* NiNode::GetBlock(const char* blockName)
+{
+	 NiFixedString str(blockName);
+	 return this->GetObjectByName(&str);
+
+}
+
+ char* NiGlobalStringTable::AddString(const char* string) {
+	 return CdeclCall<char*>(0x8242A0, string);
+ }
+
+ void NiGlobalStringTable::IncRefCount(char* string) {
+	 if (*string) InterlockedIncrement((LPLONG)(*string - 8));
+ }
+
+ void NiGlobalStringTable::DecRefCount(char* string) {
+	 if (*string) InterlockedDecrement((LPLONG)(*string - 8));
+ }
+
+ NiFixedString::NiFixedString(const char* string) {
+	 if (string)
+		 m_kHandle = NiGlobalStringTable::AddString(string);
+	 else
+		 m_kHandle = nullptr;
+ }
+
+ NiFixedString::~NiFixedString() {
+	 NiGlobalStringTable::DecRefCount(m_kHandle);
+ }
+
+ NiFixedString& NiFixedString::operator=(const char* string) {
+	 if (m_kHandle != string) {
+		 char* handle = m_kHandle;
+		 m_kHandle = NiGlobalStringTable::AddString(string);
+		 NiGlobalStringTable::DecRefCount(handle);
+	 }
+	 return *this;
+ }
+
+ NiFixedString& NiFixedString::operator=(NiFixedString& string) {
+	 if (m_kHandle != string.m_kHandle) {
+		 char* handle = string.m_kHandle;
+		 NiGlobalStringTable::IncRefCount(handle);
+		 NiGlobalStringTable::DecRefCount(m_kHandle);
+		 m_kHandle = handle;
+	 }
+	 return *this;
+ }
+
+ bool NiFixedString::operator==(const NiFixedString& string) {
+	 if (m_kHandle == string.m_kHandle)
+		 return true;
+
+	 return !strcmp(m_kHandle, string.m_kHandle);
+ }
+
+ bool NiFixedString::operator==(const char* string) {
+	 if (m_kHandle == string)
+		 return true;
+
+	 return !strcmp(m_kHandle, string);
+ }

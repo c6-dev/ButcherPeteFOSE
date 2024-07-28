@@ -108,6 +108,7 @@
       <Filter>fose</Filter>
     </ClInclude>
     <ClInclude Include="fn_destruction_data.h" />
+    <ClInclude Include="havok.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

@@ -3,7 +3,7 @@
 #include "GameForms.h"
 #include "GameBSExtraData.h"
 #include "netimmerse.h"
-
+#include "havok.h"
 #if RUNTIME
 
 
@@ -1094,7 +1094,7 @@ public:
 	// no virtual destructor
 	virtual TESObjectCELL *	GetChildCell(void);
 };
-
+class hkpRigidBody;
 class TESObjectREFR : public TESForm
 {
 public:
@@ -1202,6 +1202,13 @@ public:
 
 	bool IsTaken() const {  return ((flags & kFlags_Taken) == kFlags_Taken) ? true : false; } // Need to implement
 	bool IsPersistent() const { return ((flags & kFlags_Persistent) == kFlags_Persistent) ? true : false; }
+	NiAVObject* GetNiBlock(const char* blockName) const;
+	NiAVObject* GetNiBlock2(const char* blockName) const;
+	NiNode* GetNode(const char* nodeName) const;
+	NiNode* GetNode2(const char* nodeName) const;
+	hkpRigidBody* GetRigidBody(const char* blockName) const;
+
+
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0x01C);
 STATIC_ASSERT(sizeof(TESObjectREFR) == 0x60);
