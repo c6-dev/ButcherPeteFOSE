@@ -42,6 +42,7 @@ class NiControllerSequence;
 class NiMemObject {
 public:
 };
+
 class NiGlobalStringTable {
 public:
 	static char* AddString(const char* string);
@@ -551,54 +552,70 @@ class NiObject : public NiRefObject
 {
 public:
 	NiObject();
-	~NiObject();
+	virtual ~NiObject();
 
-	virtual NiRTTI* GetType();
-	virtual NiNode* GetNiNode();
-	virtual BSFadeNode* GetFadeNode();
-	virtual void	Unk_05(void);
-	virtual void	Unk_06(void);
-	virtual void	Unk_07(void);
-	virtual void	Unk_08(void);
-	virtual void	Unk_09(void);
-	virtual void	Unk_0A(void);
-	virtual void	Unk_0B(void);
-	virtual void	Unk_0C(void);
-	virtual void	Unk_0D(void);
-	virtual void	Unk_0E(void);
-	virtual void	Unk_0F(void);
-	virtual void	Unk_10(void);
-	virtual void	Unk_11(void);
-	virtual void	Unk_12(UInt32 arg);
-	virtual void	Unk_13(UInt32 arg);
-	virtual void	Unk_14(UInt32 arg);
-	virtual void	Unk_15(UInt32 arg);
-	virtual void	Unk_16(UInt32 arg);
-	virtual void	Unk_17(UInt32 arg);
-	virtual void	Unk_18(UInt32 arg);
-	virtual void	Unk_19(UInt32 arg);
-	virtual void	Unk_1A(UInt32 arg);
-	virtual void	Unk_1B(UInt32 arg);
-	virtual void	Unk_1C(void);
-	virtual void	Unk_1D(void);
-	virtual void	Unk_1E(UInt32 arg);
-	virtual UInt32	Unk_1F(void);
-	virtual void	Unk_20(void);
-	virtual void	Unk_21(UInt32 arg);
-	virtual void	Unk_22(void);
+	virtual const NiRTTI* GetRTTI() const;												// 02 | Returns NiRTTI of the object
+	virtual	NiNode* IsNiNode() const;												// 03 | Returns this if it's a NiNode, otherwise nullptr
+	virtual	BSFadeNode* IsFadeNode() const;												// 04 | Returns this if it's a BSFadeNode, otherwise nullptr
+	virtual void* IsMultiBoundNode() const;										// 05 | Returns this if it's a BSMultiBoundNode, otherwise nullptr
+	virtual void* IsGeometry() const;												// 06 | Returns this if it's a NiGeometry, otherwise nullptr
+	virtual void* IsTriBasedGeometry() const;										// 07 | Returns this if it's a NiTriBasedGeom, otherwise nullptr
+	virtual NiTriStrips* IsTriStrips() const;											// 08 | Returns this if it's a NiTriStrips, otherwise nullptr
+	virtual NiTriShape* IsTriShape() const;												// 09 | Returns this if it's a NiTriShape, otherwise nullptr
+	virtual void* IsSegmentedTriShape() const;									// 10 | Returns this if it's a BSSegmentedTriShape, otherwise nullptr
+	virtual void* IsResizableTriShape() const;									// 11 | Returns this if it's a BSResizableTriShape, otherwise nullptr
+	virtual NiParticles* IsParticlesGeom() const;										// 12 | Returns this if it's a NiParticles, otherwise nullptr
+	virtual NiLines* IsLinesGeom() const;											// 13 | Returns this if it's a NiLines, otherwise nullptr
+	virtual bhkNiCollisionObject* IsBhkNiCollisionObject() const;									// 14 | Returns this if it's a bhkNiCollisionObject, otherwise nullptr
+	virtual void* IsBhkBlendCollisionObject() const;								// 15 | Returns this if it's a bhkBlendCollisionObject, otherwise nullptr
+	virtual void* IsBhkRigidBody() const;											// 16 | Returns this if it's a bhkRigidBody, otherwise nullptr
+	virtual void* IsBhkLimitedHingeConstraint() const;							// 17 | Returns this if it's a bhkLimitedHingeConstraint, otherwise nullptr
+	virtual NiObject* CreateClone(void* apCloning);						// 18 | Creates a clone of this object
+	virtual void LoadBinary(void* apStream);									// 19 | Loads objects from disk
+	virtual void LinkObject(void* apStream);									// 20 | Called by the streaming system to resolve links to other objects once it can be guaranteed that all objects have been loaded
+	virtual void RegisterStreamables(void* apStream);						// 21 | When an object is inserted into a stream, it calls register streamables to make sure that any contained objects or objects linked in a scene graph are streamed as well
+	virtual void SaveBinary(void* apStream);									// 22 | Saves objects to disk
+	virtual bool IsEqual(NiObject* apObject) const;								// 23 | Compares this object with another
+	virtual void GetViewerStrings(void* apStrings);				// 24 | Gets strings containing information about the object
+	virtual void AddViewerStrings(void* apStrings);				// 25 | Adds additional strings containing information about the object
+	virtual void ProcessClone(void* apCloning);						// 26 | Post process for CreateClone
+	virtual void PostLinkObject(void* apStream);								// 27 | Called by the streaming system to resolve any tasks that require other objects to be correctly linked. It is called by the streaming system after LinkObject has been called on all streamed objects
+	virtual bool StreamCanSkip();												// 28
+	virtual const NiRTTI* GetStreamableRTTI();											// 29
+	virtual void SetBound(void* apNewBound);									// 30 | Replaces the bound of the object
+	virtual void GetBlockAllocationSize();										// 31 | Used by geometry data
+	virtual void* GetGroup();														// 32 | Used by geometry data
+	virtual void SetGroup(void* apGroup);								// 33 | Used by geometry data
+	virtual NiControllerManager* IsControllerManager() const;									// 34 | Returns this if it's a NiControllerManager, otherwise nullptr
+
 };
 
+static struct NiUpdateData
+{
+	float fTime;
+	UInt8 isUpdateControllers;
+	UInt8 bIsMultiThreaded;
+	UInt8 byte06;
+	UInt8 bUpdateGeomorphs;
+	UInt8 bUpdateShadowSceneNode;
+	UInt8 gap09[3];
+} DefaultNodeUpdateParams;
+
+class NiAVObject;
 // 0C
 class NiCollisionObject : public NiObject
 {
 public:
-	/*8C*/virtual void		Attach(void* obj);
-	/*90*/virtual void		Unk_24(UInt32 arg);
-	/*94*/virtual void		Unk_25(void);
-	/*98*/virtual void		Unk_26(UInt32 arg);
-	/*9C*/virtual void		Unk_27(UInt32 version, UInt32 arg1);
+	NiCollisionObject();
+	virtual ~NiCollisionObject();
 
-	NiNode* linkedNode;	// 08
+	virtual void		SetSceneGraphObject(NiAVObject* apSceneObject);
+	virtual void		UpdateWorldData(NiUpdateData& arData);
+	virtual void		RecreateWorldData();
+	virtual void		LoadBoundingVolume(void* apData);
+	virtual void		Convert(UInt32 uiVersion, void* apData);
+
+	NiAVObject* m_pkSceneObject;
 };
 
 
@@ -620,16 +637,6 @@ public:
 	void DumpExtraData();
 };
 
-static struct NiUpdateData
-{
-	float fTime;
-	UInt8 isUpdateControllers;
-	UInt8 bIsMultiThreaded;
-	UInt8 byte06;
-	UInt8 bUpdateGeomorphs;
-	UInt8 bUpdateShadowSceneNode;
-	UInt8 gap09[3];
-} DefaultNodeUpdateParams;
 
 // 9C
 class NiAVObject : public NiObjectNET
@@ -638,26 +645,26 @@ public:
 	NiAVObject();
 	~NiAVObject();
 
-	virtual void	Unk_23(UInt32 arg1);
-	virtual void	Unk_24(NiMatrix33* arg1, NiVector3* arg2, bool arg3);
-	virtual void	Unk_25(UInt32 arg1);
-	virtual void	Unk_26(UInt32 arg1);
-	virtual NiAVObject*	GetObjectByName(NiFixedString* str);
-	virtual void	Unk_28(UInt32 arg1, UInt32 arg2, UInt32 arg3);
-	virtual void	Unk_29(UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_2A(UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_2B(UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_2C(UInt32 arg1);
-	virtual void	Unk_2D(UInt32 arg1);
-	virtual void	UpdateTransform(UInt32 arg1);
-	virtual void	Unk_2F(void);
-	virtual void	UpdateBounds(UInt32 arg1);
-	virtual void	Unk_31(UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_32(UInt32 arg1);
-	virtual void	Unk_33(UInt32 arg1);
-	virtual void	Unk_34(void);
-	virtual void	OnVisible(NiCullingProcess* cullingProcess);
-	virtual void	Unk_36(UInt32 arg1);
+	virtual void			UpdateControllers(NiUpdateData& arData);
+	virtual void			ApplyTransform(NiMatrix3& arMat, NiPoint3& arTrn, bool abOnLeft);
+	virtual void			Unk_39();
+	virtual NiAVObject*		GetObject_(const NiFixedString& arName);
+	virtual NiAVObject*		GetObjectByName(const NiFixedString& arName);
+	virtual void			SetSelectiveUpdateFlags(bool& arSelectiveUpdate, BOOL abSelectiveUpdateTransforms, bool& arRigid);
+	virtual void			UpdateDownwardPass(const NiUpdateData& arData, UInt32 auiFlags);
+	virtual void			UpdateSelectedDownwardPass(const NiUpdateData& arData, UInt32 auiFlags);
+	virtual void			UpdateRigidDownwardPass(const NiUpdateData& arData, UInt32 auiFlags);
+	virtual void			UpdatePropertiesDownward(void* apParentState);
+	virtual void			Unk_47();
+	virtual void			UpdateWorldData(const NiUpdateData& arData);
+	virtual void			UpdateWorldBound();
+	virtual void			UpdateTransformAndBounds(const NiUpdateData& arData);
+	virtual void			PreAttachUpdate(NiNode* apEventualParent, const NiUpdateData& arData);
+	virtual void			PreAttachUpdateProperties(NiNode* apEventualParent);
+	virtual void			DetachParent();
+	virtual void			UpdateUpwardPassParent(void* arg);
+	virtual void			OnVisible(NiCullingProcess* apCuller);
+	virtual void			PurgeRendererData(void* apRenderer);
 
 	enum
 	{

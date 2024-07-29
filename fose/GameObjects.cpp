@@ -27,7 +27,7 @@ hkpRigidBody* TESObjectREFR::GetRigidBody(const char* blockName) const
 {
 	NiAVObject* block = this->GetNiBlock2(blockName);
 	if (block && block->m_collisionObject && block->m_collisionObject->worldObj && block->m_collisionObject->worldObj->phkObject) {
-		hkpRigidBody* rigidBody = block->m_collisionObject->worldObj->phkObject;
+		hkpRigidBody* rigidBody = (hkpRigidBody*)block->m_collisionObject->worldObj->phkObject;
 		if (rigidBody->m_collidable.m_broadPhaseHandle.m_type == 1) {
 			return rigidBody;
 		}

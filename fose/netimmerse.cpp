@@ -326,7 +326,7 @@ bool NiMatrix3::Inverse(NiMatrix3& inv) const {
  NiAVObject* NiNode::GetBlock(const char* blockName)
 {
 	 NiFixedString str(blockName);
-	 return this->GetObjectByName(&str);
+	 return this->GetObjectByName(str);
 
 }
 

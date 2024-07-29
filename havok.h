@@ -333,8 +333,6 @@ public:
 	virtual void collideInternal(const hkStepInfo*);
 	virtual void warpTime(float);
 
-
-
 	UInt32		m_determinismCheckFrameCounter;
 	hkpWorld*	m_world;
 	UInt8		m_lastProcessingStep;
@@ -732,74 +730,85 @@ STATIC_ASSERT(sizeof(hkpRigidBody) == 0x200);
 class bhkRefObject : public NiObject
 {
 public:
+	bhkRefObject();
+	virtual ~bhkRefObject();
 	/*8C*/virtual void		SetObject(hkReferencedObject* object);
-	/*90*/virtual void		UpdateRefCount(bool incRef);	// inc/dec ref, depending on arg
-	hkpRigidBody* phkObject;		// 08
+	/*90*/virtual void		Link(bool attach);	// inc/dec ref, depending on arg
+
+	hkReferencedObject* phkObject;		// 08
 };
+STATIC_ASSERT(sizeof(bhkRefObject) == 0xC);
 
 // 10
 class bhkSerializable : public bhkRefObject
 {
 public:
-	/*94*/virtual void		Unk_25(UInt32 arg);
-	/*98*/virtual void* GetWorld(void);
-	/*9C*/virtual bool		SetWorld(void* inWorld);
-	/*A0*/virtual bool		Unk_28(void);
-	/*A4*/virtual void		FreeData(bool del);	// free hkData
-	/*A8*/virtual UInt32	Unk_2A(void);
-	/*AC*/virtual void		LoadHavokData(void* stream);	// called from bhkSerializable::Load after primary load is done
-	/*B0*/virtual void		Unk_2C(void);	// create object
-	/*B4*/virtual void* CreateHavokData(UInt8* arg);	// create Cinfo, return hkData
-	/*B8*/virtual void		Unk_2E(void);		// destroy object
-	/*BC*/virtual void		Unk_2F(void);
-	/*C0*/virtual void		Unk_30(void);
+	bhkSerializable();
+	virtual ~bhkSerializable();
+	virtual hkpWorld*	GethkWorld();					// 37 | Returns the hkpWorld
+	virtual void*	GetbhkWorld();					// 38 | Same as above but null checks this
+	virtual bool		Add(void* apWorld);			// 39
+	virtual bool		Remove();						// 40
+	virtual void		KillCInfo(bool abCreated);		// 41
+	virtual UInt32		GetCinfoSize();					// 42
+	virtual UInt32		LoadCInfo(void* arStream);	// 43
+	virtual void		Init(void*);					// 44
+	virtual void*		CreateCInfo(bool*);				// 45
+	virtual void*		Kill();							// 46
+	virtual void*		KillCInfo2(UInt32);				// 47 | Figure out the name
 
-	void* hkData;	// 0C - stores hkConstraintData (descriptor used to build hkObj)
+	void* pInfo;	// 0C - stores hkConstraintData (descriptor used to build hkObj)
 };
+
+STATIC_ASSERT(sizeof(bhkSerializable) == 0x10);
+
 
 // 14
 class bhkWorldObject : public bhkSerializable
 {
 public:
-	/*C4*/virtual void		UpdateCollisionFilter();
-	/*C8*/virtual void		Unk_32(void);
-	/*CC*/virtual void		Unk_33(void);
-	/*D0*/virtual void		Unk_34(void);
+	bhkWorldObject();
+	virtual ~bhkWorldObject();
+
+	virtual void	UpdateCollisionFilter();
+	virtual void	ForceAdd(void* apWorld);			// 50
+	virtual NiNode* CreateDisplayGeometry(NiNode* apNode);	// 51
 
 	UInt32				bodyFlags;		// 10
 
 };
-
+STATIC_ASSERT(sizeof(bhkWorldObject) == 0x14);
 // 14
 class bhkShape : public bhkSerializable
 {
 public:
-	/*C4*/virtual void		Unk_31(void);
-	/*C8*/virtual void		Unk_32(void);
-	/*CC*/virtual void		Unk_33(void);
-	/*D0*/virtual void		Unk_34(void);
-	/*D4*/virtual void		Unk_35(void);
-	/*D8*/virtual void		Unk_36(void);
-	/*DC*/virtual void		Unk_37(void);
-	/*E0*/virtual void		Unk_38(void);
+	virtual void CopyMembers(bhkSerializable* apDestination, void* apCloneProc);							// 49
+	virtual bool CalcMass(void* apMassProperty);																		// 50
+	virtual void* FindShapeCollection(); 																	// 51
+	virtual bool CanShare(void* apCloneProc);																// 52
+	virtual void BuildDisplayGeometry(NiNode* apNode, NiColor* apColor);												// 53
+	virtual void DestroyDisplayGeometry();																				// 54
+	virtual void BuildDisplayFromhkGeometry(NiNode* apNode, void* apGeometry, NiColor* apColor, const char* apName);	// 55
 
 	UInt32			materialType;	// 10
 };
-
+STATIC_ASSERT(sizeof(bhkShape) == 0x14);
 
 // 14
 class bhkNiCollisionObject : public NiCollisionObject
 {
 public:
-	/*A0*/virtual NiVector3* GetLinearVelocityInGameUnits(NiVector3* outVel);
-	/*A4*/virtual void		CollisionObjTransformToTargetNode();
-	/*A8*/virtual void		TargetNodeTransformToCollisionObj();
-	/*AC*/virtual void		UpdateVelocity();
-	/*B0*/virtual void		SetMotionType(UInt32 moType, void* body, bool updateMotion);
-	/*B4*/virtual bool		IsFixedMotion();
-	/*B8*/virtual void		SetTargetNodeTransform(NiTransform* transform);
-	/*BC*/virtual bool		Unk_2F();
-	/*C0*/virtual void		ToggleDebugDisplay(bool toggle);	//	TCG
+	bhkNiCollisionObject();
+	virtual ~bhkNiCollisionObject();
+
+	virtual NiPoint3*	GetVelocity(NiPoint3* outVel);
+	virtual void        hktoNiTransform();
+	virtual void        NitohkTransform();
+	virtual void        ClearVelocities();
+	virtual void        SetMotionType(UInt32 aeType, void* apBody, bool abUpdateMotion);
+	virtual bool        GetKeyFrame();
+	virtual void        SetTransform(NiTransform& akTransform);
+	virtual void        SetDebugDisplay(bool abToggle);
 
 	enum Flags
 	{
@@ -815,12 +824,12 @@ public:
 	};
 
 	UInt16			flags;			// 0C
-	UInt16			word0E;			// 0E
+	UInt16			word0E;			// 0E // NiPointer
 	bhkWorldObject* worldObj;		// 10
 
-	//	Callbacks array @ 0x11AFE88
 };
 
+STATIC_ASSERT(sizeof(bhkNiCollisionObject) == 0x14);
 // 14
 class bhkCollisionObject : public bhkNiCollisionObject
 {
