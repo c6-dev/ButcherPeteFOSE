@@ -3,6 +3,16 @@
 typedef bool hkBool;
 typedef UInt16 hkHalf;
 
+enum hkpStepResult : int
+{
+	HK_STEP_RESULT_SUCCESS = 0x0,
+	HK_STEP_RESULT_MEMORY_FAILURE_BEFORE_INTEGRATION = 0x1,
+	HK_STEP_RESULT_MEMORY_FAILURE_DURING_COLLIDE = 0x2,
+	HK_STEP_RESULT_MEMORY_FAILURE_DURING_TOI_SOLVE = 0x3,
+};
+
+class hkpRigidBody;
+
 template <class T_Data>
 class hkSmallArray {
 public:
@@ -141,6 +151,7 @@ public:
 	Iterator Begin() { return Iterator(*this); }
 };
 STATIC_ASSERT(sizeof(hkArray<void*>) == 0xC);
+
 // 04
 class hkBaseObject
 {
@@ -153,87 +164,23 @@ class hkReferencedObject : public hkBaseObject
 {
 public:
 	/*04*/virtual void		CalcStatistics(void* collector);
-	/*08*/virtual void		Unk_02(void);
+	/*08*/virtual void		calcContentStatistics(void* collector);
 
 	UInt16			sizeAndFlags;		// 04
 	UInt16			refCount;			// 06
 };
-// 0C
-class hkpRigidBody;
-class bhkRefObject : public NiObject
-{
-public:
-	/*8C*/virtual void		SetObject(hkReferencedObject* object);
-	/*90*/virtual void		UpdateRefCount(bool incRef);	// inc/dec ref, depending on arg
-	hkpRigidBody*	phkObject;		// 08
-};
-
-// 10
-class bhkSerializable : public bhkRefObject
-{
-public:
-	/*94*/virtual void		Unk_25(UInt32 arg);
-	/*98*/virtual void* GetWorld(void);
-	/*9C*/virtual bool		SetWorld(void* inWorld);
-	/*A0*/virtual bool		Unk_28(void);
-	/*A4*/virtual void		FreeData(bool del);	// free hkData
-	/*A8*/virtual UInt32	Unk_2A(void);
-	/*AC*/virtual void		LoadHavokData(void* stream);	// called from bhkSerializable::Load after primary load is done
-	/*B0*/virtual void		Unk_2C(void);	// create object
-	/*B4*/virtual void* CreateHavokData(UInt8* arg);	// create Cinfo, return hkData
-	/*B8*/virtual void		Unk_2E(void);		// destroy object
-	/*BC*/virtual void		Unk_2F(void);
-	/*C0*/virtual void		Unk_30(void);
-
-	void* hkData;	// 0C - stores hkConstraintData (descriptor used to build hkObj)
-};
-// 14
-class bhkWorldObject : public bhkSerializable
-{
-public:
-	/*C4*/virtual void		UpdateCollisionFilter();
-	/*C8*/virtual void		Unk_32(void);
-	/*CC*/virtual void		Unk_33(void);
-	/*D0*/virtual void		Unk_34(void);
-
-	UInt32				bodyFlags;		// 10
-
-};
-// 14
-class bhkShape : public bhkSerializable
-{
-public:
-	/*C4*/virtual void		Unk_31(void);
-	/*C8*/virtual void		Unk_32(void);
-	/*CC*/virtual void		Unk_33(void);
-	/*D0*/virtual void		Unk_34(void);
-	/*D4*/virtual void		Unk_35(void);
-	/*D8*/virtual void		Unk_36(void);
-	/*DC*/virtual void		Unk_37(void);
-	/*E0*/virtual void		Unk_38(void);
-
-	UInt32			materialType;	// 10
-};
-
+class bhkShape;
 
 // 10
 class hkpShape : public hkReferencedObject
 {
 public:
-	/*0C*/virtual void		Unk_03(hkVector4* arg1);
-	/*10*/virtual UInt32	Unk_04();
-	/*14*/virtual bool		IsConvex();
-	/*18*/virtual UInt32	Unk_06(UInt32 arg1, UInt32 arg2);
-	/*1C*/virtual void		GetSpaceDiagonal(void* arg1, float arg2, void* resPtr);
-	/*20*/virtual void* Unk_08(void* arg1, hkVector4* arg2, void* arg3);
-	/*24*/virtual void		Unk_09(void* arg1, void* arg2, void* arg3);
-	/*28*/virtual void		Unk_0A(hkVector4* arg1, hkVector4* arg2, void* arg3, hkVector4* arg4);
-	/*2C*/virtual UInt32	Unk_0B();
 
-	bhkShape* shape;		// 08
-	UInt32			unk0C;		// 0C
+	bhkShape*		shape;		// 08
+	UInt32			m_type;		// 0C
 };
 static_assert(sizeof(hkpShape) == 0x10);
+
 // 40
 struct hkTransform
 {
@@ -250,6 +197,7 @@ struct hkSweptTransform
 	hkQuaternion	rotation1;		// 30 (70)
 	hkVector4		centerOfMassLoc;// 40 (80)
 };
+
 // B0
 struct hkMotionState
 {
@@ -268,50 +216,21 @@ struct hkMotionState
 	float				objectRadius;		// A0	For spheres: actual radius * tan(PI/3)
 	float				linearDamping;		// A4
 	float				angularDamping;		// A8
-	UInt8				byteAC;				// AC
-	UInt8				byteAD;				// AD
-	UInt8				solverDeactivation;	// AE
-	UInt8				byteAF;				// AF
+	UInt8				m_maxLinearVelocity;
+	UInt8				m_maxAngularVelocity;
+	UInt8				m_deactivationClass;
 };
 static_assert(sizeof(hkMotionState) == 0xB0);
 
 // 10
 struct hkpCdBody
 {
-	hkpShape* shape;			// 00
+	hkpShape*		shape;			// 00
 	UInt32			shapeKey;		// 04
-	hkMotionState* motion;		// 08
-	hkpCdBody* parent;		// 0C
+	hkMotionState*	motion;		// 08
+	hkpCdBody*		parent;		// 0C
 
 	hkpWorldObject* GetWorldObj() const { return (hkpWorldObject*)((UInt8*)this - 0x10); }
-};
-// 80
-struct ContactData
-{
-	UInt16							unk00;
-	UInt16							flags;
-	UInt32							key;
-	void*							contactMgr;
-	UInt32							unk0C;
-	hkpCdBody*						cdBody1;
-	hkpCdBody*						cdBody2;
-	UInt32							unk18[26];
-};
-
-// 08
-struct CdBodyLinker
-{
-	ContactData* data;
-	hkpCdBody* cdBody;
-};
-
-// 10
-struct CdParentObj
-{
-	NiRTTI* type;		// 00	0x1267B70 (bhkNiCollisionObject) / 0x11F4280 (NiAVObject) / 0x11F4A20 (NiTriStrips)
-	UInt32		unk04;		// 04
-	NiObject* object;	// 08	bhkNiCollisionObject or NiAVObject
-	UInt32		unk0C;		// 0C
 };
 
 class hkpBroadPhaseHandle
@@ -319,7 +238,6 @@ class hkpBroadPhaseHandle
 public:
 	UInt32 m_id;
 };
-
 
 class hkpTypedBroadPhaseHandle : public hkpBroadPhaseHandle {
 public:
@@ -342,9 +260,8 @@ public:
 		UInt8	m_padding;
 		UInt16	m_numChildShapeAabbs;
 		UInt16	m_capacityChildShapeAabbs;
-		void* m_childShapeAabbs;
+		void*	m_childShapeAabbs;
 	};
-
 
 	char						m_ownerOffset;
 	UInt8						m_forceCollideOntoPpu;
@@ -391,9 +308,32 @@ class hkpProperty
 	hkpPropertyValue m_value;
 };
 STATIC_ASSERT(sizeof(hkpProperty) == 0x10);
+
+struct hkStepInfo {
+	float m_startTime;
+	float m_endTime;
+	float m_deltaTime;
+	float m_invDeltaTime;
+};
+
 class hkpWorld;
+class hkpEntity;
 class hkpSimulation : public hkReferencedObject {
 public:
+	virtual hkpStepResult stepDeltaTime(float);
+	virtual hkpStepResult integrate(float);
+	virtual hkpStepResult collide();
+	virtual hkpStepResult advanceTime();
+	virtual void collideEntitiesDiscrete(hkpEntity**, int, hkpWorld*, const hkStepInfo*, int);
+	virtual void resetCollisionInformationForEntities(hkpEntity**, int, hkpWorld*, hkBool);
+	virtual void assertThereIsNoCollisionInformationForEntities(hkpEntity**, int, hkpWorld*);
+	virtual void removeCollisionInformationForAgent(void*);
+	virtual void assertThereIsNoCollisionInformationForAgent(void*);
+	virtual void reintegrateAndRecollideEntities(hkpEntity**, int, hkpWorld*, int);
+	virtual void collideInternal(const hkStepInfo*);
+	virtual void warpTime(float);
+
+
 
 	UInt32		m_determinismCheckFrameCounter;
 	hkpWorld*	m_world;
@@ -408,12 +348,6 @@ public:
 
 STATIC_ASSERT(sizeof(hkpSimulation) == 0x2C);
 
-struct hkStepInfo {
-	float m_startTime;
-	float m_endTime;
-	float m_deltaTime;
-	float m_invDeltaTime;
-};
 
 class alignas(16) hkpSolverInfo
 {
@@ -535,12 +469,13 @@ class alignas(16) hkpWorld : hkReferencedObject
 	SInt8 m_contactPointGeneration;
 };
 STATIC_ASSERT(sizeof(hkpWorld) == 0x310);
+
 // 80
 class hkpWorldObject : public hkReferencedObject
 {
 public:
-	/*0C*/virtual void		SetShape(hkpShape* shape);
-	/*10*/virtual hkMotionState* GetMotionState();
+	/*0C*/virtual void				SetShape(hkpShape* shape);
+	/*10*/virtual hkMotionState*	GetMotionState();
 
 	enum FilterFlags
 	{
@@ -558,25 +493,123 @@ public:
 };
 static_assert(sizeof(hkpWorldObject) == 0x80);
 STATIC_ASSERT(offsetof(hkpWorldObject, m_collidable) == 0x10);
-// 38
+
+
+class hkpConstraintAtom
+{
+public:
+	UInt16 m_type;
+};
+static_assert(sizeof(hkpConstraintAtom) == 0x2);
+
+class hkpConstraintInstance;
+class alignas(16) hkConstraintInternal
+{
+public:
+	hkpConstraintInstance* m_constraint;
+	hkpEntity* m_entities[2];
+	hkpConstraintAtom* m_atoms;
+	UInt16 m_atomsSize;
+	UInt8 m_callbackRequest;
+	UInt8 m_priority;
+	UInt16 m_sizeOfSchemas;
+	UInt16 m_numSolverResults;
+	UInt16 m_numSolverElemTemps;
+	UInt8 m_whoIsMaster;
+	hkBool m_isNormalType;
+	void* m_runtime;
+	UInt16 m_runtimeSize;
+	UInt16 m_slaveIndex;
+};
+
+static_assert(sizeof(hkConstraintInternal) == 0x30);
+
+struct hkpConstraintInfo
+{
+	int m_maxSizeOfSchema;
+	int m_sizeOfSchemas;
+	int m_numSolverResults;
+	int m_numSolverElemTemps;
+};
+
+class hkpConstraintOwner : hkReferencedObject
+{
+public:
+	virtual void addConstraintToCriticalLockedIsland(hkpConstraintInstance*);
+	virtual void removeConstraintFromCriticalLockedIsland(hkpConstraintInstance*);
+	virtual void addCallbackRequest(hkpConstraintInstance*, int);
+	virtual void checkAccessRw();
+
+	hkpConstraintInfo m_constraintInfo;
+};
+class hkpSolverResults
+{
+public:
+	float m_impulseApplied;
+	float m_internalSolverData;
+};
+
+class hkpConstraintData : hkReferencedObject
+{
+public:
+	struct hkpConstraintData::RuntimeInfo
+	{
+		int m_sizeOfExternalRuntime;
+		int m_numSolverResults;
+	};
+
+	class hkpConstraintData::ConstraintInfo : hkpConstraintInfo
+	{
+	public:
+		hkpConstraintAtom* m_atoms;
+		UInt32 m_sizeOfAllAtoms;
+	};
+
+	virtual hkBool* isValid(hkBool* result);
+	virtual int getType();
+	virtual void getRuntimeInfo(hkBool, hkpConstraintData::RuntimeInfo*);
+	virtual hkpSolverResults* getSolverResults(void*);
+	virtual void addInstance(hkpConstraintInstance*, void*, int);
+	virtual void buildJacobian(const void*, void*);
+	virtual hkBool*  isBuildJacobianCallbackRequired(hkBool* result);
+	virtual void buildJacobianCallback(const void*);
+	virtual void getConstraintInfo(hkpConstraintData::ConstraintInfo*);
+
+	UInt32 m_userData;
+};
+static_assert(sizeof(hkpConstraintData) == 0xC);
+
+class hkpModifierConstraintAtom : hkpConstraintAtom
+{
+public:
+	__declspec(align(16)) UInt16 m_modifierAtomSize;
+	UInt16 m_childSize;
+	hkpConstraintAtom* m_child;
+	unsigned int m_pad[2];
+};
+
+static_assert(sizeof(hkpModifierConstraintAtom) == 0x20);
+
+// 2C
 class hkpConstraintInstance : public hkReferencedObject
 {
 public:
-	/*0C*/virtual void		Unk_03(void);
-	/*10*/virtual void		Unk_04(void);
-	/*14*/virtual void		Unk_05(void);
-	/*18*/virtual void		Unk_06(void);
-	/*1C*/virtual void		Unk_07(void);
+	virtual void entityAddedCallback(hkpEntity*);
+	virtual void entityRemovedCallback(hkpEntity*);
+	virtual void entityDeletedCallback(hkpEntity*);
+	virtual int getType();
 
-	void* simIsle;			// 08
-	void* constraintData;	// 0C
-	UInt32					unk10;				// 10
-	void* contactBody;		// 14
-	void* parentBody;		// 18
-	UInt32					unk1C[5];			// 1C
-	void* ptr30;				// 30
-	UInt32					unk34;				// 34
+	hkpConstraintOwner* m_owner;
+	hkpConstraintData* m_data;
+	hkpModifierConstraintAtom* m_constraintModifiers;
+	hkpEntity* m_entities[2];
+	UInt8 m_priority;
+	hkBool m_wantRuntime;
+	const char* m_name;
+	UInt32 m_userData;
+	hkConstraintInternal* m_internal;
 };
+static_assert(sizeof(hkpConstraintInstance) == 0x2C);
 
 class hkpMaterial
 {
@@ -645,6 +678,8 @@ class hkpEntity : public hkpWorldObject
 {
 public:
 
+	virtual void deallocateInternalArrays();
+
 	struct SpuCollisionCallback {
 		void*	m_util;
 		UInt16	m_capacity;
@@ -685,22 +720,72 @@ STATIC_ASSERT(sizeof(hkpEntity) == 0x200);
 class hkpRigidBody : public hkpEntity
 {
 public:
-
+	virtual hkpRigidBody* clone();
 };
 STATIC_ASSERT(offsetof(hkpRigidBody, m_collidable.m_broadPhaseHandle.m_type) == 0x28);
 STATIC_ASSERT(sizeof(hkpRigidBody) == 0x200);
-// 0C
-class NiCollisionObject : public NiObject
+
+
+
+// bhk
+
+class bhkRefObject : public NiObject
 {
 public:
-	/*8C*/virtual void		Attach(NiAVObject* obj);
-	/*90*/virtual void		Unk_24(UInt32 arg);
-	/*94*/virtual void		Unk_25(void);
-	/*98*/virtual void		Unk_26(UInt32 arg);
-	/*9C*/virtual void		Unk_27(UInt32 version, UInt32 arg1);
-
-	NiNode* linkedNode;	// 08
+	/*8C*/virtual void		SetObject(hkReferencedObject* object);
+	/*90*/virtual void		UpdateRefCount(bool incRef);	// inc/dec ref, depending on arg
+	hkpRigidBody* phkObject;		// 08
 };
+
+// 10
+class bhkSerializable : public bhkRefObject
+{
+public:
+	/*94*/virtual void		Unk_25(UInt32 arg);
+	/*98*/virtual void* GetWorld(void);
+	/*9C*/virtual bool		SetWorld(void* inWorld);
+	/*A0*/virtual bool		Unk_28(void);
+	/*A4*/virtual void		FreeData(bool del);	// free hkData
+	/*A8*/virtual UInt32	Unk_2A(void);
+	/*AC*/virtual void		LoadHavokData(void* stream);	// called from bhkSerializable::Load after primary load is done
+	/*B0*/virtual void		Unk_2C(void);	// create object
+	/*B4*/virtual void* CreateHavokData(UInt8* arg);	// create Cinfo, return hkData
+	/*B8*/virtual void		Unk_2E(void);		// destroy object
+	/*BC*/virtual void		Unk_2F(void);
+	/*C0*/virtual void		Unk_30(void);
+
+	void* hkData;	// 0C - stores hkConstraintData (descriptor used to build hkObj)
+};
+
+// 14
+class bhkWorldObject : public bhkSerializable
+{
+public:
+	/*C4*/virtual void		UpdateCollisionFilter();
+	/*C8*/virtual void		Unk_32(void);
+	/*CC*/virtual void		Unk_33(void);
+	/*D0*/virtual void		Unk_34(void);
+
+	UInt32				bodyFlags;		// 10
+
+};
+
+// 14
+class bhkShape : public bhkSerializable
+{
+public:
+	/*C4*/virtual void		Unk_31(void);
+	/*C8*/virtual void		Unk_32(void);
+	/*CC*/virtual void		Unk_33(void);
+	/*D0*/virtual void		Unk_34(void);
+	/*D4*/virtual void		Unk_35(void);
+	/*D8*/virtual void		Unk_36(void);
+	/*DC*/virtual void		Unk_37(void);
+	/*E0*/virtual void		Unk_38(void);
+
+	UInt32			materialType;	// 10
+};
+
 
 // 14
 class bhkNiCollisionObject : public NiCollisionObject

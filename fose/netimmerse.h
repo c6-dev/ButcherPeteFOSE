@@ -588,6 +588,20 @@ public:
 	virtual void	Unk_22(void);
 };
 
+// 0C
+class NiCollisionObject : public NiObject
+{
+public:
+	/*8C*/virtual void		Attach(void* obj);
+	/*90*/virtual void		Unk_24(UInt32 arg);
+	/*94*/virtual void		Unk_25(void);
+	/*98*/virtual void		Unk_26(UInt32 arg);
+	/*9C*/virtual void		Unk_27(UInt32 version, UInt32 arg1);
+
+	NiNode* linkedNode;	// 08
+};
+
+
 class NiTimeController;
 class NiExtraData;
 // 18
