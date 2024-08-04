@@ -184,8 +184,16 @@ public:
 	UInt32				unk398[(0x454 - 0x398) >> 2];	// 398
 	NiTArray<UInt32>	array454;						// 454 NiTPrimitiveArray@TextureType@BSTextureManager
 	NiTArray<UInt32>	array464;						// 464 NiTPrimitiveArray@FilterMode@NiTexturingProperty
-	UInt32				unk468[(0x484 - 0x474) >> 2];	// 474
+	UInt32					unk474[16];			// 474
+	UInt8					byte4B4;			// 4B4
+	UInt8					byte4B5;			// 4B5
+	UInt8					byte4B6;			// 4B6
+	UInt8					byte4B7;			// 4B7
+	UInt32					unk4B8;				// 4B8
+	UInt32					pipBoyMode;			// 4BC
+	UInt32					unk4C0[(0x554 - 0x4C0) >> 2];			// 4C0
 };
 
-STATIC_ASSERT(sizeof(InterfaceManager) == 0x484);
+STATIC_ASSERT(sizeof(InterfaceManager) == 0x554);
 STATIC_ASSERT(offsetof(InterfaceManager, pipboyManager) == 0x174);
+STATIC_ASSERT(offsetof(InterfaceManager, pipBoyMode) == 0x4BC);

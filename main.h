@@ -38,6 +38,7 @@ DEFINE_COMMAND_PLUGIN(StopSound, 0, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(StopSoundAlt, 0, kParams_TwoForms_OneOptionalFloat);
 DEFINE_COMMAND_PLUGIN(IsSoundPlaying, 0, kParams_OneForm_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetCollisionObjProperty, 1, kParams_OneString_OneInt);
+DEFINE_COMMAND_PLUGIN(GetPipBoyMode, 0, NULL);
 int g_version = 160;
 
 char* s_strArgBuffer;
@@ -51,6 +52,12 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_GetPipBoyMode_Execute(COMMAND_ARGS) {
+	*result = InterfaceManager::GetSingleton()->pipBoyMode;
+	if (IsConsoleMode()) Console_Print("GetPipBoyMode >> %.2f", *result);
+	return true;
+}
 
 bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 {
