@@ -40,6 +40,12 @@ DEFINE_COMMAND_PLUGIN(IsSoundPlaying, 0, kParams_OneForm_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetCollisionObjProperty, 1, kParams_OneString_OneInt);
 DEFINE_COMMAND_PLUGIN(GetPipBoyMode, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetSystemColor, 0, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(SetSystemColor, 0, kParams_FourInts);
+DEFINE_COMMAND_PLUGIN(GetLightTraitNumeric, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetLightTraitNumeric, 0, kParams_OneForm_OneInt_OneFloat);
+DEFINE_COMMAND_PLUGIN(GetLightFlag, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetLightFlag, 0, kParams_OneForm_TwoInts);
+
 int g_version = 160;
 
 char* s_strArgBuffer;
@@ -53,6 +59,111 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_GetLightFlag_Execute(COMMAND_ARGS)
+{
+	TESObjectLIGH* light;
+	UInt32 flagID;
+	if (ExtractArgs(EXTRACT_ARGS, &light, &flagID) && (flagID <= 31) && (light->lightFlags & (1 << flagID))) {
+		*result = 1;
+	}
+	return true;
+}
+
+bool Cmd_SetLightFlag_Execute(COMMAND_ARGS)
+{
+	TESObjectLIGH* light;
+	UInt32 flagID, val;
+	if (ExtractArgs(EXTRACT_ARGS, &light, &flagID, &val) && (flagID <= 31))
+	{
+		flagID = 1 << flagID;
+		if (val) light->lightFlags |= flagID;
+		else light->lightFlags &= ~flagID;
+	}
+	return true;
+}
+
+bool Cmd_GetLightTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESObjectLIGH* light;
+	UInt32 traitID;
+	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID)) {
+		switch (traitID)
+		{
+		case 0:
+			*result = (int)light->radius;
+			break;
+		case 1:
+			*result = light->red;
+			break;
+		case 2:
+			*result = light->green;
+			break;
+		case 3:
+			*result = light->blue;
+			break;
+		case 4:
+			*result = light->falloffExp;
+			break;
+		case 5:
+			*result = light->FOV;
+			break;
+		case 6:
+			*result = light->fadeValue;
+		}
+	}
+	return true;
+}
+
+bool Cmd_SetLightTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESObjectLIGH* light;
+	UInt32 traitID;
+	float val;
+	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID, &val))
+	{
+		UInt32 intVal = (int)val;
+		switch (traitID)
+		{
+		case 0:
+			light->radius = intVal;
+			break;
+		case 1:
+			light->red = intVal;
+			break;
+		case 2:
+			light->green = intVal;
+			break;
+		case 3:
+			light->blue = intVal;
+			break;
+		case 4:
+			light->falloffExp = val;
+			return true;
+		case 5:
+			light->FOV = val;
+			return true;
+		case 6:
+			light->fadeValue = val;
+			break;
+		default:
+			return true;
+		}
+	}
+	return true;
+}
+
+bool Cmd_SetSystemColor_Execute(COMMAND_ARGS)
+{
+	UInt32 type, red, green, blue;
+	if (ExtractArgs(EXTRACT_ARGS, &type, &red, &green, &blue) && type && (type <= 5))
+		if (auto sysColor = SystemColorManager::GetSingleton()->sysColors.Head()->Advance(type - 1)->data)
+		{
+			sysColor->SetColorRGB(red, green, blue);
+			ThisCall(0xBEF410, InterfaceManager::GetSingleton()->menuRoot, type, 0);
+		}
+	return true;
+}
 
 bool Cmd_GetSystemColor_Execute(COMMAND_ARGS) {
 	*result = 0;

@@ -7,6 +7,15 @@ static ParamInfo kParams_OneInt[1] =
 	{	"int", kParamType_Integer, 0 }, 
 };
 
+static ParamInfo kParams_FourInts[4] =
+{
+	{	"int", kParamType_Integer, 0 },
+	{	"int", kParamType_Integer, 0 },
+	{	"int", kParamType_Integer, 0 },
+	{	"int", kParamType_Integer, 0 },
+
+};
+
 static ParamInfo kParams_TwoInts[2] =
 {
 	{	"int", kParamType_Integer, 0 },
@@ -317,6 +326,7 @@ static ParamInfo kParams_OneForm_TwoInts[3] =
 	{	"int",	kParamType_Integer, 0	},
 	{	"int",	kParamType_Integer, 0	},
 };
+;
 
 static ParamInfo kParams_OneForm_ThreeInts[4] =
 {

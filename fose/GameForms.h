@@ -9,6 +9,7 @@ static const UInt32 _TESValueForm_SetValue = 0x0045BE20;
 #include "GameBSExtraData.h"
 
 #include "Utilities.h"
+#include "netimmerse.h"
 
 /**** form types ****
  *	
@@ -585,7 +586,7 @@ public:
 	TESBoundObject			* next;		// 020
 	UInt16					bounds[6];	// 024
 };
-
+STATIC_ASSERT(sizeof(TESBoundObject) == 0x30);
 // C
 class TESFullName : public BaseFormComponent
 {
@@ -2319,10 +2320,21 @@ public:
 	TESValueForm				value;			// 08C
 	BGSDestructibleObjectForm	destructible;	// 094
 	
-	UInt32	unk09C[11];
+	SInt32						time;			// 09C
+	UInt32						radius;			// 0A0
+	UInt8						red;			// 0A4
+	UInt8						green;			// 0A5
+	UInt8						blue;			// 0A6
+	UInt8						padA7;			// 0A7
+	UInt32						lightFlags;		// 0A8
+	float						falloffExp;		// 0AC
+	float						FOV;			// 0B0
+	float						fadeValue;		// 0B4
+	TESSound*					sound;			// 0B8
+	NiVector3					vectorBC;		// 0BC
 
-};
-STATIC_ASSERT(sizeof(TESObjectLIGH) == 0x0C8);
+}; 
+STATIC_ASSERT(sizeof(TESObjectLIGH) == 0xC8);
 
 // TESObjectMISC (A8)
 class TESObjectMISC : public TESBoundObject

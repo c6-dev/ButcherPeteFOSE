@@ -97,6 +97,11 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetCollisionObjProperty);
 	REG_CMD(GetPipBoyMode);
 	REG_CMD(GetSystemColor);
+	REG_CMD(SetSystemColor);
+	REG_CMD(GetLightFlag);
+	REG_CMD(SetLightFlag);
+	REG_CMD(GetLightTraitNumeric);
+	REG_CMD(SetLightTraitNumeric);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}
