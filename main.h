@@ -39,6 +39,7 @@ DEFINE_COMMAND_PLUGIN(StopSoundAlt, 0, kParams_TwoForms_OneOptionalFloat);
 DEFINE_COMMAND_PLUGIN(IsSoundPlaying, 0, kParams_OneForm_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetCollisionObjProperty, 1, kParams_OneString_OneInt);
 DEFINE_COMMAND_PLUGIN(GetPipBoyMode, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetSystemColor, 0, kParams_OneInt);
 int g_version = 160;
 
 char* s_strArgBuffer;
@@ -53,9 +54,22 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Cmd_GetSystemColor_Execute(COMMAND_ARGS) {
+	*result = 0;
+	UInt32 type;
+	UInt8 color[3] = { 0, 0, 0 };
+	if (ExtractArgs(EXTRACT_ARGS, &type) && type > 0 && type <= 5) {
+		SystemColorManager* colorMgr = SystemColorManager::GetSingleton();
+		UInt32 color = (colorMgr->GetColor(type) >> 0x8);
+		*result = color;
+		if (IsConsoleMode()) Console_Print("GetSystemColor %d >> 0x%X", type, color);
+	}
+	return true;
+}
+
 bool Cmd_GetPipBoyMode_Execute(COMMAND_ARGS) {
 	*result = InterfaceManager::GetSingleton()->pipBoyMode;
-	if (IsConsoleMode()) Console_Print("GetPipBoyMode >> %.2f", *result);
+	if (IsConsoleMode()) Console_Print("GetPipBoyMode >> %.f", *result);
 	return true;
 }
 

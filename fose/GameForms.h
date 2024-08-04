@@ -418,7 +418,7 @@ public:
 	virtual void	Unk_21(void * arg);
 	virtual void	InitItem(void);
 	virtual UInt32	GetTypeID(void);
-	virtual void	GetDebugName(String * dst);
+	virtual void	GetDebugName(BSString * dst);
 	virtual bool	IsQuestItem(void);
 										// Unk_26 though Unk_36 get or set flag bits
 	virtual bool	Unk_26(void);		// 00000040
@@ -593,7 +593,7 @@ public:
 	TESFullName();
 	~TESFullName();
 
-	String	name;		// 004
+	BSString	name;		// 004
 };
 
 // 00C
@@ -604,10 +604,10 @@ public:
 	~TESTexture();
 
 	virtual UInt32	Unk_04(void);
-	virtual void	GetNormalMap(String * str);
+	virtual void	GetNormalMap(BSString * str);
 	virtual char *	GetPathRoot(void);
 
-	String ddsPath;
+	BSString ddsPath;
 };
 
 // 00C
@@ -744,7 +744,7 @@ public:
 	{
 		UInt32 scriptRefID;
 		UInt32 school;
-		String effectName;
+		BSString effectName;
 		UInt32 visualEffectCode;
 		UInt32 isHostile;
 
@@ -893,7 +893,7 @@ public:
 	virtual char *	GetPath(void);
 	virtual void	SetPath(char * path);		// 06
 
-	String	nifPath;		// 04
+	BSString	nifPath;		// 04
 	UInt32	unk0C;			// 0C
 	void	* unk10;		// 10
 	UInt8	facegenFlags;	// 14
@@ -1494,7 +1494,7 @@ public:
 
 	virtual void	Set(const char * str);
 
-	String	path;	// 4
+	BSString	path;	// 4
 };
 
 // 4+
@@ -1505,7 +1505,7 @@ public:
 	~BGSQuestObjective();
 
 	UInt32		objectiveId;	// 004 Objective Index in the GECK
-	String		displayText;	// 008
+	BSString		displayText;	// 008
 	TESQuest*	quest;			// 010
 	UInt32		unk014;			// 014
 	UInt32		unk018;			// 018
@@ -1572,7 +1572,7 @@ public:
 	UInt8				flags1;				// 25
 	UInt8				flags2;				// 26
 	UInt8				pad27;				// 27
-	String				prompt;				// 28
+	BSString				prompt;				// 28
 	tList<TESTopic>		addTopics;			// 30
 	RelatedTopics* relatedTopics;		// 38
 	UInt32				speaker;			// 3C
@@ -1671,7 +1671,7 @@ public:
 		kType_Float =	'f'
 	};
 
-	String	name;		// 18
+	BSString	name;		// 18
 	UInt8	type;		// 20
 	UInt8	pad21[3];	// 21
 	float	data;		// 24
@@ -1755,8 +1755,8 @@ public:
 	// 1C
 	struct Rank
 	{
-		String		name;		// 00
-		String		femaleName;	// 08
+		BSString		name;		// 00
+		BSString		femaleName;	// 08
 		TESTexture	insignia;	// 10 - effectively unused, can be set but there is no faction UI
 	};
 
@@ -1927,7 +1927,7 @@ public:
 
 	UInt32			unk4B8[(0x4CC - 0x4B8) >> 2]; // 4B8
 
-	String				name;			// 4CC
+	BSString				name;			// 4CC
 	NiTArray <void *>	faceGenUndo;	// 4D4 - NiTPrimitiveArray<FaceGenUndo *>
 };
 
@@ -2068,7 +2068,7 @@ public:
 		UInt8			type;		// 10
 		UInt8			pad11[3];	// 11
 		UInt32			unk14;		// 14
-		String			name;		// 18
+		BSString			name;		// 18
 	};
 
 	struct ScriptInfo
@@ -2225,8 +2225,8 @@ public:
 
 	struct MenuEntry
 	{
-		String entryText;
-		String resultText;
+		BSString entryText;
+		BSString resultText;
 		Script* resScript;
 		UInt8 restOfScript[78];
 		ConditionList conditions;
@@ -2237,7 +2237,7 @@ public:
 	};
 	STATIC_ASSERT(sizeof(MenuEntry) == 0x78);
 
-	String				desc;			// 090	DESC
+	BSString				desc;			// 090	DESC
 	tList<MenuEntry>	menuEntries;	// 098
 	void*			password;		// 0A0	PNAM
 	TermData			data;			// 0A4	DNAM
@@ -2973,7 +2973,7 @@ public:
 	tList<Unk54>				conditions;			// 054	
 	ScriptEventList*			scriptEventList;	// 05C
 	UInt32						unk60;				// 060
-	String						editorName;			// 064
+	BSString						editorName;			// 064
 };
 
 STATIC_ASSERT(offsetof(TESQuest, running) == 0x03C);

@@ -7,23 +7,23 @@
 
 
 // 8
-class String
+class BSString
 {
 public:
-	String();
-	~String();
+	BSString();
+	~BSString();
 
 	char	* m_data;
 	UInt16	m_dataLen;
 	UInt16	m_bufLen;
 
-	bool	Set(const char * src);
-	bool	Includes(const char* toFind) const;
-	bool	Replace(const char* toReplace, const char* replaceWith); // replaces instance of toReplace with replaceWith
-	bool	Append(const char* toAppend);
-	double	Compare(const String& compareTo, bool caseSensitive = false);
-
-	UInt16 GetLen();
+	void Init(UInt32 bufSize);
+	bool Set(const char* src);
+	bool Append(const char* toAppend);
+	void AppendChar(char toAppend);
+	void InsertChar(char toInsert, UInt32 index);
+	void EraseAt(UInt32 index);
+	const char* CStr();
 };
 
 enum {
@@ -1105,3 +1105,47 @@ __declspec(naked) NiTMapEntry<T_Key, T_Data>* NiTMapBase<T_Key, T_Data>::Get(T_K
 			retn	4
 	}
 }
+
+// 10
+struct SystemColorManager {
+	// 0C
+	class SystemColor {
+	public:
+		SystemColor();
+		~SystemColor();
+
+		virtual void	Destructor(bool doFree);
+		virtual UInt32	GetColor();
+		virtual void	SetColor(UInt32 newColor);
+		virtual bool	IsHard();
+		virtual bool	IsSoft();
+
+		BSString		traitName;
+
+		void SetColorRGB(UInt32 r, UInt32 g, UInt32 b) { this->SetColor(((r & 0xFF) << 16) + ((g & 0xFF) << 8) + (b & 0xFF)); }
+	};
+
+	// 10
+	class HardSystemColor : public SystemColor {
+	public:
+		HardSystemColor();
+		~HardSystemColor();
+
+		UInt32		color;		// 0C
+	};
+
+	// 10
+	class SoftSystemColor : public SystemColor {
+	public:
+		SoftSystemColor();
+		~SoftSystemColor();
+
+		UInt32* setting;	// 0C
+	};
+
+	DList<SystemColor>	sysColors;
+	UInt32				unk0C;
+
+	static SystemColorManager* GetSingleton() { return StdCall<SystemColorManager*>(0x6295A0); }
+	UInt32 GetColor(UInt32 type) { return ThisCall<UInt32>(0x621640, this, type); }
+};

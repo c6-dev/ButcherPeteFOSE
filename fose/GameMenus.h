@@ -146,7 +146,7 @@ public:
 	{
 		UInt32		unk00;		// 00
 		float		flt04;		// 04
-		String		tileName;	// 08
+		BSString		tileName;	// 08
 		Tile* tile;		// 10
 	};
 
@@ -267,10 +267,10 @@ enum {
 
 struct DialogueResponse
 {
-	String responseText; // 0
+	BSString responseText; // 0
 	UInt32 emotionType;	 // 8
 	UInt32* emotionValue; // C
-	String voiceFilePath;// 10
+	BSString voiceFilePath;// 10
 	TESIdleForm* speakerAnimation;	// 18
 	TESIdleForm* listenerAnimation;	// 1C
 	UInt32 soundID;	// 20
