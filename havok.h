@@ -1,5 +1,5 @@
 #pragma once
-
+#include "GameObjects.h"
 typedef bool hkBool;
 typedef UInt16 hkHalf;
 
@@ -303,6 +303,7 @@ STATIC_ASSERT(sizeof(hkpPropertyValue) == 0x8);
 
 class hkpProperty
 {
+public:
 	UInt32 m_key;
 	UInt32 m_alignmentPadding;
 	hkpPropertyValue m_value;
@@ -491,7 +492,7 @@ public:
 };
 static_assert(sizeof(hkpWorldObject) == 0x80);
 STATIC_ASSERT(offsetof(hkpWorldObject, m_collidable) == 0x10);
-
+STATIC_ASSERT(offsetof(hkpWorldObject, m_properties) == 0x74);
 
 class hkpConstraintAtom
 {
@@ -707,6 +708,8 @@ public:
 	hkSmallArray<void*>					m_actions;
 
 	bool IsMobile() const { return (m_motion.m_type & 2) != 0; }
+	NiNode* GetParentNode();
+	TESObjectREFR* GetParentRef();
 
 };
 STATIC_ASSERT(sizeof(hkpEntity::ExtendedListeners) == 0x10);
@@ -724,6 +727,158 @@ STATIC_ASSERT(offsetof(hkpRigidBody, m_collidable.m_broadPhaseHandle.m_type) == 
 STATIC_ASSERT(sizeof(hkpRigidBody) == 0x200);
 
 
+// 04
+class hkpEntityListener
+{
+public:
+	/*00*/virtual void		Destroy(bool doFree);
+	/*04*/virtual void		Unk_01(UInt32 arg);
+	/*08*/virtual void		Unk_02(hkpRigidBody* rigidBody);
+	/*0C*/virtual void		Unk_03(UInt32 arg);
+	/*10*/virtual void		Unk_04(UInt32 arg);
+	/*14*/virtual void		Unk_05(UInt32 arg);
+};
+
+
+// 04
+class hkpPhantomListener
+{
+public:
+	/*00*/virtual void		Unk_00(void);
+	/*04*/virtual void		Unk_01(void);
+	/*08*/virtual void		Unk_02(void);
+	/*0C*/virtual void		Unk_03(void);
+	/*10*/virtual void		Unk_04(void);
+};
+
+
+// D0
+class hkpCharacterProxy : public hkReferencedObject
+{
+public:
+	/*0C*/virtual void		Unk_03(void);
+	/*10*/virtual void		Unk_04(void);
+
+	hkpEntityListener		entityListener;		// 08
+	hkpPhantomListener		phantomListener;	// 0C
+
+	hkVector4				velocity;			// 10
+	hkVector4				vector20;			// 20
+	void* shapePhantom;		// 30
+	UInt32					unk34[16];			// 34
+	hkArray<UInt32>			cdPoints;			// 74
+	hkArray<UInt32>			arr80;				// 80
+	hkArray<UInt32>			arr8C;				// 8C
+	hkArray<UInt32>			arr98;				// 98
+	UInt32					unkA4[11];			// A4
+};
+static_assert(sizeof(hkpCharacterProxy) == 0xD0);
+
+class hkpCdPointCollector {
+public:
+	hkpCdPointCollector();
+	virtual ~hkpCdPointCollector();
+	virtual void addCdPoint(void* point);
+
+	float m_earlyOutDistance;
+};
+
+STATIC_ASSERT(sizeof(hkpCdPointCollector) == 0x8);
+
+// 10
+struct hkCdBody
+{
+	hkpShape* shape;			// 00
+	UInt32			shapeKey;		// 04
+	hkMotionState* motion;		// 08
+	hkCdBody* parent;		// 0C
+
+	hkpWorldObject* GetWorldObj() const { return (hkpWorldObject*)((UInt8*)this - 0x10); }
+};
+
+struct hkContactPoint
+{
+	NiVector4 m_position;
+	NiVector4 m_separatingNormal;
+};
+
+
+template <typename T_Data, unsigned T_Count>
+class hkInplaceArray : public hkArray<T_Data> {
+public:
+	T_Data m_storage[T_Count];
+};
+
+class hkpAllCdPointCollector : public hkpCdPointCollector {
+public:
+	virtual void addCdPointAlt(void* event);
+
+	struct hkpRootCdPoint {
+		hkContactPoint	m_contact;
+		hkpCollidable* m_rootCollidableA;
+		UInt32 m_shapeKeyA;
+		hkpCollidable* m_rootCollidableB;
+		UInt32 unk30[5];
+	};
+
+	UInt32					unk008[2];		// 008
+	hkArray<hkpRootCdPoint>		cdPoints;		// 010
+	UInt32					unk01C;			// 01C
+	hkpRootCdPoint				cdPointsLoc[8];	// 020
+};
+
+
+STATIC_ASSERT(sizeof(hkpAllCdPointCollector) == 0x220);
+STATIC_ASSERT(sizeof(hkpAllCdPointCollector::hkpRootCdPoint) == 0x40);
+
+
+class hkpPhantom : public hkpWorldObject {
+public:
+	hkpPhantom();
+	virtual ~hkpPhantom();
+
+	virtual UInt32			getType() const;
+	virtual void			calcAabb(void* aabb);
+	virtual void			addOverlappingCollidable(void* collidable);
+	virtual bool			isOverlappingCollidableAdded(const void* collidable);
+	virtual void			removeOverlappingCollidable(void* collidable);
+	virtual hkpPhantom* clone() const;
+	virtual void			updateShapeCollectionFilter();
+	virtual void			deallocateInternalArrays();
+
+	hkArray<void*>							m_overlapListeners;
+	hkArray<hkpPhantomListener*>			m_phantomListeners;
+};
+
+STATIC_ASSERT(sizeof(hkpPhantom) == 0x98);
+
+class hkpShapePhantom : public hkpPhantom {
+public:
+	hkpShapePhantom();
+	virtual ~hkpShapePhantom();
+
+	virtual void setPositionAndLinearCast(const hkVector4& position, const void* input, hkpCdPointCollector& castCollector, hkpCdPointCollector* startCollector);
+	virtual void getClosestPoints(hkpCdPointCollector& collector, const void* input = nullptr);
+	virtual void getPenetrations(void* collector, const void* input = nullptr);
+
+	hkMotionState m_motionState;
+};
+
+STATIC_ASSERT(sizeof(hkpShapePhantom) == 0x150);
+
+
+// 170
+class hkpSimpleShapePhantom : public hkpShapePhantom
+{
+public:
+	hkpSimpleShapePhantom();
+	virtual ~hkpSimpleShapePhantom();
+	struct CollisionDetail {
+		  hkpCollidable* m_collidable;
+	};
+	hkArray<CollisionDetail>		m_collisionDetails;	// 160
+};
+STATIC_ASSERT(sizeof(hkpSimpleShapePhantom) == 0x160);
 
 // bhk
 
@@ -778,6 +933,13 @@ public:
 
 };
 STATIC_ASSERT(sizeof(bhkWorldObject) == 0x14);
+
+class bhkPhantom : public bhkWorldObject {
+public:
+	bool unk14;
+};
+
+STATIC_ASSERT(sizeof(bhkPhantom) == 0x18);
 // 14
 class bhkShape : public bhkSerializable
 {
@@ -847,3 +1009,61 @@ class bhkSPCollisionObject : public bhkPCollisionObject
 {
 public:
 };
+
+
+// 3C8
+class bhkCharacterPointCollector : public hkpAllCdPointCollector
+{
+public:
+	UInt32						unk3A0;			// 3A0 
+	hkArray<hkpWorldObject*>	contactBodies;	// 3A4
+	hkArray<UInt32>				arr3B0;			// 3B0
+	hkArray<float>				arr3BC;			// 3BC
+};
+STATIC_ASSERT(sizeof(bhkCharacterPointCollector) == 0x248);
+
+// 3E0
+class bhkCharacterProxy : public bhkSerializable
+{
+public:
+	bhkCharacterPointCollector	pointCollector;		// 10
+	UInt32						unk3D8[2];
+};
+STATIC_ASSERT(sizeof(bhkCharacterProxy) == 0x260);
+
+// 0x4F0 TODO
+class bhkCharacterController : public bhkCharacterProxy
+{
+public:
+	UInt32 unkC[(0x34C - 0x260) >> 2];
+	UInt32 wantState;
+	UInt32 unk354[0x38 >> 2];
+	hkVector4 velocity;
+	hkVector4 kVelocityMod;
+	float velocityTime;
+	float rotMod;
+	float rotModTime;
+	float calculatePitchTimer;
+	float acrobatics;
+	float center;
+	float waterHeight;
+	float jumpHeight;
+	float fallStartHeight;
+	float fallTime;
+	float gravity;
+	float pitchAngle;
+	float rollAngle;
+	float pitchMult;
+	float scale;
+	float swimFloatHeight;
+	float actorHeight;
+	float speedPct;
+	UInt32 unk3F8[(0x498 - 0x3F8) >> 2];
+	UInt32 unk498;
+	hkpRigidBody* spSupportBody; 
+	UInt32 unk4A0[(0x4F0 - 0x4A0) >> 2];
+};
+STATIC_ASSERT(sizeof(bhkCharacterController) == 0x4F0);
+STATIC_ASSERT(offsetof(bhkCharacterController, velocity) == 0x390);
+STATIC_ASSERT(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
+//STATIC_ASSERT(offsetof(bhkCharacterController, wantState) == 0x350);

@@ -102,6 +102,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetLightFlag);
 	REG_CMD(GetLightTraitNumeric);
 	REG_CMD(SetLightTraitNumeric);
+	REG_CMD(SetActorVelocity);
+	REG_CMD(GetFallTimeElapsed);
+	REG_CMD(GetFallTimeRemaining);
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}

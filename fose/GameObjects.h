@@ -1095,6 +1095,7 @@ public:
 	virtual TESObjectCELL *	GetChildCell(void);
 };
 class hkpRigidBody;
+class bhkPhantom;
 class TESObjectREFR : public TESForm
 {
 public:
@@ -1184,7 +1185,7 @@ public:
 		float			revealDistance;		// 0C
 		UInt32			flags;				// 10
 		NiNode* rootNode;			// 14
-		void* phantom;			// 18	Used with trigger volume
+		bhkPhantom* phantom;			// 18	Used with trigger volume
 	};
 
 	TESChildCell	childCell;				// 018
@@ -1207,6 +1208,7 @@ public:
 	NiNode* GetNode(const char* nodeName) const;
 	NiNode* GetNode2(const char* nodeName) const;
 	hkpRigidBody* GetRigidBody(const char* blockName) const;
+	bhkCharacterController* GetCharacterController() const;
 
 
 };

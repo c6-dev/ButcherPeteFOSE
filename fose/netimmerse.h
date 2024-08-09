@@ -925,35 +925,5 @@ public:
 };
 
 
-// 0x4F0 TODO
-class bhkCharacterController
-{
-public:
-	UInt32 unk00[0x350 >> 2];
-	UInt32 wantState;
-	UInt32 unk354[0x38 >> 2];
-	hkVector4 velocity;
-	hkVector4 kVelocityMod;
-	float velocityTime;
-	float rotMod;
-	float rotModTime;
-	float calculatePitchTimer;
-	float acrobatics;
-	float center;
-	float waterHeight;
-	float jumpHeight;
-	float fallStartHeight;
-	float fallTime;
-	float gravity;
-	float pitchAngle;
-	float rollAngle;
-	float pitchMult;
-	float scale;
-	float swimFloatHeight;
-	float actorHeight;
-	float speedPct;
-	UInt32 unk3F8[0xF0 >> 2];
-}; 
-STATIC_ASSERT(sizeof(bhkCharacterController) == 0x4F0);
-STATIC_ASSERT(offsetof(bhkCharacterController, velocity) == 0x390);
-STATIC_ASSERT(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
+
+

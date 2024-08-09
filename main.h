@@ -45,6 +45,9 @@ DEFINE_COMMAND_PLUGIN(GetLightTraitNumeric, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetLightTraitNumeric, 0, kParams_OneForm_OneInt_OneFloat);
 DEFINE_COMMAND_PLUGIN(GetLightFlag, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetLightFlag, 0, kParams_OneForm_TwoInts);
+DEFINE_COMMAND_PLUGIN(SetActorVelocity, 1, kParams_OneAxis_OneFloat);
+DEFINE_COMMAND_PLUGIN(GetFallTimeElapsed, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetFallTimeRemaining, 1, NULL);
 
 int g_version = 160;
 
@@ -59,6 +62,35 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+
+bool Cmd_GetFallTimeElapsed_Execute(COMMAND_ARGS)
+{
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+		*result = charCtrl->fallTime;
+	return true;
+}
+
+bool Cmd_GetFallTimeRemaining_Execute(COMMAND_ARGS)
+{
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+		*result = charCtrl->calculatePitchTimer;
+	return true;
+}
+
+bool Cmd_SetActorVelocity_Execute(COMMAND_ARGS)
+{
+	char axis;
+	float velocity;
+	if (ExtractArgs(EXTRACT_ARGS, &axis, &velocity)) {
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+			if (charCtrl->phkObject) {
+				((hkpCharacterProxy*)charCtrl->phkObject)->velocity[axis - 'X'] = velocity;
+			}
+		}
+	}
+	return true;
+}
 
 bool Cmd_GetLightFlag_Execute(COMMAND_ARGS)
 {
@@ -342,22 +374,20 @@ bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
 	char axis = 0;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &axis)) {
-		BaseProcess* proc = ((Actor*)thisObj)->baseProcess;
-		if (proc->uiProcessLevel > 1) return true;
-		bhkCharacterController* charCtrl = proc->GetCharacterController();
-		if (!charCtrl) return true;
-		if (axis) {
-			*result = charCtrl->velocity[axis - 'X'];
-		}
-		else {
-			__m128 vec = charCtrl->velocity.PS();
-			__m128 sq = _mm_mul_ps(vec, vec);
-			sq = _mm_hadd_ps(sq, sq);
-			sq = _mm_hadd_ps(sq, sq); 
-			*result = sqrt(_mm_cvtss_f32(sq));
-		}
-		if (IsConsoleMode()) {
-			Console_Print("GetActorVelocity >> %.5f", *result);
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+			if (axis) {
+				*result = charCtrl->velocity[axis - 'X'];
+			}
+			else {
+				__m128 vec = charCtrl->velocity.PS();
+				__m128 sq = _mm_mul_ps(vec, vec);
+				sq = _mm_hadd_ps(sq, sq);
+				sq = _mm_hadd_ps(sq, sq);
+				*result = sqrt(_mm_cvtss_f32(sq));
+			}
+			if (IsConsoleMode()) {
+				Console_Print("GetActorVelocity >> %.5f", *result);
+			}
 		}
 	}
 	return true;

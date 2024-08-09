@@ -323,7 +323,10 @@ enum ObjectVtbl
 	kVtbl_BGSAcousticSpace = 0xDD03AC,
 	kVtbl_AlchemyItem = 0xDB32B4,
 	kVtbl_BGSMovableStatic = 0xDC4674,
-	kVtbl_BSFadeNode = 0xE8FBC8
+	kVtbl_BSFadeNode = 0xE8FBC8,
+	kVtbl_bhkNiCollisionObject = 0xE328A4,
+	kVtbl_NiAVObject = 0xE20B2C,
+	kVtbl_bhkSimpleShapePhantom = 0xDCE334
 };
 
 #define IS_TYPE(form, type) (*(UInt32*)form == kVtbl_##type)

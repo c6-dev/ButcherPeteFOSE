@@ -145,6 +145,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="havok.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -35,6 +35,15 @@ hkpRigidBody* TESObjectREFR::GetRigidBody(const char* blockName) const
 	return nullptr;
 }
 
+bhkCharacterController* TESObjectREFR::GetCharacterController() const
+{
+	BaseProcess* proc = ((Actor*)this)->baseProcess;
+	if (proc->uiProcessLevel > 1) return nullptr;
+	bhkCharacterController* charCtrl = proc->GetCharacterController();
+	if (!charCtrl) return nullptr;
+	return charCtrl;
+}
+
 
 static PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x0107A104;
 

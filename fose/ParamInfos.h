@@ -327,6 +327,12 @@ static ParamInfo kParams_OneForm_TwoInts[3] =
 	{	"int",	kParamType_Integer, 0	},
 };
 ;
+static ParamInfo kParams_OneAxis_OneFloat[2] =
+{
+	{"axis", kParamType_Axis, 0},
+	{"float", kParamType_Float, 0}
+};
+
 
 static ParamInfo kParams_OneForm_ThreeInts[4] =
 {

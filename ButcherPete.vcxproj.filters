@@ -53,6 +53,7 @@
     <ClCompile Include="fose\netimmerse.cpp">
       <Filter>fose</Filter>
     </ClCompile>
+    <ClCompile Include="havok.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
