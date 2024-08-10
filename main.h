@@ -49,7 +49,7 @@ DEFINE_COMMAND_PLUGIN(SetActorVelocity, 1, kParams_OneAxis_OneFloat);
 DEFINE_COMMAND_PLUGIN(GetFallTimeElapsed, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetFallTimeRemaining, 1, NULL);
 
-int g_version = 160;
+int g_version = 170;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
