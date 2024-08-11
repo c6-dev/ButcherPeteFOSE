@@ -50,6 +50,11 @@ static ParamInfo kParams_OneFloat[1] =
 	{	"float", kParamType_Float,	0 },
 };
 
+static ParamInfo kParams_OneOptionalActorBase[1] =
+{
+	{	"actorBase", kParamType_ActorBase,	1 },
+};
+
 static ParamInfo kParams_OneString[1] =
 {
 	{	"string",	kParamType_String,	0 },

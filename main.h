@@ -51,6 +51,7 @@ DEFINE_COMMAND_PLUGIN(GetFallTimeRemaining, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetActorGravityMult, 1, NULL);
 DEFINE_COMMAND_PLUGIN(SetActorGravityMult, 1, kParams_OneFloat);
 DEFINE_COMMAND_PLUGIN(IsInWater, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetCreatureType, 0, kParams_OneOptionalActorBase);
 
 int g_version = 170;
 
@@ -66,7 +67,23 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
-
+bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
+{
+	*result = -1;
+	TESCreature* creature = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &creature)) {
+		if (creature || (thisObj && thisObj->IsActor() && (creature = (TESCreature*)((Actor*)thisObj)->GetActorBase()))) {
+			if IS_ID(creature, Creature)
+			{
+				*result = creature->type;
+				if (IsConsoleMode()) {
+					Console_Print("GetCreatureType >> %.f", *result);
+				}
+			}
+		}
+	}
+	return true;
+}
 
 bool Cmd_IsInWater_Execute(COMMAND_ARGS)
 {
