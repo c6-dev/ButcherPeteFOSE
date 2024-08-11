@@ -1096,6 +1096,7 @@ public:
 };
 class hkpRigidBody;
 class bhkPhantom;
+struct AnimData;
 class TESObjectREFR : public TESForm
 {
 public:
@@ -1148,7 +1149,7 @@ public:
 	virtual void		Unk_76(void);
 	virtual void		Unk_77(void);
 	virtual void		Unk_78(void);
-	virtual void* GetAnimData();			// 0079
+	virtual AnimData* GetAnimData();			// 0079
 	virtual void* GetValidBip01Names(void);	// 007A	Character only
 	virtual void* CallGetValidBip01Names(void);
 	virtual void		SetValidBip01Names(void* validBip01Names);
@@ -1794,3 +1795,132 @@ public:
 
 };
 static_assert(sizeof(BSAudioManager) == 0x188);
+
+
+// 04
+class AnimSequenceBase
+{
+public:
+	virtual void	Destroy(bool deFree);
+	virtual void	AddAnimGroupSequence(BSAnimGroupSequence* sequence, UInt32 arg2);
+	virtual bool	RemoveAnimGroupSequence(BSAnimGroupSequence* sequence, UInt32 arg2);
+	virtual bool	IsSingle();
+	virtual BSAnimGroupSequence* GetSequenceByIndex(UInt8 index);
+	virtual BSAnimGroupSequence* GetSequenceByGroup(TESAnimGroup* animGroup);
+	virtual char	GetSequenceIndexByName(const char* seqName);
+};
+
+struct KFModel;
+// 38
+class AnimIdle : public NiRefObject
+{
+public:
+	UInt32					unk08;			// 08
+	UInt32					unk0C;			// 0C
+	UInt32					unk10;			// 10
+	UInt32					sequenceID;		// 14
+	BSAnimGroupSequence*	agSequence;	// 18
+	NiObject*				object1C;		// 1C
+	NiObject*				object20;		// 20
+	NiObject*				object24;		// 24
+	NiObject*				object28;		// 28
+	TESIdleForm*			idleForm;		// 2C
+	UInt32					unk30;			// 30
+	Actor*					actor;			// 34
+};
+
+// 13C
+struct AnimData
+{
+	enum SequenceTypes
+	{
+		kSequence_None = -1,
+		kSequence_Idle = 0,
+		kSequence_Movement = 1,
+		kSequence_LeftArm = 2,
+		kSequence_LeftHand = 3,
+		kSequence_Weapon = 4,
+		kSequence_WeaponUp = 5,
+		kSequence_WeaponDown = 6,
+		kSequence_SpecialIdle = 7,
+		kSequence_Death = 0x14
+	};
+
+	enum AnimStates
+	{
+
+	};
+
+	struct PlayingIdle
+	{
+		TESIdleForm* idleForm;
+		float			replayDelay;
+	};
+
+	UInt32							unk000;				// 000
+	Actor*							actor;				// 004
+	NiNode*							nSceneRoot;		// 008
+	NiNode*							nBip01;			// 00C
+	UInt32							unk010;				// 010
+	float							flt014;				// 014
+	float							flt018;				// 018
+	NiVector3						pos01C;				// 01C
+	NiNode*							nPelvis;			// 028
+	NiNode*							nBip01Copy;		// 02C
+	NiNode*							nLForearm;			// 030
+	NiNode*							nHead;				// 034
+	NiNode*							nWeapon;			// 038
+	UInt32							unk03C[2];			// 03C
+	NiNode*							nNeck1;			// 044
+	float							flt048;				// 048
+	UInt16							animGroupIDs[8];	// 04C
+	SInt32							sequenceState1[8];	// 05C
+	SInt32							sequenceState2[8];	// 07C
+	UInt16							word09C[8];			// 09C
+	UInt32							unk0AC[8];			// 0AC
+	UInt8							byte0CC;			// 0CC
+	UInt8							byte0CD;			// 0CD
+	UInt8							byte0CE;			// 0CE
+	UInt8							byte0CF;			// 0CF
+	float							timePassed;			// 0D0
+	UInt32							unk0D4;				// 0D4
+	NiControllerManager*			controllerMngr;	// 0D8
+	NiTPointerMap<AnimSequenceBase>* sequenceBaseMap;	// 0DC
+	BSAnimGroupSequence*			animSequence[8];	// 0E0
+	BSAnimGroupSequence*			animSeq100;		// 100
+	tList<KFModel>					loadingAnims;		// 104
+	float							movementSpeedMult;	// 10C
+	float							rateOfFire;			// 110
+	UInt8							noBlend;			// 120
+	UInt8							byte121;			// 121
+	UInt16							word122;			// 122
+	AnimIdle*						idleAnim;			// 124
+	AnimIdle*						queuedIdleAnim;	// 128
+	NiObject*						object12C;			// 12C
+	NiObject*						object130;			// 130
+	tList<PlayingIdle>				playingIdleAnims;	// 134
+
+	TESIdleForm* GetPlayedIdle() const;
+
+	__forceinline void PlayIdle(TESIdleForm* idleAnim)
+	{
+		ThisCall(0x4649F0, this, idleAnim, actor, idleAnim->data.groupFlags & 0x3F, 3);
+	}
+
+	__forceinline void StopIdle()
+	{
+		ThisCall(0x460090, this, true, false);
+	}
+
+	__forceinline void Refresh()
+	{
+		ThisCall(0x45E360, this, 0);
+	}
+
+	void BlendSequence(UInt32 sequenceIdx)
+	{
+		if (animSequence[sequenceIdx])
+			ThisCall(0x45E4C0, this, sequenceIdx, 0);
+	}
+};
+static_assert(sizeof(AnimData) == 0x130);

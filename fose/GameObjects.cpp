@@ -104,3 +104,14 @@ TESActorBase* Actor::GetActorBase()
 	return (xLvlCre && xLvlCre->form) ? (TESActorBase*)xLvlCre->form : (TESActorBase*)baseForm;
 }
 
+TESIdleForm* AnimData::GetPlayedIdle() const
+{
+	AnimIdle* queuedIdleAnim = this->queuedIdleAnim;
+	if (queuedIdleAnim && queuedIdleAnim->idleForm)
+		return queuedIdleAnim->idleForm;
+	if (this->idleAnim && this->idleAnim->idleForm) {
+		bool noIdlePlaying = ThisCall<bool>(0x45E180, this);
+		if (!noIdlePlaying) return this->idleAnim->idleForm;
+	}
+	return nullptr;
+}

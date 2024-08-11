@@ -55,6 +55,15 @@ static ParamInfo kParams_OneOptionalActorBase[1] =
 	{	"actorBase", kParamType_ActorBase,	1 },
 };
 
+static ParamInfo kParams_OneOptionalIdleForm[1] =
+{
+	{	"idle form", kParamType_IdleForm,	1 },
+};
+
+static ParamInfo kParams_OneIdleForm[1] =
+{
+	{	"idle form", kParamType_IdleForm,	0 },
+};
 static ParamInfo kParams_OneString[1] =
 {
 	{	"string",	kParamType_String,	0 },
@@ -290,6 +299,11 @@ static ParamInfo kParams_OneString_OneForm[] =
 static ParamInfo kParams_OneForm[] =
 {
 	{	"object",	kParamType_AnyForm,	0	},
+};
+
+static ParamInfo kParams_OneOptionalForm[] =
+{
+	{	"object",	kParamType_AnyForm,	1	},
 };
 
 static ParamInfo kParams_OneForm_OneOptionalForm[2] =

@@ -52,6 +52,9 @@ DEFINE_COMMAND_PLUGIN(GetActorGravityMult, 1, NULL);
 DEFINE_COMMAND_PLUGIN(SetActorGravityMult, 1, kParams_OneFloat);
 DEFINE_COMMAND_PLUGIN(IsInWater, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetCreatureType, 0, kParams_OneOptionalActorBase);
+DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
+DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 
 int g_version = 170;
 
@@ -66,6 +69,46 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
+{
+	TESIdleForm* idleAnim;
+	if (ExtractArgs(EXTRACT_ARGS, &idleAnim)) {
+		AnimData* animData = thisObj->GetAnimData();
+		if (animData && (animData->GetPlayedIdle() == idleAnim)) {
+			*result = 1;
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetPlayedIdle_Execute(COMMAND_ARGS)
+{
+	if (AnimData* animData = thisObj->GetAnimData()) {
+		if (TESIdleForm* idleAnim = animData->GetPlayedIdle()) {
+			*(UInt32*)result = idleAnim->refID;
+		}
+	}
+	return true;
+}
+
+bool Cmd_PlayIdleEx_Execute(COMMAND_ARGS)
+{
+	TESIdleForm* idleAnim = nullptr;
+	Actor* actor = (Actor*)thisObj;
+	if (actor->baseProcess && !actor->baseProcess->uiProcessLevel && ExtractArgs(EXTRACT_ARGS, &idleAnim))
+		if (AnimData* animData = thisObj->GetAnimData())
+		{
+			if (!idleAnim)
+				idleAnim = ThisCall<TESIdleForm*>(0x553D70, (UInt32*)0x10721B8, actor, ((HighProcess*)actor->baseProcess)->pTarget);
+			// todo from here
+			else if (idleAnim->children)
+				idleAnim = idleAnim->FindIdle(actor);
+			if (idleAnim && (animData->GetPlayedIdle() != idleAnim))
+				animData->PlayIdle(idleAnim);
+		}
+	return true;
+}
 
 bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 {

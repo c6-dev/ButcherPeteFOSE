@@ -109,6 +109,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetActorGravityMult);
 	REG_CMD(IsInWater);
 	REG_CMD(GetCreatureType);
+	REG_CMD(PlayIdleEx);
+	REG_CMD(GetPlayedIdle);
+	REG_CMD(IsIdlePlayingEx);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

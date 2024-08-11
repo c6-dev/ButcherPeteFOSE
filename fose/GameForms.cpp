@@ -363,3 +363,14 @@ SInt8 TESActorBaseData::GetFactionRank(TESFaction* faction)
 	FactionListData* pData = factionList.Find(matcher);
 	return (pData) ? pData->rank : -1;
 }
+
+TESIdleForm* TESIdleForm::FindIdle(Actor* animActor)
+{
+	bool eval;
+	if (!conditions.Evaluate(animActor, 0, &eval, 0)) return nullptr;
+	if (!children) return this;
+	TESIdleForm** idles = children->data, *result = nullptr;
+	for (UInt32 count = children->size; count && !result; count--, idles++)
+		if (*idles) result = (*idles)->FindIdle(animActor);
+	return result;
+}
