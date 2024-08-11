@@ -48,6 +48,9 @@ DEFINE_COMMAND_PLUGIN(SetLightFlag, 0, kParams_OneForm_TwoInts);
 DEFINE_COMMAND_PLUGIN(SetActorVelocity, 1, kParams_OneAxis_OneFloat);
 DEFINE_COMMAND_PLUGIN(GetFallTimeElapsed, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetFallTimeRemaining, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetActorGravityMult, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetActorGravityMult, 1, kParams_OneFloat);
+DEFINE_COMMAND_PLUGIN(IsInWater, 1, NULL);
 
 int g_version = 170;
 
@@ -63,9 +66,43 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Cmd_IsInWater_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if ((thisObj->IsActor()) && ((Actor*)thisObj)->inWater) {
+		*result = 1;
+	}
+	return true;
+}
+
+
+bool Cmd_GetActorGravityMult_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+		*result = charCtrl->gravity;
+		if (IsConsoleMode()) {
+			Console_Print("GetActorGravityMult >> %f", *result);
+		}
+	}
+	return true;
+}
+
+bool Cmd_SetActorGravityMult_Execute(COMMAND_ARGS)
+{
+	float gravityMult;
+	if (ExtractArgs(EXTRACT_ARGS, &gravityMult)) {
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+			charCtrl->gravity = gravityMult;
+		}
+	}
+	return true;
+}
+
 
 bool Cmd_GetFallTimeElapsed_Execute(COMMAND_ARGS)
 {
+	*result = 0;
 	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
 		*result = charCtrl->fallTime;
 	return true;
@@ -73,6 +110,7 @@ bool Cmd_GetFallTimeElapsed_Execute(COMMAND_ARGS)
 
 bool Cmd_GetFallTimeRemaining_Execute(COMMAND_ARGS)
 {
+	*result = 0;
 	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
 		*result = charCtrl->calculatePitchTimer;
 	return true;
@@ -94,6 +132,7 @@ bool Cmd_SetActorVelocity_Execute(COMMAND_ARGS)
 
 bool Cmd_GetLightFlag_Execute(COMMAND_ARGS)
 {
+	*result = 0;
 	TESObjectLIGH* light;
 	UInt32 flagID;
 	if (ExtractArgs(EXTRACT_ARGS, &light, &flagID) && (flagID <= 31) && (light->lightFlags & (1 << flagID))) {
@@ -117,6 +156,7 @@ bool Cmd_SetLightFlag_Execute(COMMAND_ARGS)
 
 bool Cmd_GetLightTraitNumeric_Execute(COMMAND_ARGS)
 {
+	*result = 0;
 	TESObjectLIGH* light;
 	UInt32 traitID;
 	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID)) {

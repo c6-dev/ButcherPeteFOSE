@@ -105,6 +105,10 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetActorVelocity);
 	REG_CMD(GetFallTimeElapsed);
 	REG_CMD(GetFallTimeRemaining);
+	REG_CMD(GetActorGravityMult);
+	REG_CMD(SetActorGravityMult);
+	REG_CMD(IsInWater);
+
 	if (fose->isEditor) {
 		WriteEditorPatches();
 	}
