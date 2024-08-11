@@ -51,7 +51,6 @@ DEFINE_COMMAND_PLUGIN(GetFallTimeRemaining, 1, NULL);
 DEFINE_COMMAND_PLUGIN(GetActorGravityMult, 1, NULL);
 DEFINE_COMMAND_PLUGIN(SetActorGravityMult, 1, kParams_OneFloat);
 DEFINE_COMMAND_PLUGIN(IsInWater, 1, NULL);
-DEFINE_COMMAND_PLUGIN(GetWaterImmersionPerc, 1, NULL);
 
 int g_version = 170;
 
@@ -67,19 +66,7 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
-bool Cmd_GetWaterImmersionPerc_Execute(COMMAND_ARGS)
-{
-	*result = 0;
-	if ((thisObj->IsActor()) && ((Actor*)thisObj)->inWater) {
-		Actor* actor = (Actor*)thisObj;
-		if (actor->inWater && actor->baseProcess && actor->baseProcess->uiProcessLevel == 0) {
-			*result = ThisCall<double>(0x6F5EC0, actor, actor->posZ, actor->parentCell);
-			if (IsConsoleMode()) {
-				Console_Print("GetWaterImmersionPerc >> %f", *result);
-			}
-		}
-	}
-}
+
 
 bool Cmd_IsInWater_Execute(COMMAND_ARGS)
 {
