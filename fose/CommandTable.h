@@ -108,7 +108,7 @@ struct ParamInfo
 	UInt32		isOptional;	// do other bits do things?
 };
 
-#define COMMAND_ARGS		ParamInfo * paramInfo, void * scriptData, TESObjectREFR * thisObj, TESObjectREFR * containingObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr
+#define COMMAND_ARGS		ParamInfo * paramInfo, UInt8* scriptData, TESObjectREFR* thisObj, TESObjectREFR* containingObj, Script* scriptObj, ScriptEventList* eventList, double * result, UInt32 * opcodeOffsetPtr
 #define PASS_COMMAND_ARGS	paramInfo, scriptData, thisObj, containingObj, scriptObj, eventList, result, opcodeOffsetPtr
 #define EXTRACT_ARGS		paramInfo, scriptData, opcodeOffsetPtr, thisObj, containingObj, scriptObj, eventList
 //args passed to EVAL version of command (arg1 and arg2 types vary based on ParamInfo)

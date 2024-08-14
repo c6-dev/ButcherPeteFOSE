@@ -55,6 +55,15 @@ static ParamInfo kParams_OneOptionalActorBase[1] =
 	{	"actorBase", kParamType_ActorBase,	1 },
 };
 
+static ParamInfo kParams_OneString_ThreeOptionalFloats_OneOptionalInt[5] =
+{
+	{"string", kParamType_String, 0},
+	{"float", kParamType_Float, 1},
+	{"float", kParamType_Float, 1},
+	{"float", kParamType_Float, 1},
+	{"integer", kParamType_Integer, 1}
+};
+
 static ParamInfo kParams_OneOptionalIdleForm[1] =
 {
 	{	"idle form", kParamType_IdleForm,	1 },

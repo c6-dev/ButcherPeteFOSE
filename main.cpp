@@ -112,6 +112,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(PlayIdleEx);
 	REG_CMD(GetPlayedIdle);
 	REG_CMD(IsIdlePlayingEx);
+	REG_CMD(SetUIFloatGradual);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

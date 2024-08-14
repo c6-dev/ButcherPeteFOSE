@@ -310,7 +310,7 @@ public:
 	UInt8						unk35;			// 35
 	UInt8						pad35[2];		// 36
 
-	static UInt32	TraitNameToID(const char* traitName) { return 0; };
+	static UInt32	TraitNameToID(const char* traitName) { return  CdeclCall<UInt32>(0xBEA9E0, traitName); };
 	static UInt32	TraitNameToIDAdd(const char* traitName) { return 0; };
 	float			GetValueFloat(UInt32 id);
 	DListNode<Tile>* GetNthChild(UInt32 index);
@@ -331,7 +331,25 @@ public:
 	float			GetLocusAdjustedPosX();
 	float			GetLocusAdjustedPosY();
 	void			SetParent(Tile* newParent, Tile* oldParent);
-
+	Tile*			GetChild(const char* childName);
+	Tile*			GetComponent(const char* componentTile, const char** trait);
+	Tile*			GetComponentTile(const char* componentTile);
+	Value*			GetComponentValue(const char* componentPath);
+	Value*			GetValueName(const char* valueName) const;
+	Value*			GetValue(UInt32 typeID) const;
+	static Tile*	GetTargetComponent(const char* componentPath, Tile::Value** value);
+	__forceinline void StartGradualSetFloat(UInt32 id, float startVal, float endVal, float seconds, UInt32 changeMode = 0)
+	{
+		ThisCall(0xBF05A0, this, id, startVal, endVal, seconds, changeMode);
+	}
+	__forceinline void EndGradualSetFloat(UInt32 id)
+	{
+		ThisCall(0xBED770, this, id);
+	}
+	__forceinline bool HasGradualSetFloat(UInt32 id)
+	{
+		return !ThisCall<bool>(0xBEACA0, this, id);
+	}
 };
 
 
@@ -348,6 +366,8 @@ class TileMenu : public TileRect
 {
 public:
 	Menu* menu;	// 3C
+
+	static TileMenu* GetMenuTile(const char* componentPath);
 };
 
 class TileImage : public Tile

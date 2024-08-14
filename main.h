@@ -55,6 +55,7 @@ DEFINE_COMMAND_PLUGIN(GetCreatureType, 0, kParams_OneOptionalActorBase);
 DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
+DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
 
 int g_version = 180;
 
@@ -69,6 +70,37 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_SetUIFloatGradual_Execute(COMMAND_ARGS)
+{
+	char tilePath[0x100];
+	float startVal, endVal, timer;
+	UInt32 changeMode = 0;
+	UInt8 numArgs = scriptData[*opcodeOffsetPtr];
+	if (ExtractArgs(EXTRACT_ARGS, &tilePath, &startVal, &endVal, &timer, &changeMode))
+	{
+		Tile::Value* tileVal = nullptr;
+		if (Tile* component = Tile::GetTargetComponent(tilePath, &tileVal)) {
+			if (numArgs >= 4)
+			{
+				if (changeMode > 4) {
+					changeMode = 0;
+				} else {
+					UInt8 changeModeMatch[] = { 0, 4, 1, 5, 6 };
+					changeMode = changeModeMatch[changeMode];
+				}
+				component->StartGradualSetFloat(tileVal->id, startVal, endVal, timer, changeMode);
+			}
+			else
+			{
+				component->EndGradualSetFloat(tileVal->id);
+				if (numArgs >= 2)
+					tileVal->SetFloat(startVal);
+			}
+		}
+	}
+	return true;
+}
 
 bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 {

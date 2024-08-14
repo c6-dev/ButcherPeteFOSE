@@ -84,3 +84,99 @@ void Tile::SetParent(Tile* newParent, Tile* oldParent)
 	ThisCall(0xBEEA70, this, newParent, oldParent);
 }
 
+Tile* Tile::GetComponent(const char* componentPath, const char** trait)
+{
+	Tile* parentTile = this;
+	while (char* slashPos = (char*)strchr(componentPath, '\\'))
+	{
+		*slashPos = 0;
+		parentTile = parentTile->GetChild(componentPath);
+		if (!parentTile) return nullptr;
+		componentPath = slashPos + 1;
+	}
+	if (*componentPath)
+	{
+		Tile* result = parentTile->GetChild(componentPath);
+		if (result) return result;
+		*trait = componentPath;
+	}
+	return parentTile;
+}
+
+Tile::Value* Tile::GetValueName(const char* valueName) const
+{
+	return GetValue(TraitNameToID(valueName));
+}
+
+Tile::Value* Tile::GetValue(UInt32 typeID) const
+{
+
+	if (this->values.size > 0) {
+		for (int i = 0; i < this->values.size; i++) {
+			Tile::Value* val = this->values.data[i];
+			if (val->id == typeID) return val;
+		}
+	}
+	return nullptr;
+}
+
+Tile* Tile::GetTargetComponent(const char* componentPath, Tile::Value** value)
+{
+	char* slashPos = (char*)strchr(componentPath, '\\');
+	if (!slashPos) return TileMenu::GetMenuTile(componentPath);
+	*slashPos = 0;
+	Tile* component = TileMenu::GetMenuTile(componentPath);
+	if (!component) return nullptr;
+	const char* trait = nullptr;
+	component = component->GetComponent(slashPos + 1, &trait);
+	if (!component) return nullptr;
+	if (trait)
+	{
+		if (!value || !(*value = component->GetValueName(trait))) return nullptr;
+	}
+	else if (value) return nullptr;
+	return component;
+}
+
+Tile* Tile::GetChild(const char* childName)
+{
+	int childIndex = 0;
+	char* colon = (char*)strchr(childName, ':');
+	if (colon)
+	{
+		if (colon == childName) return nullptr;
+		*colon = 0;
+		childIndex = atoi(colon + 1);
+	}
+	Tile* result = nullptr;
+	bool wildcard = *childName == '*';
+	for (auto node = children.begin(); node != children.end(); ++node)
+	{
+		if (*node && (wildcard || !stricmp((*node)->name.m_data, childName)) && !childIndex--)
+		{
+			result = *node;
+			break;
+		}
+	}
+	if (colon) *colon = ':';
+	return result;
+}
+
+void Tile::Value::SetFloat(float fltVal, bool bRemoveFromReactionMap)
+{
+	if (this->num != fltVal) {
+		this->num = fltVal;
+		this->Refresh(true);
+	}
+}
+
+TileMenu* TileMenu::GetMenuTile(const char* componentPath)
+{
+	char traitName[MAX_PATH];
+	sprintf(traitName, "&%s;", componentPath);
+	if (UInt32 menuID = Tile::TraitNameToID(traitName)) {
+		TileMenu** g_tileMenuArray = *(TileMenu***)0x106A7C0;
+		return g_tileMenuArray[menuID - 1001];
+	}
+	return nullptr;
+}
