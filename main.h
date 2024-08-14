@@ -56,7 +56,7 @@ DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 
-int g_version = 170;
+int g_version = 180;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -509,7 +509,7 @@ bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
 		PlayerCharacter* player = PlayerCharacter::GetSingleton();
 		Actor* actor = (Actor*)thisObj;
 		int level = ThisCall<int>(0x6F4CD0, actor);
-		int typeReward = CdeclCall<int>(0x5A3A70, actor->baseForm->typeID != kFormType_Creature, level);
+		int typeReward = CdeclCall<int>(0x5A3A70, actor->baseForm->typeID != kFormType_Creature ? 1 : 0, level);
 		double difficultyMult = CdeclCall<double>(0x585650, (float)typeReward, player->gameDifficulty);
 		*result = floor(difficultyMult);
 		if (IsConsoleMode()) {
