@@ -71,6 +71,24 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Hook_GetRepairList_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESForm* pForm = 0;
+
+	if (!ExtractArgs(EXTRACT_ARGS, &pForm)) return true;
+	pForm = pForm->TryGetREFRParent();
+	if (!pForm) {
+		if (!thisObj) return true;
+		pForm = thisObj->baseForm;
+	}
+	BGSRepairItemList* pRepairList = DYNAMIC_CAST(pForm, TESForm, BGSRepairItemList);
+	if (pRepairList && pRepairList->listForm) {
+		*((UInt32*)result) = pRepairList->listForm->refID;
+	}
+	return true;
+}
+
 bool Cmd_SetUIFloatGradual_Execute(COMMAND_ARGS)
 {
 	char tilePath[0x100];

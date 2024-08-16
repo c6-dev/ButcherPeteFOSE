@@ -132,6 +132,10 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 		info = cmdTableInterface->GetByOpcode(0x142A);
 		info->execute = Hook_ListAddReference_Execute;
 
+		// additional null check
+		info = cmdTableInterface->GetByOpcode(0x1405);
+		info->execute = Hook_GetRepairList_Execute;
+
 		// fix GetRadiationLevel not working on NPCs
 		info = cmdTableInterface->GetByOpcode(0x11F7);
 		info->eval = Hook_GetRadiationLevel_Eval;
