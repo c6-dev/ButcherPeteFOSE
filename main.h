@@ -71,6 +71,22 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+bool Hook_GetTeleportCell_Execute(COMMAND_ARGS)
+{
+	UInt32* refResult = (UInt32*)result;
+	*refResult = 0;
+
+	if (!thisObj)
+		return true;
+
+	ExtraTeleport* xTele = GetByTypeCast(thisObj->extraDataList, Teleport);
+	// parentCell will be null if linked door's cell is not currently loaded (e.g. most exterior cells)
+	if (xTele && xTele->data && xTele->data->linkedDoor && xTele->data->linkedDoor->parentCell) {
+		*refResult = xTele->data->linkedDoor->parentCell->refID;
+	}
+
+	return true;
+}
 bool Hook_GetRepairList_Execute(COMMAND_ARGS)
 {
 	*result = 0;
