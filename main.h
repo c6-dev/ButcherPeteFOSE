@@ -56,8 +56,9 @@ DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_FormatString);
 
-int g_version = 180;
+int g_version = 190;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -70,6 +71,45 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
+{
+	char buffer[0x100];
+	if (ExtractFormatStringArgs(0, buffer, EXTRACT_ARGS_EX, 12))
+	{
+		char* tempName = GetNextToken(buffer, '|');
+		if (!*tempName) return true;
+		char* altName = GetNextToken(tempName, '|');
+		TileMenu* menu;
+		Tile* component = nullptr;
+		char* slashPos = (char*)strchr(buffer, '\\');
+		if (slashPos)
+		{
+			*slashPos = 0;
+			menu = TileMenu::GetMenuTile(buffer);
+			if (!menu) return true;
+			const char* trait = nullptr;
+			component = menu->GetComponent(slashPos + 1, &trait);
+			if (trait) return true;
+		}
+		else
+		{
+			menu = TileMenu::GetMenuTile(buffer);
+			component = menu;
+		}
+		if (component)
+		{
+			component = menu->menu->AddTileFromTemplate(component, tempName);
+			if (component)
+			{
+				*result = 1;
+				if (*altName)
+					component->name.Set(altName);
+			}
+		}
+	}
+	return true;
+}
 
 bool Hook_GetTeleportCell_Execute(COMMAND_ARGS)
 {

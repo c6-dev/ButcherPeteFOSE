@@ -174,7 +174,10 @@ public:
 	// check 4 at 0xA1D9EC (when closing menu) :: set at 0x7036A4, 0x71204D
 	// check 8 at 0x712194 :: set 8 at 0xA1DB8F (when opening menu), 0x720B39
 
-	Tile* AddTileFromTemplate(Tile* destTile, const char* templateName);
+	__forceinline Tile* AddTileFromTemplate(Tile* destTile, const char* templateName)
+	{
+		return ThisCall<Tile*>(0xBFD250, this, destTile, templateName, 0);
+	}
 	void Close()
 	{
 		this->rootTile->SetFloat(6002, 1);
