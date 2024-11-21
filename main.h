@@ -58,7 +58,7 @@ DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_OneString);
 
-int g_version = 190;
+int g_version = 200;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
