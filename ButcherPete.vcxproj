@@ -165,6 +165,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\GameTiles.h" />
     <ClInclude Include="fose\GameTypes.h" />
     <ClInclude Include="fose\netimmerse.h" />
+    <ClInclude Include="fose\PluginAPI.h" />
     <ClInclude Include="fose\Utilities.h" />
     <ClInclude Include="fose\SafeWrite.h" />
     <ClInclude Include="havok.h" />

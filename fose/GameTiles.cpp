@@ -175,8 +175,7 @@ TileMenu* TileMenu::GetMenuTile(const char* componentPath)
 	char traitName[MAX_PATH];
 	sprintf(traitName, "&%s;", componentPath);
 	if (UInt32 menuID = Tile::TraitNameToID(traitName)) {
-		TileMenu** g_tileMenuArray = *(TileMenu***)0x106A7C0;
-		return g_tileMenuArray[menuID - 1001];
+		return CdeclCall<TileMenu*>(0xBEAF00, menuID);
 	}
 	return nullptr;
 }

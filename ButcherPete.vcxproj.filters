@@ -112,6 +112,9 @@
     <ClInclude Include="havok.h">
       <Filter>fose</Filter>
     </ClInclude>
+    <ClInclude Include="fose\PluginAPI.h">
+      <Filter>fose</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

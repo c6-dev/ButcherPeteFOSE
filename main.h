@@ -56,7 +56,7 @@ DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
-DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_FormatString);
+DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_OneString);
 
 int g_version = 190;
 
@@ -72,16 +72,21 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
 
+void SwapSlash(char* str) {
+	char* current_pos = strchr(str, '/');
+	for (char* p = current_pos; (current_pos = strchr(str, '/')) != NULL; *current_pos = '\\');
+}
 bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 {
-	char buffer[0x100];
-	if (ExtractFormatStringArgs(0, buffer, EXTRACT_ARGS_EX, 12))
+	char buffer[MAX_PATH];
+	if (ExtractArgs(EXTRACT_ARGS, &buffer))
 	{
 		char* tempName = GetNextToken(buffer, '|');
 		if (!*tempName) return true;
 		char* altName = GetNextToken(tempName, '|');
 		TileMenu* menu;
 		Tile* component = nullptr;
+		SwapSlash(buffer);
 		char* slashPos = (char*)strchr(buffer, '\\');
 		if (slashPos)
 		{
@@ -1521,6 +1526,7 @@ void WritePatches() {
 	SafeWrite16(0x6654DB, 0x9090); // nop 2b
 	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
+
 }
 
 void WriteEditorPatches()
