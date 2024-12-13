@@ -599,6 +599,17 @@ static struct NiUpdateData
 	UInt8 bUpdateGeomorphs;
 	UInt8 bUpdateShadowSceneNode;
 	UInt8 gap09[3];
+
+	NiUpdateData()
+		: fTime(0.0f),
+		isUpdateControllers(0),
+		bIsMultiThreaded(0),
+		byte06(0),
+		bUpdateGeomorphs(0),
+		bUpdateShadowSceneNode(0)
+	{
+		// gap09 is intentionally not initialized
+	}
 } DefaultNodeUpdateParams;
 
 class NiAVObject;

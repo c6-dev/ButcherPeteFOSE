@@ -370,6 +370,15 @@ static ParamInfo kParams_OneForm_ThreeInts[4] =
 	{	"int",	kParamType_Integer, 0	},
 };
 
+static ParamInfo kParams_OneForm_ThreeFloats[4] =
+{
+	{	"form",	kParamType_AnyForm,	0	},
+	{	"float",	kParamType_Float, 0	},
+	{	"float",	kParamType_Float, 0	},
+	{	"float",	kParamType_Float, 0	},
+};
+
+
 static ParamInfo kParams_OneForm_OneInt_OneFloat[3] =
 {
 	{ "Form", kParamType_AnyForm, 0 },

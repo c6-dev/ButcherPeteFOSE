@@ -1210,12 +1210,14 @@ public:
 	NiNode* GetNode2(const char* nodeName) const;
 	hkpRigidBody* GetRigidBody(const char* blockName) const;
 	bhkCharacterController* GetCharacterController() const;
+	void MoveToCell(TESObjectCELL* cell, const NiVector3& posVector);
+	void SetPos(const NiVector3& posVector);
 
 
 };
 STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0x01C);
 STATIC_ASSERT(sizeof(TESObjectREFR) == 0x60);
-
+extern TESObjectREFR* s_tempPosMarker;
 // 080
 class MobileObject : public TESObjectREFR
 {
@@ -1756,45 +1758,28 @@ public:
 	UInt32						unk0A0;				// 0A0
 	UInt32						unk0A4;				// 0A4
 	float						flt0A8;				// 0A8
-	LPCRITICAL_SECTION			cs0AC;				// 0AC
-	UInt32						unk0B0[5];			// 0B0
-	LPCRITICAL_SECTION			cs0C4;				// 0C4
-	UInt32						unk0C8[5];			// 0C8
-	LPCRITICAL_SECTION			cs0DC;				// 0DC
-	UInt32						unk0E0[5];			// 0E0
-	LPCRITICAL_SECTION			cs0F4;				// 0F4
-	UInt32						unk0F8[5];			// 0F8
-	LPCRITICAL_SECTION			cs10C;				// 10C
-	UInt32						unk110[5];			// 110
-	DList<void>					list124;			// 124
-	UInt32						lastTickCount;		// 130
-	UInt8						byte134;			// 134
-	UInt8						byte135;			// 135
-	UInt8						pad136[2];			// 136
-	UInt32						unk138;				// 138
-	void*						audioMgrThread;	// 13C
-	float						volumes[12];		// 140
-	//	0	Master
-	//	1	Foot
-	//	2	Voice
-	//	3	Effects
-	//	4	Music
-	//	5	Radio
-	UInt32						unk170;				// 170
-	UInt8						byte174;			// 174
-	UInt8						byte175;			// 175
-	UInt8						pad176[2];			// 176
-	UInt32						unk178;				// 178
-	UInt32						unk17C;				// 17C
-	UInt32						nextMapKey;			// 180
-	UInt8						byte184;			// 184
-	UInt8						pad185[3];			// 185
+	CRITICAL_SECTION			cs0AC;
+	CRITICAL_SECTION			cs0C4;
+	CRITICAL_SECTION			cs0DC;
+	CRITICAL_SECTION			cs0F4;
+	UInt32						lastTickCount;
+	BYTE						initedSounds;
+	BYTE						unk111;
+	UInt32						threadID;
+	void*						updateThread;
+	float						volumes[6];
+	UInt32						unk134;
+	UInt8						byte138;
+	UInt8						byte139;
+	UInt32						unk13C;
+	UInt32						unk140;
+	UInt32						soundCacheIndex;
 
 	__forceinline static BSAudioManager* Get() { return (BSAudioManager*)0x11791D8; }
 
 
 };
-static_assert(sizeof(BSAudioManager) == 0x188);
+static_assert(sizeof(BSAudioManager) == 0x148);
 
 
 // 04

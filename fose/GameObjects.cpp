@@ -44,6 +44,56 @@ bhkCharacterController* TESObjectREFR::GetCharacterController() const
 	return charCtrl;
 }
 
+void TESObjectREFR::MoveToCell(TESObjectCELL* cell, const NiVector3& posVector)
+{
+	TESObjectCELL* parentCell;
+	TESObjectREFR::RenderState* renderState; 
+	TESWorldSpace* worldSpace; 
+	parentCell = this->parentCell;
+	renderState = this->loadedData;
+	worldSpace = cell->worldSpace;
+	if (parentCell != nullptr && renderState != nullptr && renderState->rootNode != nullptr
+		&& (parentCell == cell || worldSpace != nullptr && parentCell->worldSpace == worldSpace))
+	{
+		TESObjectREFR::SetPos(posVector);
+	}
+	else
+	{
+		s_tempPosMarker->parentCell = cell;
+		s_tempPosMarker->rotX = this->rotX;
+		s_tempPosMarker->rotY = this->rotY;
+		s_tempPosMarker->rotZ = this->rotZ;
+		s_tempPosMarker->posX = posVector.x;
+		s_tempPosMarker->posY = posVector.y;
+		s_tempPosMarker->posZ = posVector.z;
+		CdeclCall<void>(0x528730, this, s_tempPosMarker, 0, 0, 0);
+	}
+}
+
+void TESObjectREFR::SetPos(const NiVector3& posVector)
+{
+		
+		ThisCall<void>(0x4EEAE0, this, &posVector);
+		MobileObject* mobileObj = DYNAMIC_CAST(this, TESObjectREFR, MobileObject);
+		if (mobileObj)
+		{
+			bhkCharacterController* ctrl = mobileObj->GetCharacterController();
+			if (ctrl && ctrl->chrContext.hkState != 4)
+			{
+					ThisCall<void>(0x4E6580, ctrl, &posVector);
+			}
+		}
+		NiNode* node = this->GetNiNode();
+		if (node)
+		{
+			node->m_localTranslate = posVector;
+			CdeclCall<void>(0x8DA3B0, node, 1);
+			NiUpdateData updateData;
+			ThisCall<void>(0x8264C0, node, &updateData);
+		}
+		
+}
+
 
 static PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x0107A104;
 

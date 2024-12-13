@@ -57,7 +57,9 @@ DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_FormatString);
-
+DEFINE_COMMAND_PLUGIN(MoveToCell, 1, kParams_OneForm_ThreeFloats);
+DEFINE_COMMAND_PLUGIN(GetGameVolume, 0, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(SetGameVolume, 0, kParams_OneInt_OneOptionalInt);
 int g_version = 200;
 
 char* s_strArgBuffer;
@@ -71,6 +73,51 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 char** defaultMarkerList = (char**)0xF6B13C;
 
 bool timePatched = false;
+
+TESObjectREFR* s_tempPosMarker;
+
+bool Cmd_GetGameVolume_Execute(COMMAND_ARGS)
+{
+	UInt32 volType;
+	if (ExtractArgs(EXTRACT_ARGS, &volType) && (volType <= 5)) {
+		*result = BSAudioManager::Get()->volumes[volType] * 100;
+		if (IsConsoleMode()) Console_Print("GetGameVolume %d >> %.2f", volType, *result);
+	}
+	return true;
+}
+
+bool Cmd_SetGameVolume_Execute(COMMAND_ARGS)
+{
+	UInt32 volType;
+	int volLevel = -1;
+	if (ExtractArgs(EXTRACT_ARGS, &volType, &volLevel) && (volType <= 5) && (volLevel <= 100)) {
+		BSAudioManager::Get()->volumes[volType] = (volLevel < 0) ? *(float*)(0x117910C + volType * 0xC) : (volLevel * 0.01F);
+	}
+	return true;
+}
+
+bool Cmd_MoveToCell_Execute(COMMAND_ARGS)
+{
+	TESObjectCELL* cell;
+	NiVector3 posVector;
+	if (s_tempPosMarker == nullptr) {
+		TESObjectREFR* ref = (TESObjectREFR*)GameHeapAlloc(sizeof(TESObjectREFR));
+		s_tempPosMarker = ThisCall<TESObjectREFR*>(0x4F9970, ref);
+		ThisCall(0x4553B0, s_tempPosMarker);
+	}
+	if (ExtractArgs(EXTRACT_ARGS, &cell, &posVector.x, &posVector.y, &posVector.z))
+	{
+		if NOT_ID(cell, Cell)
+		{
+			if NOT_ID(cell, WorldSpace)
+				return true;
+			cell = ((TESWorldSpace*)cell)->cell;
+		}
+		thisObj->MoveToCell(cell, posVector);
+		*result = 1;
+	}
+	return true;
+}
 
 void SwapSlash(char* str) {
 	char* current_pos = strchr(str, '/');
