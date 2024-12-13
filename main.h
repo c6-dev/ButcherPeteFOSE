@@ -56,7 +56,7 @@ DEFINE_COMMAND_PLUGIN(PlayIdleEx, 1, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetPlayedIdle, 1, NULL);
 DEFINE_COMMAND_PLUGIN(IsIdlePlayingEx, 1, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(SetUIFloatGradual, 0, kParams_OneString_ThreeOptionalFloats_OneOptionalInt);
-DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_OneString);
+DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_FormatString);
 
 int g_version = 200;
 
@@ -78,41 +78,41 @@ void SwapSlash(char* str) {
 }
 bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 {
-	char buffer[MAX_PATH];
-	if (ExtractArgs(EXTRACT_ARGS, &buffer))
+	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
+		return true;
+
+	char* tempName = GetNextToken(s_strValBuffer, '|');
+	if (!*tempName) return true;
+	char* altName = GetNextToken(tempName, '|');
+	TileMenu* menu;
+	Tile* component = nullptr;
+	SwapSlash(s_strValBuffer);
+	char* slashPos = (char*)strchr(s_strValBuffer, '\\');
+	if (slashPos)
 	{
-		char* tempName = GetNextToken(buffer, '|');
-		if (!*tempName) return true;
-		char* altName = GetNextToken(tempName, '|');
-		TileMenu* menu;
-		Tile* component = nullptr;
-		SwapSlash(buffer);
-		char* slashPos = (char*)strchr(buffer, '\\');
-		if (slashPos)
-		{
-			*slashPos = 0;
-			menu = TileMenu::GetMenuTile(buffer);
-			if (!menu) return true;
-			const char* trait = nullptr;
-			component = menu->GetComponent(slashPos + 1, &trait);
-			if (trait) return true;
-		}
-		else
-		{
-			menu = TileMenu::GetMenuTile(buffer);
-			component = menu;
-		}
+		*slashPos = 0;
+		menu = TileMenu::GetMenuTile(s_strValBuffer);
+		if (!menu) return true;
+		const char* trait = nullptr;
+		component = menu->GetComponent(slashPos + 1, &trait);
+		if (trait) return true;
+	}
+	else
+	{
+		menu = TileMenu::GetMenuTile(s_strValBuffer);
+		component = menu;
+	}
+	if (component)
+	{
+		component = menu->menu->AddTileFromTemplate(component, tempName);
 		if (component)
 		{
-			component = menu->menu->AddTileFromTemplate(component, tempName);
-			if (component)
-			{
-				*result = 1;
-				if (*altName)
-					component->name.Set(altName);
-			}
+			*result = 1;
+			if (*altName)
+				component->name.Set(altName);
 		}
 	}
+	
 	return true;
 }
 
