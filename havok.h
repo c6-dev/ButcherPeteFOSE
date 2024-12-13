@@ -1031,11 +1031,22 @@ public:
 };
 STATIC_ASSERT(sizeof(bhkCharacterProxy) == 0x260);
 
+// 30 TODO
+class hkpCharacterContext : public hkReferencedObject
+{
+public:
+	UInt32						unk08;			// 08
+	void						*stateMngr;		// 0C
+	UInt32						hkState;		// 10
+	UInt32						unk14[7];		// 14
+};
+
 // 0x4F0 TODO
 class bhkCharacterController : public bhkCharacterProxy
 {
 public:
-	UInt32 unkC[(0x34C - 0x260) >> 2];
+	hkpCharacterContext	chrContext;
+	UInt32 unkC[(0x34C - 0x290) >> 2];
 	UInt32 wantState;
 	UInt32 unk354[0x38 >> 2];
 	hkVector4 velocity;
