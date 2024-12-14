@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 /**** base opcodes
  *	
  *	10	begin
@@ -250,71 +248,3 @@ struct CommandMetadata
 	UInt32				parentPlugin;
 	CommandReturnType	returnType;
 };
-
-class CommandTable
-{
-public:
-	CommandTable();
-	~CommandTable();
-
-	static void	Init(void);
-
-	void	Read(CommandInfo * start, CommandInfo * end);
-	void	Add(CommandInfo * info, CommandReturnType retnType = kRetnType_Default, UInt32 parentPluginOpcodeBase = 0);
-	void	PadTo(UInt32 id, CommandInfo * info = NULL);
-	bool	Replace(UInt32 opcodeToReplace, CommandInfo* replaceWith);
-
-	CommandInfo *	GetStart(void)	{ return &m_commands[0]; }
-	CommandInfo *	GetEnd(void)	{ return GetStart() + m_commands.size(); }
-	CommandInfo *	GetByName(const char * name);
-	CommandInfo *	GetByOpcode(UInt32 opcode);
-
-	void	SetBaseID(UInt32 id)	{ m_baseID = id; m_curID = id; }
-	UInt32	GetMaxID(void)			{ return m_baseID + m_commands.size(); }
-	void	SetCurID(UInt32 id)		{ m_curID = id; }
-	UInt32	GetCurID(void)			{ return m_curID; }
-
-	void	Dump(void);
-	void	DumpAlternateCommandNames(void);
-	void	DumpCommandDocumentation(UInt32 startWithID = kFoseOpCodeStart);
-
-	CommandReturnType	GetReturnType(const CommandInfo * cmd);
-	void				SetReturnType(UInt32 opcode, CommandReturnType retnType);
-
-	UInt32				GetRequiredFOSEVersion(const CommandInfo * cmd);
-	PluginInfo *		GetParentPlugin(const CommandInfo * cmd);
-
-private:
-	typedef std::vector <CommandInfo>				CommandList;
-	typedef std::map <UInt32, CommandMetadata>		CmdMetadataList;
-	typedef std::map <UInt32, CommandReturnType>	OpcodeReturnTypeMap;
-	typedef std::map <UInt32, UInt32>				OpcodeToPluginMap;
-
-	CommandList		m_commands;
-	CmdMetadataList	m_metadata;
-
-	UInt32		m_baseID;
-	UInt32		m_curID;
-
-	// todo: combine these in to a single struct
-	//OpcodeReturnTypeMap	m_returnTypes;		// maps opcode to return type, only string/array-returning cmds included
-	//OpcodeToPluginMap	m_opcodesByPlugin;	// maps opcode to owning plugin opcode base
-
-	std::vector<UInt32>	m_opcodesByRelease;	// maps an NVSE major version # to opcode of first command added to that release, beginning with v0008
-
-	void	RecordReleaseVersion(void);
-	void	RemoveDisabledPlugins(void);
-};
-
-extern CommandTable	g_consoleCommands;
-extern CommandTable	g_scriptCommands;
-
-namespace PluginAPI {
-	const CommandInfo* GetCmdTblStart();
-	const CommandInfo* GetCmdTblEnd();
-	const CommandInfo* GetCmdByOpcode(UInt32 opcode);
-	const CommandInfo* GetCmdByName(const char* name);
-	UInt32 GetCmdRetnType(const CommandInfo* cmd);
-	UInt32 GetReqVersion(const CommandInfo* cmd);
-	const PluginInfo* GetCmdParentPlugin(const CommandInfo* cmd);
-}

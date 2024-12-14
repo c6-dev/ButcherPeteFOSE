@@ -76,34 +76,6 @@ private:
 void CreateTempHook(UInt32 hookAddr, UInt32 jmpAddr);
 bool DeleteTempHook(UInt32 hookAddr);
 
-namespace MersenneTwister
-{
-
-/* initializes mt[N] with a seed */
-void init_genrand(unsigned long s);
-
-/* initialize by an array with array-length */
-void init_by_array(unsigned long init_key[], int key_length);
-
-/* generates a random number on [0,0xffffffff]-interval */
-unsigned long genrand_int32(void);
-
-/* generates a random number on [0,0x7fffffff]-interval */
-long genrand_int31(void);
-
-/* generates a random number on [0,1]-real-interval */
-double genrand_real1(void);
-
-/* generates a random number on [0,1)-real-interval */
-double genrand_real2(void);
-
-/* generates a random number on (0,1)-real-interval */
-double genrand_real3(void);
-
-/* generates a random number on [0,1) with 53-bit resolution*/
-double genrand_res53(void);
-
-};
 
 // thread-safe template versions of ThisStdCall()
 
@@ -124,7 +96,6 @@ __forceinline T_Ret CdeclCall(UInt32 _addr, Args ...args)
 {
 	return ((T_Ret(__cdecl*)(Args...))_addr)(std::forward<Args>(args)...);
 }
-
 
 
 #define GameHeapAlloc(size) ThisCall<void*>(0x86B930, (void*)0x1090A78, size)

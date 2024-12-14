@@ -64,7 +64,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\common;$(SolutionDir)\fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)common;$(SolutionDir)fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;FOSE_PLUGIN_EXAMPLE_EXPORTS;FALLOUT_VERSION=0x01070030;RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>
       </MinimalRebuild>
@@ -73,7 +73,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <ForcedIncludeFiles>fose_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -90,13 +90,13 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\common;$(SolutionDir)\fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)common;$(SolutionDir)fose;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FOSE_PLUGIN_EXAMPLE_EXPORTS;FALLOUT_VERSION=0x01070030;RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <ForcedIncludeFiles>fose_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MinimalRebuild />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -117,13 +117,9 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="common\common.vcxproj">
-      <Project>{20c6411c-596f-4b85-be4e-8bc91f59d8a6}</Project>
-      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="code\main.cpp" />
+    <ClCompile Include="common\IDebugLog.cpp" />
+    <ClCompile Include="common\IErrors.cpp" />
     <ClCompile Include="fose\GameAPI.cpp" />
     <ClCompile Include="fose\GameBSExtraData.cpp" />
     <ClCompile Include="fose\GameData.cpp" />
@@ -136,6 +132,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="fose\GameSettings.cpp" />
     <ClCompile Include="fose\GameTiles.cpp" />
     <ClCompile Include="fose\GameTypes.cpp" />
+    <ClCompile Include="fose\havok.cpp" />
     <ClCompile Include="fose\netimmerse.cpp" />
     <ClCompile Include="fose\Utilities.cpp" />
     <ClCompile Include="fose\SafeWrite.cpp" />
@@ -145,11 +142,15 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="havok.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="fn_destruction_data.h" />
+    <ClInclude Include="code\fn_destruction_data.h" />
+    <ClInclude Include="code\main.h" />
+    <ClInclude Include="common\IDebugLog.h" />
+    <ClInclude Include="common\IErrors.h" />
+    <ClInclude Include="common\IPrefix.h" />
+    <ClInclude Include="common\ITypes.h" />
+    <ClInclude Include="fose\CommandTable.h" />
     <ClInclude Include="fose\GameAPI.h" />
     <ClInclude Include="fose\GameBSExtraData.h" />
     <ClInclude Include="fose\GameData.h" />
@@ -164,12 +165,12 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\GameSettings.h" />
     <ClInclude Include="fose\GameTiles.h" />
     <ClInclude Include="fose\GameTypes.h" />
+    <ClInclude Include="fose\havok.h" />
     <ClInclude Include="fose\netimmerse.h" />
+    <ClInclude Include="fose\ParamInfos.h" />
     <ClInclude Include="fose\PluginAPI.h" />
     <ClInclude Include="fose\Utilities.h" />
     <ClInclude Include="fose\SafeWrite.h" />
-    <ClInclude Include="havok.h" />
-    <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

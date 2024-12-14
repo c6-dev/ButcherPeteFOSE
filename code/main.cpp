@@ -9,7 +9,7 @@
 #include "SafeWrite.h"
 #include "GameMenus.h"
 #include "main.h"
-#include "ParamInfos.h"
+#include "fose_version.h"
 
 IDebugLog		gLog("butcher_pete.log");
 
@@ -45,7 +45,7 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 	
 	return true;
 }
-const char* fnName = "GetButcherPeteVersion";
+
 
 bool FOSEPlugin_Load(const FOSEInterface * fose)
 {

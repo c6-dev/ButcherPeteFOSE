@@ -4,6 +4,9 @@
     <Filter Include="fose">
       <UniqueIdentifier>{73718d94-89f5-4587-a383-7f1630b888ce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{177f0224-8768-4111-8b06-dc3c64d4ae96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fose\GameAPI.cpp">
@@ -46,14 +49,22 @@
       <Filter>fose</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.c" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="fose\GameTiles.cpp">
       <Filter>fose</Filter>
     </ClCompile>
     <ClCompile Include="fose\netimmerse.cpp">
       <Filter>fose</Filter>
     </ClCompile>
-    <ClCompile Include="havok.cpp" />
+    <ClCompile Include="common\IDebugLog.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\IErrors.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="fose\havok.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="code\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -98,7 +109,6 @@
     <ClInclude Include="fose\Utilities.h">
       <Filter>fose</Filter>
     </ClInclude>
-    <ClInclude Include="main.h" />
     <ClInclude Include="fose\GameMenus.h">
       <Filter>fose</Filter>
     </ClInclude>
@@ -108,13 +118,32 @@
     <ClInclude Include="fose\netimmerse.h">
       <Filter>fose</Filter>
     </ClInclude>
-    <ClInclude Include="fn_destruction_data.h" />
-    <ClInclude Include="havok.h">
-      <Filter>fose</Filter>
-    </ClInclude>
     <ClInclude Include="fose\PluginAPI.h">
       <Filter>fose</Filter>
     </ClInclude>
+    <ClInclude Include="common\IDebugLog.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\IErrors.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\IPrefix.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\ITypes.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\CommandTable.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\ParamInfos.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\havok.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="code\fn_destruction_data.h" />
+    <ClInclude Include="code\main.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
