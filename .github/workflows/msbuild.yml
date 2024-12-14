@@ -39,13 +39,13 @@ jobs:
     - name: Publish Release
       uses: actions/upload-artifact@v3
       with:
-        name: ButcherPeteFOSE-Release-${{ artifact_timestamp }}
+        name: ButcherPeteFOSE-Release-${{ env.artifact_timestamp }}
         path: |
           Release\ButcherPete.dll
 
     - name: Publish Debug
       uses: actions/upload-artifact@v3
       with:
-        name: ButcherPeteFOSE-Debug-${{ artifact_timestamp }}
+        name: ButcherPeteFOSE-Debug-${{ env.artifact_timestamp }}
         path: |
           Debug\ButcherPete.dll
