@@ -30,9 +30,10 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 		_ERROR("German No-Gore version is not supported");
 		return false;
 	}
-	if(fose->foseVersion < FOSE_VERSION_INTEGER)
+	if(fose->foseVersion < 0x1030020)
 	{
-		_ERROR("FOSE version too old (got %08X expected at least %08X)", fose->foseVersion, FOSE_VERSION_INTEGER);
+		MessageBoxA(nullptr, "ButcherPete FOSE plugin requires FOSE version v1.3b2.\n\nInstalled version is too old.", "ButcherPete FOSE", 0);
+		_ERROR("FOSE 1.3b2 is required for ButcherPete FOSE. Your version is %08X", fose->foseVersion);
 		return false;
 	}
 
