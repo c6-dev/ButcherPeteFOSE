@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include "havok.h"
 #include "fn_destruction_data.h"
+#include "GameSettings.h"
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 #undef MessageBoxEx
 
@@ -1560,6 +1561,13 @@ __declspec (naked) void GetMapMarkerHook() {
 		jmp GetMapMarker
 	}
 }
+void __fastcall SetTreeFullLODToINISetting(TESObjectCELL* cell)
+{
+	auto mgr = BSTreeManager::GetSingleton(true);
+	Setting* bForceFullLOD = (Setting*)0x1073C94;
+	mgr->isForceFullLOD = bForceFullLOD->data.i;
+	ThisCall<void>(0x4D8120, cell);
+}
 
 void WritePatches() {
 	s_strArgBuffer = (char*)malloc(0x4000);
@@ -1573,6 +1581,7 @@ void WritePatches() {
 	SafeWrite16(0x6654DB, 0x9090); // nop 2b
 	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
+	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
 
 }
 

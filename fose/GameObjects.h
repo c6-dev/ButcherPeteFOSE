@@ -1909,3 +1909,24 @@ struct AnimData
 	}
 };
 static_assert(sizeof(AnimData) == 0x130);
+
+class BSTreeManager
+{
+public:
+	virtual void Destructor();
+
+	NiRefObject* unk04;
+	void* materialProperty08;
+	void* alphaProperty0C;
+	void* bsxFlags;
+	float unk14;
+	UInt8 byte18;
+	UInt8 byte19;
+	UInt8 byte1A;
+	UInt8 isForceFullLOD;
+	UInt32 refTreeNodeMap;
+
+	static BSTreeManager* GetSingleton(bool bEnableCreation) { return CdeclCall<BSTreeManager*>(0x59BAA0, bEnableCreation); }
+};
+
+static_assert(sizeof(BSTreeManager) == 0x20);
