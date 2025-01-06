@@ -65,7 +65,7 @@ DEFINE_COMMAND_PLUGIN(SetClimateSunGlareTexture, 0, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(SetClimateSunTexture, 0, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(GetClimateTraitNumeric, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetClimateTraitNumeric, 0, kParams_OneForm_TwoInts);
-int g_version = 200;
+int g_version = 220;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
