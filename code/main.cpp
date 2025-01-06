@@ -118,6 +118,10 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(MoveToCell);
 	REG_CMD(GetGameVolume);
 	REG_CMD(SetGameVolume);
+	REG_CMD(SetClimateSunGlareTexture);
+	REG_CMD(SetClimateSunTexture);
+	REG_CMD(GetClimateTraitNumeric);
+	REG_CMD(SetClimateTraitNumeric);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

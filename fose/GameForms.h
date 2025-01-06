@@ -2838,16 +2838,31 @@ class TESLevItem;
 // TESWeather (2F4)
 class TESWeather;
 
-// TESClimate (58)
+struct WeatherEntry
+{
+	TESWeather* weather;
+	UInt32			chance;
+	TESGlobal* global;
+};
+typedef tList<WeatherEntry> WeatherTypes;
+
+// 58
 class TESClimate : public TESForm
 {
 public:
-	TESClimate();
-	~TESClimate();
+	TESModel			nightSkyModel;		// 18
+	WeatherTypes		weatherTypes;		// 30
+	TESTexture			sunTexture;			// 38
+	TESTexture			sunGlareTexture;	// 44
+	UInt8				sunriseBegin;		// 50
+	UInt8				sunriseEnd;			// 51
+	UInt8				sunsetBegin;		// 52
+	UInt8				sunsetEnd;			// 53
+	UInt8				volatility;			// 54
+	UInt8				phaseLength;		// 55
+	UInt8				pad56[2];			// 56
 
-	UInt32 unk018[(0x58-0x18) >> 2];		// 018
 };
-
 STATIC_ASSERT(sizeof(TESClimate) == 0x58);
 
 // TESRegion (38)

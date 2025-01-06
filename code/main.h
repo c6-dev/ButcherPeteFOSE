@@ -61,6 +61,10 @@ DEFINE_COMMAND_PLUGIN(AddTileFromTemplate, 0, kParams_FormatString);
 DEFINE_COMMAND_PLUGIN(MoveToCell, 1, kParams_OneForm_ThreeFloats);
 DEFINE_COMMAND_PLUGIN(GetGameVolume, 0, kParams_OneInt);
 DEFINE_COMMAND_PLUGIN(SetGameVolume, 0, kParams_OneInt_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(SetClimateSunGlareTexture, 0, kParams_OneForm_OneString);
+DEFINE_COMMAND_PLUGIN(SetClimateSunTexture, 0, kParams_OneForm_OneString);
+DEFINE_COMMAND_PLUGIN(GetClimateTraitNumeric, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetClimateTraitNumeric, 0, kParams_OneForm_TwoInts);
 int g_version = 200;
 
 char* s_strArgBuffer;
@@ -76,6 +80,102 @@ char** defaultMarkerList = (char**)0xF6B13C;
 bool timePatched = false;
 
 TESObjectREFR* s_tempPosMarker;
+
+bool Cmd_GetClimateTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESClimate* climate;
+	UInt32 traitID;
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID) && IS_TYPE(climate, TESClimate)) {
+		switch (traitID)
+		{
+		case 0:
+			*result = climate->sunriseBegin * 10;
+			break;
+		case 1:
+			*result = climate->sunriseEnd * 10;
+			break;
+		case 2:
+			*result = climate->sunsetBegin * 10;
+			break;
+		case 3:
+			*result = climate->sunsetEnd * 10;
+			break;
+		case 4:
+			*result = climate->volatility;
+			break;
+		case 5:
+			*result = climate->phaseLength >> 6;
+			break;
+		case 6:
+			*result = climate->phaseLength & 63;
+			break;
+		default:
+			break;
+		}
+		if (IsConsoleMode()) Console_Print("GetClimateTraitNumeric %d >> %.2f", traitID, *result);
+	}
+	return true;
+}
+
+bool Cmd_SetClimateTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESClimate* climate;
+	UInt32 traitID, val;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID, &val) && IS_TYPE(climate, TESClimate)) {
+		switch (traitID)
+		{
+		case 0:
+			climate->sunriseBegin = (val > 1430) ? 143 : (val / 10);
+			break;
+		case 1:
+			climate->sunriseEnd = (val > 1430) ? 143 : (val / 10);
+			break;
+		case 2:
+			climate->sunsetBegin = (val > 1430) ? 143 : (val / 10);
+			break;
+		case 3:
+			climate->sunsetEnd = (val > 1430) ? 143 : (val / 10);
+			break;
+		case 4:
+			climate->volatility = (val > 255) ? 255 : val;
+			break;
+		case 5:
+			climate->phaseLength = (climate->phaseLength & 63) + ((val > 3) ? 192 : (val << 6));
+			break;
+		case 6:
+			climate->phaseLength = (climate->phaseLength & 192) + ((val > 63) ? 63 : val);
+			break;
+		default:
+			break;
+		}
+	}
+	return true;
+}
+
+bool Cmd_SetClimateSunTexture_Execute(COMMAND_ARGS)
+{
+	TESClimate* climate;
+	char path[MAX_PATH];
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate)) {
+		climate->sunTexture.ddsPath.Set(path);
+		*result = 1;
+	}
+	return true;
+}
+
+bool Cmd_SetClimateSunGlareTexture_Execute(COMMAND_ARGS)
+{
+	TESClimate* climate;
+	char path[MAX_PATH];
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate)) {
+		climate->sunGlareTexture.ddsPath.Set(path);
+		*result = 1;
+	}
+	return true;
+}
 
 bool Cmd_GetGameVolume_Execute(COMMAND_ARGS)
 {
