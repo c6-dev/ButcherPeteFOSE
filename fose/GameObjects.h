@@ -1449,14 +1449,53 @@ public:
 
 STATIC_ASSERT(offsetof(Actor, cvOwner) == 0x0A0);
 STATIC_ASSERT(sizeof(Actor) == 0x1A0);
+class BipedAnim {
+public:
+	enum eOptionalBoneType {
+		kOptionalBone_Bip01Head = 0,
+		kOptionalBone_Weapon = 1,
+		kOptionalBone_Bip01LForeTwist = 2,
+		kOptionalBone_Bip01Spine2 = 3,
+		kOptionalBone_Bip01Neck1 = 4,
+	};
 
+	// 008
+	struct OptionalBone
+	{
+		bool	bExists;
+		NiNode* pBone;
+	};
+
+	// 010
+	struct VB01Data
+	{
+		union
+		{
+			TESForm* pItem;
+			TESObjectARMO* pArmor;
+			TESObjectWEAP* pWeapon;
+			TESRace* pRace;
+		};
+		TESModelTextureSwap* pModelTexture;
+		NiNode* pBoneNode;
+		UInt32 unk00C;
+	};
+
+	NiNode* pRoot;
+	OptionalBone kBones[5];
+	VB01Data slotData[20];
+	VB01Data unk016C[20];
+	UInt32 unk2AC;
+	Actor* pActor;
+};
+STATIC_ASSERT(sizeof(BipedAnim) == 0x2B4);
 class Character : public Actor
 {
 public:
 	Character();
 	~Character();
 
-	float fTotalArmorDR;
+	BipedAnim* bipedAnim;
 	float fTotalArmorDT;
 	UInt8 bIsTrespassing;
 	UInt8 bIsGuard;
@@ -1473,6 +1512,8 @@ struct CompassTarget
 	UInt8 isUndetected;
 };
 STATIC_ASSERT(sizeof(CompassTarget) == 8);
+
+
 
 class PlayerCharacter : public Character
 {
@@ -1511,7 +1552,7 @@ public:
 	UInt32								disabledControlFlags;			// 5DC
 	UInt32								unk5E0;							// 5E0
 	UInt32								unk5E4;							// 5E4
-	UInt32								unk5E8;							// 5E8
+	BipedAnim*							pBipedAnims1st;					// 5E8
 	UInt32								unk5EC;							// 5EC
 	NiNode								* unk5F0;						// 5F0
 	float								eyeHeight;						// 5F4

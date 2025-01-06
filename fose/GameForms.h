@@ -326,7 +326,8 @@ enum ObjectVtbl
 	kVtbl_BSFadeNode = 0xE8FBC8,
 	kVtbl_bhkNiCollisionObject = 0xE328A4,
 	kVtbl_NiAVObject = 0xE20B2C,
-	kVtbl_bhkSimpleShapePhantom = 0xDCE334
+	kVtbl_bhkSimpleShapePhantom = 0xDCE334,
+	kVtbl_NiNode = 0xE213CC
 };
 
 #define IS_TYPE(form, type) (*(UInt32*)form == kVtbl_##type)

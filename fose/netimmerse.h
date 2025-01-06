@@ -706,7 +706,7 @@ public:
 		kNiFlag_HighDetail = 0x1000000,
 		kNiFlag_ForceUpdate = 0x2000000,
 		kNiFlag_PreProcessedNode = 0x4000000,
-		kNiFlag_UnkBit27 = 0x8000000,
+		kNiFlag_PlayerBone = 0x8000000,
 		kNiFlag_UnkBit28 = 0x10000000,
 		kNiFlag_UnkBit29 = 0x20000000,
 		kNiFlag_UnkBit30 = 0x40000000,
@@ -779,6 +779,7 @@ public:
 	NiTArray<NiAVObject*>	m_children;		// 9C
 
 	NiAVObject* GetBlock(const char* blockName);
+	NiAVObject* GetBip01();
 
 };
 STATIC_ASSERT(sizeof(NiNode) == 0xAC);

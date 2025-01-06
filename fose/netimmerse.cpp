@@ -330,6 +330,19 @@ bool NiMatrix3::Inverse(NiMatrix3& inv) const {
 
 }
 
+ NiAVObject* NiNode::GetBip01()
+ {
+	 if (this->m_children.Length() > 0) {
+		 for (int i = 0; i < this->m_children.Length(); i++) {
+			 NiAVObject* obj = this->m_children[i];
+			 if (obj && obj->m_blockName != nullptr && strcmp(obj->m_blockName, "Bip01") == 0) {
+				 return obj;
+			 }
+		 }
+	 }
+	 return nullptr;
+ }
+
  char* NiGlobalStringTable::AddString(const char* string) {
 	 return CdeclCall<char*>(0x8242A0, string);
  }

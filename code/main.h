@@ -532,8 +532,27 @@ bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sour
 		NiAVObject* soundObj;
 		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
 		{
-			if (!(gameSound = sndIter.Get()) ||  strcmp(soundPath, gameSound->filePath) != 0 || !(soundObj = playingObjMap->Lookup(sndIter.Key())) || (soundObj->GetParentRef() != sourceRef))
+			gameSound = sndIter.Get();
+			if (!gameSound || strcmp(soundPath, gameSound->filePath) != 0) {
 				continue;
+			}
+			soundObj = playingObjMap->Lookup(sndIter.Key());
+			if (!soundObj) {
+				continue;
+			}
+			if (sourceRef->refID == 0x14) { // player
+				NiNode* node = IS_TYPE(soundObj, BSFadeNode) ? (BSFadeNode*)soundObj : (NiNode*)soundObj;
+				NiAVObject* root = node->GetBip01(); 
+				if (!root || (root->m_flags & NiAVObject::kNiFlag_PlayerBone) == 0) {
+					continue;
+				}
+				
+			} else {
+				TESObjectREFR* parentRef = soundObj->GetParentRef();
+				if (!parentRef || parentRef != sourceRef) {
+					continue;
+				}
+			}
 			if (!doStop) return true;
 			if (fadeOutTime == -1) {
 				gameSound->stateFlags &= 0xFFFFFF0F;
@@ -1568,6 +1587,27 @@ void __fastcall SetTreeFullLODToINISetting(TESObjectCELL* cell)
 	mgr->isForceFullLOD = bForceFullLOD->data.i;
 	ThisCall<void>(0x4D8120, cell);
 }
+void MarkNode(NiNode* node) {
+	if (node) {
+		node->m_flags |= NiAVObject::kNiFlag_PlayerBone;
+		if (node->IsNiNode()) {
+			for (int i = 0; i < node->m_children.Length(); i++) {
+				NiAVObject* node3 = node->m_children[i];
+				MarkNode((NiNode*)node3);
+			} 
+		}
+	}
+}
+
+void __stdcall MarkPlayerBones() {
+	StdCall<void>(0x619EB0);
+	PlayerCharacter* player = PlayerCharacter::GetSingleton();
+	NiNode* firstPerson = player->pBipedAnims1st->pRoot;
+	if (firstPerson) firstPerson->m_flags |= NiAVObject::kNiFlag_PlayerBone;
+	NiNode* thirdPerson = player->bipedAnim->pRoot;
+	if (thirdPerson) thirdPerson->m_flags |= NiAVObject::kNiFlag_PlayerBone;
+	 
+}
 
 void WritePatches() {
 	s_strArgBuffer = (char*)malloc(0x4000);
@@ -1582,6 +1622,7 @@ void WritePatches() {
 	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
 	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
+	WriteRelCall(0x76FA6A, (UInt32)MarkPlayerBones);
 
 }
 

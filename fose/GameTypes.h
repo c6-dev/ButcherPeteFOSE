@@ -868,6 +868,7 @@ template <typename T_Data>
 
 		public:
 			explicit operator bool() const { return count != 0; }
+			bool End() const { return !count; }
 			void operator++()
 			{
 				pData++;
