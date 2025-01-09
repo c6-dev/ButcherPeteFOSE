@@ -1971,3 +1971,26 @@ public:
 };
 
 static_assert(sizeof(BSTreeManager) == 0x20);
+
+class Sky
+{
+public:
+	virtual Sky* Destructor(bool doFree);
+
+	NiNode* niNode004;					// 004
+	NiNode* niNode008;					// 008
+	TESClimate* currClimate;			// 00C
+	TESWeather* currWeather;			// 010
+	TESWeather* transWeather;			// 014	Previous weather, gradually fading, on weather transition
+	TESWeather* defaultWeather;			// 018	Picked from currClimate weathers list. currClimate is set to this unless there's a regional weather
+	TESWeather* overrideWeather;		// 01C
+	BYTE		unk020[(0x12C - 0x20)];	// 020
+
+	__forceinline static Sky* Get() { return *(Sky**)0x107A0E8; }
+
+	__forceinline void RefreshClimate(TESClimate* climate, bool immediate = true)
+	{
+		ThisCall(0x57E3B0, this, climate, immediate);
+	}
+};
+static_assert(sizeof(Sky) == 0x12C);

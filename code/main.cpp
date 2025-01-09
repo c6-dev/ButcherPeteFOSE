@@ -122,6 +122,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetClimateSunTexture);
 	REG_CMD(GetClimateTraitNumeric);
 	REG_CMD(SetClimateTraitNumeric);
+	REG_CMD(RefreshCurrentClimate);
+	REG_CMD(GetCurrentClimate);
+	REG_CMD(SetCurrentClimate);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

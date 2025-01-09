@@ -65,6 +65,9 @@ DEFINE_COMMAND_PLUGIN(SetClimateSunGlareTexture, 0, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(SetClimateSunTexture, 0, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(GetClimateTraitNumeric, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetClimateTraitNumeric, 0, kParams_OneForm_TwoInts);
+DEFINE_COMMAND_PLUGIN(RefreshCurrentClimate, 0, NULL);
+DEFINE_COMMAND_PLUGIN(GetCurrentClimate, 0, NULL);
+DEFINE_COMMAND_PLUGIN(SetCurrentClimate, 0, kParams_OneForm);
 int g_version = 220;
 
 char* s_strArgBuffer;
@@ -80,6 +83,38 @@ char** defaultMarkerList = (char**)0xF6B13C;
 bool timePatched = false;
 
 TESObjectREFR* s_tempPosMarker;
+
+bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
+{
+	Sky* currentSky = Sky::Get();
+	TESClimate* climate = currentSky->currClimate;
+	if (climate)
+		*(UInt32*)result = climate->refID;
+	if (IsConsoleMode()) {
+		Console_Print("GetCurrentClimate >> 0x%X %s", climate->refID, climate->GetEditorID());
+	}
+	return true;
+}
+
+bool Cmd_SetCurrentClimate_Execute(COMMAND_ARGS)
+{
+	TESClimate* climate;
+	if (ExtractArgs(EXTRACT_ARGS, &climate) && IS_TYPE(climate, TESClimate))
+	{
+		Sky* currentSky = Sky::Get();
+		currentSky->currClimate = climate;
+	}
+	return true;
+}
+
+bool Cmd_RefreshCurrentClimate_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	Sky* currentSky = Sky::Get();
+	currentSky->RefreshClimate(currentSky->currClimate, true);
+	*result = 1;
+	return true;
+}
 
 bool Cmd_GetClimateTraitNumeric_Execute(COMMAND_ARGS)
 {
