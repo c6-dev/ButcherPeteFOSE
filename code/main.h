@@ -68,7 +68,7 @@ DEFINE_COMMAND_PLUGIN(SetClimateTraitNumeric, 0, kParams_OneForm_TwoInts);
 DEFINE_COMMAND_PLUGIN(RefreshCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetCurrentClimate, 0, kParams_OneForm);
-int g_version = 220;
+int g_version = 230;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
