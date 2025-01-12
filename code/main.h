@@ -1758,7 +1758,14 @@ void __stdcall MarkPlayerBones() {
 	if (thirdPerson) thirdPerson->m_flags |= NiAVObject::kNiFlag_PlayerBone;
 	 
 }
-
+void __fastcall SetCellImageSpaceHook(TESObjectCELL* cell, void* edx, TESImageSpace* imageSpace) {
+	ThisCall<void>(0x4D36C0, cell, imageSpace);
+	PlayerCharacter* player = PlayerCharacter::GetSingleton();
+	if (player->parentCell != nullptr && player->parentCell == cell) {
+		CdeclCall<void>(0xAD5900, imageSpace->fTraitValues);
+	}
+	
+}
 void WritePatches() {
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
@@ -1773,6 +1780,7 @@ void WritePatches() {
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
 	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
 	WriteRelCall(0x76FA6A, (UInt32)MarkPlayerBones);
+	WriteRelCall(0x51F0B0, (UInt32)SetCellImageSpaceHook);
 
 }
 

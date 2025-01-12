@@ -3558,7 +3558,12 @@ public:
 	TESImageSpace();
 	~TESImageSpace();
 
-	UInt32 unk018[(0xB0-0x18) >> 2];		// 018
+	float fTraitValues[33];		// 018
+	UInt32 unk9C;
+	UInt32 unkA0;
+	UInt32 unkA4;
+	UInt32 uiFlags;
+	UInt32 unkAC;
 };
 
 STATIC_ASSERT(sizeof(TESImageSpace) == 0xB0);
