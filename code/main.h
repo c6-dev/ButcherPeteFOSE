@@ -68,7 +68,9 @@ DEFINE_COMMAND_PLUGIN(SetClimateTraitNumeric, 0, kParams_OneForm_TwoInts);
 DEFINE_COMMAND_PLUGIN(RefreshCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetCurrentClimate, 0, kParams_OneForm);
-int g_version = 230;
+DEFINE_COMMAND_PLUGIN(GetCellImageSpace, 0, kParams_OneForm);
+
+int g_version = 240;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -84,6 +86,19 @@ bool timePatched = false;
 
 TESObjectREFR* s_tempPosMarker;
 
+bool Cmd_GetCellImageSpace_Execute(COMMAND_ARGS)
+{
+	TESObjectCELL* cell = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &cell) && IS_TYPE(cell, TESObjectCELL)) {
+		ExtraCellImageSpace* xCellIS = (ExtraCellImageSpace*)cell->extraDataList.GetByType(kExtraData_CellImageSpace);
+		if (xCellIS && xCellIS->imageSpace) { 
+			*(UInt32*)result = xCellIS->imageSpace->refID;
+			if (IsConsoleMode()) Console_Print("GetCellImageSpace >> 0x%X", *result);
+		}
+	}
+	return true;
+}
+
 bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
 {
 	Sky* currentSky = Sky::Get();
@@ -91,7 +106,7 @@ bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
 	if (climate)
 		*(UInt32*)result = climate->refID;
 	if (IsConsoleMode()) {
-		Console_Print("GetCurrentClimate >> 0x%X %s", climate->refID, climate->GetEditorID());
+		Console_Print("GetCurrentClimate >> 0x%X", climate->refID);
 	}
 	return true;
 }

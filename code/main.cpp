@@ -125,6 +125,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(RefreshCurrentClimate);
 	REG_CMD(GetCurrentClimate);
 	REG_CMD(SetCurrentClimate);
+	REG_CMD(GetCellImageSpace);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

@@ -986,7 +986,7 @@ public:
 	ExtraCellImageSpace();
 	virtual ~ExtraCellImageSpace();
 
-	UInt32	unk00C;		// 00C
+	TESImageSpace* imageSpace;		// 00C
 };
 
 // 014
