@@ -69,6 +69,7 @@ DEFINE_COMMAND_PLUGIN(RefreshCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(GetCurrentClimate, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetCurrentClimate, 0, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(GetCellImageSpace, 0, kParams_OneForm);
+DEFINE_COMMAND_PLUGIN(GetActiveMenuMode, 0, NULL);
 
 int g_version = 240;
 
@@ -85,6 +86,12 @@ char** defaultMarkerList = (char**)0xF6B13C;
 bool timePatched = false;
 
 TESObjectREFR* s_tempPosMarker;
+
+bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
+{
+	*result = CdeclCall<int>(0x6191A0);
+	return true;
+}
 
 bool Cmd_GetCellImageSpace_Execute(COMMAND_ARGS)
 {
