@@ -1,20 +1,23 @@
 #include "PluginAPI.h"
 #include "CommandTable.h"
-#include "GameAPI.h"
-#include "ParamInfos.h"
-#include "GameObjects.h"
-#include "GameRTTI.h"
-#include "GameExtraData.h"
-#include <string>
-#include "SafeWrite.h"
-#include "GameMenus.h"
 #include "main.h"
+#include "functions.h"
+#include "patches.h"
 #include "fose_version.h"
+
+#define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
 
 IDebugLog		gLog("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
+int g_version = 240;
+
+char* s_strArgBuffer;
+char* s_strValBuffer;
+
+CommandInfo* cmd_IsKeyPressed = nullptr;
+FOSECommandTableInterface* cmdTableInterface = nullptr;
 
 extern "C" {
 
@@ -127,6 +130,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetCurrentClimate);
 	REG_CMD(GetCellImageSpace);
 	REG_CMD(GetActiveMenuMode);
+
+	s_strArgBuffer = (char*)malloc(0x4000);
+	s_strValBuffer = (char*)malloc(0x10000);
 
 	if (fose->isEditor) {
 		WriteEditorPatches();

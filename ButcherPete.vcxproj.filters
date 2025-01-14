@@ -65,6 +65,8 @@
       <Filter>fose</Filter>
     </ClCompile>
     <ClCompile Include="code\main.cpp" />
+    <ClCompile Include="functions.cpp" />
+    <ClCompile Include="patches.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -142,8 +144,9 @@
     <ClInclude Include="fose\havok.h">
       <Filter>fose</Filter>
     </ClInclude>
-    <ClInclude Include="code\fn_destruction_data.h" />
     <ClInclude Include="code\main.h" />
+    <ClInclude Include="functions.h" />
+    <ClInclude Include="patches.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
