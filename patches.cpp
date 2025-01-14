@@ -71,6 +71,8 @@ const char* GetPackageTypeName(char type) {
 		return "Search For Attacker";
 	case 31:
 		return "Avoid Radiation";
+	default:
+		return "";
 	}
 	return "";
 }

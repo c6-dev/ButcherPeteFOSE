@@ -13,15 +13,16 @@ extern int g_version;
 
 extern char* s_strArgBuffer;
 extern char* s_strValBuffer;
-TESObjectREFR* s_tempPosMarker;
 
 extern std::unordered_map<UInt32, char*> markerIconMap;
 
 extern CommandInfo* cmd_IsKeyPressed;
 
-bool timePatched = false;
+static bool timePatched = false;
 
 const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
+
+TESObjectREFR* s_tempPosMarker;
 
 bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
@@ -215,7 +216,7 @@ bool Cmd_MoveToCell_Execute(COMMAND_ARGS)
 
 void SwapSlash(char* str) {
 	char* current_pos = strchr(str, '/');
-	for (char* p = current_pos; (current_pos = strchr(str, '/')) != NULL; *current_pos = '\\');
+	for (char* p = current_pos; (current_pos = strchr(str, '/')) != nullptr; *current_pos = '\\');
 }
 bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 {
@@ -497,6 +498,9 @@ bool Cmd_GetLightTraitNumeric_Execute(COMMAND_ARGS)
 			break;
 		case 6:
 			*result = light->fadeValue;
+			break;
+		default:
+			break;
 		}
 	}
 	return true;
@@ -555,7 +559,6 @@ bool Cmd_SetSystemColor_Execute(COMMAND_ARGS)
 bool Cmd_GetSystemColor_Execute(COMMAND_ARGS) {
 	*result = 0;
 	UInt32 type;
-	UInt8 color[3] = { 0, 0, 0 };
 	if (ExtractArgs(EXTRACT_ARGS, &type) && type > 0 && type <= 5) {
 		SystemColorManager* colorMgr = SystemColorManager::GetSingleton();
 		UInt32 color = (colorMgr->GetColor(type) >> 0x8);
@@ -604,6 +607,8 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 			case 8:
 				*result = rigidBody->m_motion.m_type;
 				break;
+			default:
+				break;
 			}
 		}
 	return true;
@@ -611,7 +616,7 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 
 
 
-bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sourceRef, float fadeOutTime)
+static bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sourceRef, float fadeOutTime)
 {
 	BSAudioManager* audioMngr = BSAudioManager::Get();
 	BSGameSound* gameSound;
@@ -723,13 +728,13 @@ bool Cmd_IsDLLLoaded_Execute(COMMAND_ARGS) {
 	*result = 0;
 	int checkOutsideOfGameFolder = 0;
 	char dllName[MAX_PATH];
-	char dllPath[MAX_PATH];
-	char fnvPath[MAX_PATH];
 	if (ExtractArgs(EXTRACT_ARGS, &dllName, &checkOutsideOfGameFolder)) {
 		strncat(dllName, ".dll", 4);
 		HMODULE module = GetModuleHandle(dllName);
 		if (module) {
 			if (!checkOutsideOfGameFolder) {
+				char dllPath[MAX_PATH];
+				char fnvPath[MAX_PATH];
 				GetModuleFileNameA(module, dllPath, MAX_PATH);
 				GetModuleFileNameA(NULL, fnvPath, MAX_PATH);
 				fnvPath[strlen(fnvPath) - 13] = '\0';
@@ -820,9 +825,7 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	int hotkeynum;
-	TESForm* itemform = NULL;
-	ExtraDataList* found = NULL;
-	ExtraHotkey* xHotkey = NULL;
+	TESForm* itemform = nullptr;
 
 	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum, &itemform))
 		return true;
@@ -832,6 +835,8 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
 		if (xChanges)
 		{
+			ExtraDataList* found = nullptr;
+			ExtraHotkey* xHotkey = nullptr;
 			// Remove the hotkey if it exists on another object.
 			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
 			{
@@ -848,14 +853,14 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 					}
 					if (found)
 						break;
-				};
+				}
 			}
 			if (found) {
 				found->RemoveByType(kExtraData_Hotkey);
-				found = NULL;
+				found = nullptr;
 			}
 
-			xHotkey = NULL;
+			xHotkey = nullptr;
 			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
 			{
 				if (itemIter->type && itemIter->type->refID == itemform->refID)
@@ -897,8 +902,6 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	int hotkeynum;
-	ExtraDataList* found = NULL;
-	ExtraHotkey* xHotkey = NULL;
 	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum))
 		return true;
 	if (--hotkeynum < 8)
@@ -907,6 +910,8 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
 		if (xChanges)
 		{
+			ExtraDataList* found = nullptr;
+			ExtraHotkey* xHotkey = nullptr;
 			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
 			{
 				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
@@ -938,7 +943,7 @@ bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS) {
 
 
 
-void SetMapMarkerIcon(TESObjectREFR* marker, char* iconPath) {
+static void SetMapMarkerIcon(TESObjectREFR* marker, char* iconPath) {
 	auto pos = markerIconMap.find(marker->refID);
 	char* pathCopy = new char[strlen(iconPath) + 1];
 	strcpy(pathCopy, iconPath);
@@ -1104,7 +1109,7 @@ bool Cmd_IsLoadDoor_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-bool IsUnlockedOrHacked(TESObjectREFR* obj) {
+static bool IsUnlockedOrHacked(TESObjectREFR* obj) {
 	BGSTerminal* terminal = (BGSTerminal*)obj->baseForm;
 	bool isUnlocked = (terminal->data.terminalFlags & 2) != 0;
 	ExtraTerminalState* xState = (ExtraTerminalState*)obj->extraDataList.GetByType(kExtraData_TerminalState);
@@ -1204,9 +1209,8 @@ bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
 
 bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
 	Actor* actor = (Actor*)thisObj;
-	TESObjectREFR* killer = nullptr;
 	if (actor->IsActor() && (actor->lifeState == 1 || actor->lifeState == 2)) {
-		killer = actor->killer;
+		TESObjectREFR* killer = actor->killer;
 		*(UInt32*)result = killer->refID;
 		if (IsConsoleMode()) {
 			Console_Print("GetKiller >> 0x%X", killer->refID);
@@ -1223,7 +1227,7 @@ bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS) {
 		if (keyCode < 255)
 		{
 			keyCode = ScancodeToVirtualKey(keyCode);
-			if (!(keyCode == NOKEY)) *result = (GetAsyncKeyState(keyCode) & 0x8000) ? true : false;
+			if (keyCode != NOKEY) *result = (GetAsyncKeyState(keyCode) & 0x8000) ? true : false;
 		}
 		else {
 			cmd_IsKeyPressed->eval(thisObj, (void*)keyCode, nullptr, result);
@@ -1290,20 +1294,20 @@ bool Cmd_MessageExAlt_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-TESForm* GetOwner(BaseExtraList* xDataList)
+static TESForm* GetOwner(BaseExtraList* xDataList)
 {
 	return ThisCall<TESForm*>(0x40ABC0, xDataList);
 }
 
-TESForm* GetCellOwner(TESObjectCELL* cell) {
+static TESForm* GetCellOwner(TESObjectCELL* cell) {
 	return ThisCall<TESForm*>(0x4DAAE0, cell);
 }
 
-SInt32 GetRequiredRank(BaseExtraList* xDataList) {
+static SInt32 GetRequiredRank(BaseExtraList* xDataList) {
 	return ThisCall<SInt32>(0x40AC00, xDataList);
 }
 
-SInt32 GetFactionRank(Actor* actor, TESFaction* faction) {
+static SInt32 GetFactionRank(Actor* actor, TESFaction* faction) {
 	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction, actor == PlayerCharacter::GetSingleton());
 }
 
@@ -1354,23 +1358,22 @@ bool Cmd_IsOwned_Execute(COMMAND_ARGS) {
 
 bool Cmd_AddItemOwnership_Execute(COMMAND_ARGS) {
 	*result = 0;
-	TESForm* pItem = NULL;
+	TESForm* pItem = nullptr;
 	float NumItems = 1;
-	TESForm* pOwner = NULL;
+	TESForm* pOwner = nullptr;
 	UInt32 Rank = 0;
-	TESForm* rcItem = NULL;
 
 	if (ExtractArgs(EXTRACT_ARGS, &pItem, &NumItems, &pOwner, &Rank)) {
-		if (!thisObj) return NULL;
+		if (!thisObj) return true;
 
 		TESScriptableForm* pScript = DYNAMIC_CAST(pItem, TESForm, TESScriptableForm);
-		if (pScript && !pScript->script) pScript = NULL;  // Only existing scripts matter
+		if (pScript && !pScript->script) pScript = nullptr;  // Only existing scripts matter
 
 
-		ExtraOwnership* pXOwner = NULL;
-		ExtraRank* pXRank = NULL;
-		ExtraDataList* pExtraDataList = NULL;
-		ExtraScript* pXScript = NULL;
+		ExtraOwnership* pXOwner = nullptr;
+		ExtraRank* pXRank = nullptr;
+		ExtraDataList* pExtraDataList = nullptr;
+		ExtraScript* pXScript = nullptr;
 
 		if (pOwner || Rank || pScript) {
 			pExtraDataList = ExtraDataList::Create();
@@ -1433,7 +1436,7 @@ bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 	return true;
 }
 
-float GetRadiationLevel(Actor* actor, bool scaleByResist)
+static float GetRadiationLevel(Actor* actor, bool scaleByResist)
 {
 	if (actor->IsActor()) {
 		if (HighProcess* hiProc = (HighProcess*)actor->baseProcess; hiProc && !hiProc->uiProcessLevel) {
@@ -1633,6 +1636,9 @@ bool Cmd_GetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 				break;
 			case 4:
 				*result = (int)destructible->data->stages[idx]->debrisCount;
+				break;
+			default:
+				break;
 			}
 	return true;
 }
@@ -1660,6 +1666,9 @@ bool Cmd_SetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 				break;
 			case 4:
 				destructible->data->stages[idx]->debrisCount = value;
+				break;
+			default:
+				break;
 			}
 	return true;
 }

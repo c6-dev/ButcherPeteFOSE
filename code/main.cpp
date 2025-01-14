@@ -5,9 +5,9 @@
 #include "patches.h"
 #include "fose_version.h"
 
-#define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name);
+#define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name)
 
-IDebugLog		gLog("butcher_pete.log");
+IDebugLog		g_log("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
