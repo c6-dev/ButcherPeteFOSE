@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "CommandTable.h"
 #include "GameAPI.h"
+#include "GameEffects.h"
 #include "GameObjects.h"
 #include "GameRTTI.h"
 #include "GameExtraData.h"
@@ -24,6 +25,22 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 TESObjectREFR* s_tempPosMarker;
 
+bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	MagicItem* magicItem = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &magicItem) && thisObj->IsActor()) {
+		Actor* actor = (Actor*)thisObj;
+		for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next) {
+			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !activeEff->bTerminated) {
+				*result = 1;
+				break;
+			}
+		}
+	}
+	if (IsConsoleMode()) Console_Print("IsSpellTargetAlt >> %.f", *result);
+	return true;
+}
 bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
 	*result = CdeclCall<int>(0x6191A0);

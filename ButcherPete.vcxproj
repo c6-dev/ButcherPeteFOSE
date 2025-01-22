@@ -142,8 +142,8 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </ForcedIncludeFiles>
     </ClCompile>
-    <ClCompile Include="functions.cpp" />
-    <ClCompile Include="patches.cpp" />
+    <ClCompile Include="code\functions.cpp" />
+    <ClCompile Include="code\patches.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\main.h" />
@@ -172,8 +172,8 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\PluginAPI.h" />
     <ClInclude Include="fose\Utilities.h" />
     <ClInclude Include="fose\SafeWrite.h" />
-    <ClInclude Include="functions.h" />
-    <ClInclude Include="patches.h" />
+    <ClInclude Include="code\functions.h" />
+    <ClInclude Include="code\patches.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

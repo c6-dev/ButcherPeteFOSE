@@ -1,28 +1,60 @@
 #pragma once
 
-// B0
-class EffectSetting : public TESForm
-{
-public:
-	EffectSetting();
-	~EffectSetting();
-
-	// bases
-	TESModel			model;			// 018
-	TESDescription		description;	// 030
-	TESFullName			fullName;		// 038
-	TESIcon				icon;			// 044
-
-};
-
-
-
+class MagicTarget;
+class MagicCaster;
+class MagicItem;
+class EffectItem;
 class ActiveEffect
 {
 public:
-	ActiveEffect();
-	~ActiveEffect();
+	/*000*/virtual void		Destroy(bool doFree);
+	/*004*/virtual ActiveEffect* Clone();
+	/*008*/virtual void		Unk_02();
+	/*00C*/virtual void		Unk_03(float arg);
+	/*010*/virtual void		SaveGame(UInt32 arg);
+	/*014*/virtual void		LoadGame(UInt32 arg);
+	/*018*/virtual void		Unk_06(UInt32 arg);
+	/*01C*/virtual void		Unk_07(UInt32 arg);
+	/*020*/virtual void		Unk_08(UInt32 arg);
+	/*024*/virtual void		Unk_09(UInt32 arg);
+	/*028*/virtual void		Unk_0A(UInt32 arg);
+	/*02C*/virtual void		CopyTo(ActiveEffect* _target);
+	/*030*/virtual bool		Unk_0C(UInt32 arg);
+	/*034*/virtual bool		Unk_0D(UInt32 arg);
+	/*038*/virtual bool		ResetCasterIfSame(MagicCaster* _caster);
+	/*03C*/virtual bool		Unk_0F();
+	/*040*/virtual void		Unk_10(UInt32 arg);
+	/*044*/virtual void		CopyFrom(ActiveEffect* from);
+	/*048*/virtual bool		Unk_12(UInt32 arg);
+	/*04C*/virtual bool		Unk_13(MagicTarget* _target);
+	/*050*/virtual void		Unk_14();
+	/*054*/virtual void		Unk_15();
+	/*058*/virtual void		Unk_16();
+
+	float			timeElapsed;		// 04
+	MagicItem*		magicItem;			// 08
+	EffectItem*		effectItem;		// 0C
+	bool			bActive;			// 10
+	bool			bApplied;			// 11
+	bool			byte12;				// 12
+	bool			bTerminated;		// 13 set to 1 when effect is to be removed
+	UInt8			byte14;				// 14
+	UInt8			pad15[3];			// 15
+	UInt32			flags;				// 18
+	float			magnitude;			// 1C - adjusted based on target?
+	float			duration;			// 20 - adjusted based on target?
+	MagicTarget*	target;			// 24
+	MagicCaster*	caster;			// 28
+	UInt32			spellType;			// 2C e.g. SpellItem::kType_Ability
+	void*			sound[3];				// 30
+	TESForm*		enchantObject;		// 3C	Object responsible for effect
+	tList<void>* list40;			// 40
+	UInt32			unk44;				// 44
+
+
 };
+
+STATIC_ASSERT(sizeof(ActiveEffect) == 0x48);
 
 class ValueModifierEffect : public ActiveEffect
 {
@@ -248,9 +280,3 @@ public:
 	~ValueAndConditionsEffect();
 };
 
-class VampirismEffect :: public ActiveEffect
-{
-public:
-	VampirismEffect();
-	~VampirismEffect();
-};

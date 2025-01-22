@@ -33,19 +33,41 @@ enum
 
 
 class Actor;
+class MagicCaster;
+class ActiveEffect;
 
-// 010
+// 10
 class MagicTarget
 {
 public:
-	MagicTarget();
-	~MagicTarget();
+	/*000*/virtual bool		ApplyEffect(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect, bool arg4);
+	/*004*/virtual Actor* GetActor();
+	/*008*/virtual tList<ActiveEffect>* GetEffectList();
+	/*00C*/virtual bool		Unk_03();
+	/*010*/virtual bool		CannotBeHit();
+	/*014*/virtual void		Unk_05(ActiveEffect* activeEffect);
+	/*018*/virtual void		Unk_06(ActiveEffect* activeEffect);
+	/*01C*/virtual void		Unk_07(MagicCaster* magicCaster, ActiveEffect* activeEffect);
+	/*020*/virtual void		Unk_08(MagicCaster* magicCaster, ActiveEffect* activeEffect);
+	/*024*/virtual float	GetEffectMagnitudeModifier(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect);
+	/*028*/virtual void		Unk_0A(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect, bool arg4);
+	/*02C*/virtual bool		Unk_0B(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect);
 
-	UInt32 vtabl;
-	UInt32 unk004[3];	// 004
+	struct SpellInfo
+	{
+		MagicItem* magItem;
+		MagicCaster* magCaster;
+		ActiveEffect* activeEff;
+	};
+
+	UInt8				byte04;		// 04
+	UInt8				byte05;		// 05
+	UInt8				pad06[2];	// 06
+	tList<SpellInfo>	spellInfos;	// 08
+
+	void RemoveEffect(EffectItem* effItem);
 };
-
-STATIC_ASSERT(sizeof(MagicTarget) == 0x010);
+static_assert(sizeof(MagicTarget) == 0x10);
 
 class TESPackageData
 {

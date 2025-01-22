@@ -130,6 +130,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetCurrentClimate);
 	REG_CMD(GetCellImageSpace);
 	REG_CMD(GetActiveMenuMode);
+	REG_CMD(IsSpellTargetAlt);
 
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);

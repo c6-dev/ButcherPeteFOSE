@@ -65,8 +65,8 @@
       <Filter>fose</Filter>
     </ClCompile>
     <ClCompile Include="code\main.cpp" />
-    <ClCompile Include="functions.cpp" />
-    <ClCompile Include="patches.cpp" />
+    <ClCompile Include="code\functions.cpp" />
+    <ClCompile Include="code\patches.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -145,8 +145,8 @@
       <Filter>fose</Filter>
     </ClInclude>
     <ClInclude Include="code\main.h" />
-    <ClInclude Include="functions.h" />
-    <ClInclude Include="patches.h" />
+    <ClInclude Include="code\functions.h" />
+    <ClInclude Include="code\patches.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
