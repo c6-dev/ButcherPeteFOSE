@@ -19,11 +19,24 @@ extern std::unordered_map<UInt32, char*> markerIconMap;
 
 extern CommandInfo* cmd_IsKeyPressed;
 
+extern TESClimate* s_forcedClimate;
+
 static bool timePatched = false;
 
 const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
 
 TESObjectREFR* s_tempPosMarker;
+
+bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESClimate* climate = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &climate) && (!climate || IS_TYPE(climate, TESClimate))) {
+		s_forcedClimate = climate;
+		*result = 1;
+	}
+	return true;
+}
 
 bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 {

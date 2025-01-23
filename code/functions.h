@@ -79,6 +79,7 @@ DEFINE_COMMAND_PLUGIN(SetNthDestructionStageExplosion, 0, kParams_OneForm_OneInt
 DEFINE_COMMAND_PLUGIN(GetNthDestructionStageDebris, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetNthDestructionStageDebris, 0, kParams_OneForm_OneInt_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(IsSpellTargetAlt, 1, kParams_OneMagicItem);
+DEFINE_COMMAND_PLUGIN(ForceClimate, 0, kParams_OneOptionalForm);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 
