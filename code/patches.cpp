@@ -174,9 +174,9 @@ void WritePatches() {
 	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
 	WriteRelCall(0x76FA6A, (UInt32)MarkPlayerBones);
 	WriteRelCall(0x51F0B0, (UInt32)SetCellImageSpaceHook);
-	WriteRelJump(0x440ED6, (UInt32)SetClimateHook);
-	WriteRelJump(0x530FE0, (UInt32)SetClimateHook);
-	WriteRelJump(0x7878CB, (UInt32)SetClimateHook);
+	WriteRelCall(0x440ED6, (UInt32)SetClimateHook);
+	WriteRelCall(0x530FE0, (UInt32)SetClimateHook);
+	WriteRelCall(0x7878CB, (UInt32)SetClimateHook);
 
 }
 
