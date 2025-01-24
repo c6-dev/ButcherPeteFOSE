@@ -100,7 +100,8 @@ bool Cmd_RefreshCurrentClimate_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	Sky* currentSky = Sky::Get();
-	currentSky->RefreshClimate(currentSky->currClimate, true);
+	TESClimate* climate = s_forcedClimate ? s_forcedClimate : currentSky->currClimate;
+	currentSky->RefreshClimate(climate, true);
 	*result = 1;
 	return true;
 }
