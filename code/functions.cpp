@@ -1764,3 +1764,16 @@ bool Cmd_GetButcherPeteVersion_Eval(COMMAND_ARGS_EVAL) {
 	*result = g_version;
 	return true;
 }
+
+bool Cmd_SetTextureSetTexture_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	BGSTextureSet* texSet = nullptr;
+	int mapID = -1;
+	char path[MAX_PATH];
+	if (ExtractArgs(EXTRACT_ARGS, &texSet, &mapID, &path) && (mapID >= 0 && mapID <= 5)) {
+		texSet->textures[mapID].ddsPath.Set(path);
+		*result = 1;
+	}
+	return true;
+};
