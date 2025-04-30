@@ -310,6 +310,12 @@ static ParamInfo kParams_OneForm[] =
 	{	"object",	kParamType_AnyForm,	0	},
 };
 
+static ParamInfo kParams_TwoForms[] =
+{
+	{	"object",	kParamType_AnyForm,	0	},
+	{	"object",	kParamType_AnyForm,	0	},
+};
+
 static ParamInfo kParams_OneOptionalForm[] =
 {
 	{	"object",	kParamType_AnyForm,	1	},

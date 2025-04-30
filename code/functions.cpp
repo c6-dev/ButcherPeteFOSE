@@ -27,6 +27,17 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 TESObjectREFR* s_tempPosMarker;
 
+bool Cmd_SetLandTextureTextureSet_Execute(COMMAND_ARGS)
+{
+	TESLandTexture* landTex = nullptr;
+	BGSTextureSet* texSet = nullptr;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &landTex, &texSet)) {
+		landTex->textureSet = texSet;
+	}
+	return true;
+}
+
 bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
 {
 	*result = 0;

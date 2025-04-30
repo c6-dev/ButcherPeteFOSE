@@ -2130,7 +2130,7 @@ public:
 	TESLandTexture();
 	~TESLandTexture();
 
-	UInt32	unk18;	// 18
+	BGSTextureSet	*textureSet;	// 18
 	UInt8	unk1C;	// 1C
 	UInt8	unk1D;	// 1D
 	UInt8	unk1E;	// 1E
