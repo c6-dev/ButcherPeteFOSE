@@ -34,6 +34,7 @@ bool Cmd_SetLandTextureTextureSet_Execute(COMMAND_ARGS)
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &landTex, &texSet)) {
 		landTex->textureSet = texSet;
+		*result = 1;
 	}
 	return true;
 }
