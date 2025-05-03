@@ -134,6 +134,8 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(ForceClimate);
 	REG_CMD(SetTextureSetTexture);
 	REG_CMD(SetLandTextureTextureSet);
+	REG_CMD(GetFormFlag);
+	REG_CMD(SetFormFlag);
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
 

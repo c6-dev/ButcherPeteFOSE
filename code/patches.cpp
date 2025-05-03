@@ -160,6 +160,12 @@ _declspec(naked) void uGridsLoadingCrashHook()
 	}
 }
 
+void __fastcall MarkRefAsModifiedHook(TESObjectREFR* refr, int edx, UInt32 flag)
+{
+	if (flag != 4 || refr->parentCell == nullptr || (refr->parentCell->flags & 0x400000) == 0) {
+		ThisCall(0x4542B0, refr, flag);
+	}
+}
 
 void WritePatches() {
 
@@ -171,12 +177,14 @@ void WritePatches() {
 	SafeWrite16(0x6654DB, 0x9090); // nop 2b
 	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
+
 	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
 	WriteRelCall(0x76FA6A, (UInt32)MarkPlayerBones);
 	WriteRelCall(0x51F0B0, (UInt32)SetCellImageSpaceHook);
 	WriteRelCall(0x440ED6, (UInt32)SetClimateHook);
 	WriteRelCall(0x530FE0, (UInt32)SetClimateHook);
 	WriteRelCall(0x7878CB, (UInt32)SetClimateHook);
+	SafeWrite32(0xDCEEC4, (UInt32)MarkRefAsModifiedHook); // make cells tagged with Unknown 23 not save ref positions
 
 }
 

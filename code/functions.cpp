@@ -27,6 +27,37 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 TESObjectREFR* s_tempPosMarker;
 
+bool Cmd_GetFormFlag_Execute(COMMAND_ARGS)
+{
+	TESForm* form = nullptr;
+	UInt32 flag;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &form, &flag) && (form->flags & flag))
+	{
+		*result = 1;
+	}
+	if (IsConsoleMode()) Console_Print("GetFormFlag >> %.f", *result);
+	return true;
+}
+
+bool Cmd_SetFormFlag_Execute(COMMAND_ARGS)
+{
+	TESForm* form;
+	UInt32 flag, inval;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &form, &flag, &inval))
+	{
+		if (inval) {
+			form->flags |= flag;
+		}
+		else {
+			form->flags &= ~flag;
+		}
+		*result = 1;
+	}
+	return true;
+}
+
 bool Cmd_SetLandTextureTextureSet_Execute(COMMAND_ARGS)
 {
 	TESLandTexture* landTex = nullptr;

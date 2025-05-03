@@ -82,6 +82,8 @@ DEFINE_COMMAND_PLUGIN(IsSpellTargetAlt, 1, kParams_OneMagicItem);
 DEFINE_COMMAND_PLUGIN(ForceClimate, 0, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(SetTextureSetTexture, 0, kParams_OneForm_OneInt_OneString);
 DEFINE_COMMAND_PLUGIN(SetLandTextureTextureSet, 0, kParams_TwoForms);
+DEFINE_COMMAND_PLUGIN(GetFormFlag, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetFormFlag, 0, kParams_OneForm_TwoInts);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 
