@@ -1283,11 +1283,14 @@ bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
 
 bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
 	Actor* actor = (Actor*)thisObj;
+	*result = 0;
 	if (actor->IsActor() && (actor->lifeState == 1 || actor->lifeState == 2)) {
 		TESObjectREFR* killer = actor->killer;
-		*(UInt32*)result = killer->refID;
-		if (IsConsoleMode()) {
-			Console_Print("GetKiller >> 0x%X", killer->refID);
+		if (killer != nullptr) {
+			*(UInt32*)result = killer->refID;
+			if (IsConsoleMode()) {
+				Console_Print("GetKiller >> 0x%X", killer->refID);
+			}
 		}
 	}
 
