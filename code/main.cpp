@@ -11,7 +11,7 @@ IDebugLog		g_log("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 271;
+int g_version = 272;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -136,6 +136,9 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetLandTextureTextureSet);
 	REG_CMD(GetFormFlag);
 	REG_CMD(SetFormFlag);
+	REG_CMD(GetMessageFlags);
+	REG_CMD(SetMessageFlags);
+	REG_CMD(SetMessageDisplayTime);
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
 
