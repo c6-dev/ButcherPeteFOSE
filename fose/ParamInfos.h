@@ -415,3 +415,15 @@ static ParamInfo kParams_OneOptionalAxis[1] =
 {
 	{ "axis", kParamType_Axis, 1}
 };
+
+static ParamInfo kParams_OneMessage[1] =
+{
+	{"message", kParamType_Message, 0}
+};
+
+static ParamInfo kParams_OneMessage_OneInt[2] =
+{
+
+	{"message", kParamType_Message, 0},
+	{"int",	kParamType_Integer,		0 }
+};

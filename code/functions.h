@@ -84,6 +84,9 @@ DEFINE_COMMAND_PLUGIN(SetTextureSetTexture, 0, kParams_OneForm_OneInt_OneString)
 DEFINE_COMMAND_PLUGIN(SetLandTextureTextureSet, 0, kParams_TwoForms);
 DEFINE_COMMAND_PLUGIN(GetFormFlag, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetFormFlag, 0, kParams_OneForm_TwoInts);
+DEFINE_COMMAND_PLUGIN(GetMessageFlags, 0, kParams_OneMessage);
+DEFINE_COMMAND_PLUGIN(SetMessageFlags, 0, kParams_OneMessage_OneInt);
+DEFINE_COMMAND_PLUGIN(SetMessageDisplayTime, 0, kParams_OneMessage_OneInt);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

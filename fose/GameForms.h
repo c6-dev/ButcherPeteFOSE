@@ -3792,20 +3792,25 @@ class BGSEncounterZone : public TESForm
 	UInt32 unk018[(0x30-0x18) >> 2];	// 018
 };
 
-// BGSMessage (40)
+
 class BGSMessage : public TESForm
 {
 public:
-	BGSMessage();
-	~BGSMessage();
+	struct Button
+	{
+		char*			label;
+		ConditionList	conditions;
+	};
 
-	TESFullName		fullName;			// 018
-	TESDescription	description;		// 024
+	TESFullName		fullName;		// 18
+	TESDescription	description;	// 24
 
-	UInt32	unk02C[(0x40-0x2C) >> 2];	// 02C
+	BGSMenuIcon* menuIcon;		// 2C
+	tList<Button>	buttons;		// 30
+	UInt8			msgFlags;		// 38	1 - Message Box, 2 - Auto-display
+	UInt32			displayTime;	// 3C
 };
-
-STATIC_ASSERT(sizeof(BGSMessage) == 0x040);
+STATIC_ASSERT(sizeof(BGSMessage) == 0x40);
 
 // BGSRagdoll (148)
 class BGSRagdoll : public TESForm

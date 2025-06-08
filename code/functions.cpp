@@ -1823,3 +1823,35 @@ bool Cmd_SetTextureSetTexture_Execute(COMMAND_ARGS)
 	}
 	return true;
 };
+
+
+bool Cmd_GetMessageFlags_Execute(COMMAND_ARGS)
+{
+	BGSMessage* message;
+	if (ExtractArgs(EXTRACT_ARGS, &message)) {
+		*result = message->msgFlags;
+		if (IsConsoleMode()) {
+			Console_Print("GetMessageFlags >> %.f", *result);
+		}
+	}
+
+	return true;
+}
+
+bool Cmd_SetMessageFlags_Execute(COMMAND_ARGS)
+{
+	BGSMessage* message;
+	UInt32 flags;
+	if (ExtractArgs(EXTRACT_ARGS, &message, &flags) && (flags <= 3))
+		message->msgFlags = flags;
+	return true;
+}
+
+bool Cmd_SetMessageDisplayTime_Execute(COMMAND_ARGS)
+{
+	BGSMessage* message;
+	UInt32 displayTime;
+	if (ExtractArgs(EXTRACT_ARGS, &message, &displayTime))
+		message->displayTime = displayTime;
+	return true;
+}
