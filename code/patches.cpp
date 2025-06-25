@@ -167,6 +167,15 @@ void __fastcall MarkRefAsModifiedHook(TESObjectREFR* refr, int edx, UInt32 flag)
 	}
 }
 
+char __fastcall QueueUIMessageHook(void* menu, void* edx, char* text, int type, char* path, char* soundName, float time)
+{
+	if (fabs(time) < FLT_EPSILON)
+	{
+		return 0;
+	}
+	return ThisCall<char>(0x648500, menu, text, type, path, soundName, time);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -185,6 +194,8 @@ void WritePatches() {
 	WriteRelCall(0x530FE0, (UInt32)SetClimateHook);
 	WriteRelCall(0x7878CB, (UInt32)SetClimateHook);
 	SafeWrite32(0xDCEEC4, (UInt32)MarkRefAsModifiedHook); // make cells tagged with Unknown 23 not save ref positions
+
+	WriteRelCall(0x61B8D2, (UInt32)QueueUIMessageHook); // don't show messages with duration of 0
 
 }
 
