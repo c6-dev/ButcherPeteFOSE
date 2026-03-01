@@ -139,6 +139,12 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetMessageFlags);
 	REG_CMD(SetMessageFlags);
 	REG_CMD(SetMessageDisplayTime);
+	REG_CMD(ToggleCombatMusic);
+	REG_CMD(IsCombatMusicEnabled);
+	REG_CMD(SetScopeModelPath);
+	REG_CMD(IsPlayable);
+	REG_CMD(SetIsPlayable);
+	REG_CMD(GetInventoryWeight);
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
 

@@ -9,6 +9,8 @@ char** defaultMarkerList = (char**)0xF6B13C;
 
 TESClimate* s_forcedClimate = nullptr;
 
+bool bCombatMusicDisabled = false;
+
 void __fastcall SetClimateHook(Sky* sky, void* edx, TESClimate* climate, bool a3)
 {
 	if (s_forcedClimate) {
@@ -176,6 +178,11 @@ char __fastcall QueueUIMessageHook(void* menu, void* edx, char* text, int type, 
 	return ThisCall<char>(0x648500, menu, text, type, path, soundName, time);
 }
 
+bool __fastcall CombatMusicHook(uint32_t* a1) {
+	if (bCombatMusicDisabled) return false;
+	return ThisCall<bool>(0x7A8580, a1);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -197,6 +204,9 @@ void WritePatches() {
 
 	WriteRelCall(0x61B8D2, (UInt32)QueueUIMessageHook); // don't show messages with duration of 0
 
+	// ToggleCombatMusic
+	WriteRelCall(0x6C047D, (UInt32)CombatMusicHook);
+	WriteRelCall(0x6C08DF, (UInt32)CombatMusicHook);
 }
 
 void WriteEditorPatches()

@@ -1108,7 +1108,8 @@ public:
 	};
 
 	enum EBipedFlags {
-		eBipedFlag_PowerArmor = 0x20
+		eBipedFlag_PowerArmor = 0x20,
+		eBipedFlag_NonPlayable = 0x40
 	};
 
 	// missing part mask and flags
@@ -1124,11 +1125,21 @@ public:
 	static UInt32 MaskForSlot(UInt32 mask);
 
 	bool IsPowerArmor() const { return (bipedFlags & eBipedFlag_PowerArmor) == eBipedFlag_PowerArmor; }
+	bool IsNonPlayable() const { return (bipedFlags & eBipedFlag_NonPlayable) == eBipedFlag_NonPlayable; }
+	bool IsPlayable() const { return !IsNonPlayable(); }
 	void SetPowerArmor(bool bPA) {
 		if (bPA) {
 			bipedFlags |= eBipedFlag_PowerArmor;
 		} else {
 			bipedFlags &= ~eBipedFlag_PowerArmor;
+		}
+	}
+	void SetNonPlayable(bool bNP) {
+		if (bNP) {
+			bipedFlags |= eBipedFlag_NonPlayable;
+		}
+		else {
+			bipedFlags &= ~eBipedFlag_NonPlayable;
 		}
 	}
 };
@@ -1937,6 +1948,7 @@ public:
 
 	BSString				name;			// 4CC
 	NiTArray <void *>	faceGenUndo;	// 4D4 - NiTPrimitiveArray<FaceGenUndo *>
+	bool IsPlayable() const { return (raceFlags & kFlag_Playable) == kFlag_Playable; }
 };
 
 // 68
@@ -2505,7 +2517,7 @@ public:
 		eFlag_HideBackpack				= 0x10,
 		eFlag_EmbeddedWeapon			= 0x20,
 		eFlag_No1stPersonISAnims		= 0x40,
-		Eflag_NonPlayable				= 0x80
+		eFlag_NonPlayable				= 0x80
 	};
 
 	enum EWeaponFlags2 {
@@ -2618,7 +2630,7 @@ public:
 	UInt8				pad185[3];			// 185
 	SpellItem			* criticalEffect;	// 188
 	TESModel			shellCasingModel;	// 18C
-	TESModel			model1A4;			// 1A4
+	TESModel			targetNIF;			// 1A4
 	TESModel			model1BC;			// 1BC
 	UInt32				unk1D4;				// 1D4
 	TESSound			* sounds[8];		// 1D8
@@ -2652,6 +2664,9 @@ public:
 	void SetHandGrip(UInt8 handGrip);
 	UInt8 AttackAnimation() const;
 	void SetAttackAnimation(UInt8 attackAnim);
+
+	bool IsNonPlayable() { return IsFlag1Set(eFlag_NonPlayable); }
+	bool IsPlayable() { return !IsNonPlayable(); }
 };
 
 STATIC_ASSERT(offsetof(TESObjectWEAP, fullName) == 0x030);
@@ -2669,6 +2684,12 @@ public:
 	TESAmmo();
 	~TESAmmo();
 
+	enum eAmmoFlags
+	{
+		kFlags_IgnoreWeapResistance = 1,
+		kFlags_NonPlayable = 2,
+	};
+
 	// bases
 	TESFullName					fullName;		// 030
 	TESModelTextureSwap			model;			// 03C
@@ -2678,8 +2699,13 @@ public:
 	BGSClipRoundsForm			clipRounds;		// 080
 	BGSDestructibleObjectForm	destructible;	// 088
 	BGSPickupPutdownSounds		unk090;			// 090
-};
+	char gap94[0xA0 - 0x9C];					// 09C
+	UInt32 flags;								// 0A0
 
+	bool IsNonPlayable() { return (flags & kFlags_NonPlayable) == kFlags_NonPlayable; }
+	bool IsPlayable() { return !IsNonPlayable(); }
+};
+static_assert(offsetof(TESAmmo, flags) == 0xA0);
 // 1EC
 class TESNPC : public TESActorBase
 {

@@ -340,6 +340,13 @@ static ParamInfo kParams_OneForm_OneInt[2] =
 	{	"int",	kParamType_Integer, 0	},
 };
 
+static ParamInfo kParams_OneInt_OneOptionalForm[2] =
+{
+
+	{	"int",	kParamType_Integer, 0	},
+	{	"form",	kParamType_AnyForm,	1	},
+};
+
 static ParamInfo kParams_OneForm_OneInt_OneString[3] =
 {
 	{	"form",	kParamType_AnyForm,	0	},
@@ -403,6 +410,13 @@ static ParamInfo kParams_OneForm_OneString[2] =
 {
 	{ "Form", kParamType_AnyForm, 0 },
 	{ "String", kParamType_String, 0 },
+};
+
+static ParamInfo kParams_OneString_OneOptionalForm[2] =
+
+{
+	{ "String", kParamType_String, 0 },
+	{ "Form", kParamType_AnyForm, 1 },
 };
 
 static ParamInfo kParams_SetHotkeyItem[2] =

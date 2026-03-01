@@ -87,6 +87,12 @@ DEFINE_COMMAND_PLUGIN(SetFormFlag, 0, kParams_OneForm_TwoInts);
 DEFINE_COMMAND_PLUGIN(GetMessageFlags, 0, kParams_OneMessage);
 DEFINE_COMMAND_PLUGIN(SetMessageFlags, 0, kParams_OneMessage_OneInt);
 DEFINE_COMMAND_PLUGIN(SetMessageDisplayTime, 0, kParams_OneMessage_OneInt);
+DEFINE_COMMAND_PLUGIN(ToggleCombatMusic, 0, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(IsCombatMusicEnabled, 0, NULL);
+DEFINE_COMMAND_PLUGIN(SetScopeModelPath, 0, kParams_OneString_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(IsPlayable, 0, kParams_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(SetIsPlayable, 0, kParams_OneInt_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(GetInventoryWeight, 1, NULL);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

@@ -27,6 +27,121 @@ const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xD
 
 TESObjectREFR* s_tempPosMarker;
 
+extern bool bCombatMusicDisabled;
+
+
+bool Cmd_GetInventoryWeight_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	BSExtraData* xData = thisObj->extraDataList.GetByType(kExtraData_ContainerChanges);
+	ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+
+	if (xChanges && xChanges->data)
+		xChanges->data->totalWgCurrent = -1.0f;
+		*result = ThisCall<double>(0x47EE00, xChanges->data);
+	if (IsConsoleMode()) Console_Print("GetInventoryWeight >> %.2f", *result);
+	return true;
+}
+
+bool Cmd_IsPlayable_Execute(COMMAND_ARGS)
+{
+	*result = 1;
+	TESForm* form = NULL;
+
+	if (ExtractArgs(EXTRACT_ARGS, &form))
+	{
+		form = form->TryGetREFRParent();
+		if (!form)
+			if (thisObj)
+				form = thisObj->baseForm;
+	}
+	if (form)
+	{
+		TESBipedModelForm* biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		if (biped)
+			*result = biped->IsPlayable() ? 1 : 0;
+		else {
+			TESObjectWEAP* weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
+			if (weap)
+				*result = weap->IsPlayable() ? 1 : 0;
+			else {
+				TESAmmo* ammo = DYNAMIC_CAST(form, TESForm, TESAmmo);
+				if (ammo)
+					*result = ammo->IsPlayable() ? 1 : 0;
+				else {
+					TESRace* race = DYNAMIC_CAST(form, TESForm, TESRace);
+					if (race)
+						*result = race->IsPlayable() ? 1 : 0;
+				}
+			}
+		}
+	}
+	if (IsConsoleMode()) Console_Print("IsPlayable >> %.f", *result);
+
+	return true;
+}
+
+
+bool Cmd_SetIsPlayable_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESForm* form = NULL;
+	float doSet;
+
+	if (ExtractArgs(EXTRACT_ARGS, &doSet, &form))
+	{
+		form = form->TryGetREFRParent();
+		if (!form)
+			if (thisObj)
+				form = thisObj->baseForm;
+	}
+	if (form)
+	{
+		TESBipedModelForm* biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		if (biped)
+			biped->SetNonPlayable(0.0 == doSet);
+	}
+	return true;
+}
+bool Cmd_SetScopeModelPath_Execute(COMMAND_ARGS)
+{
+	TESForm* form = NULL;
+	TESModel* model = NULL;
+	char pathStr[512];
+	*result = 0;
+
+	if (ExtractArgs(EXTRACT_ARGS, &pathStr, &form))
+	{
+		if (!form)
+			if (thisObj)
+				form = thisObj->baseForm;
+
+		TESObjectWEAP* weapon = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
+		if (weapon && weapon->HasScope())
+			model = &(weapon->targetNIF);
+
+		if (model)
+			model->nifPath.Set(pathStr);
+	}
+
+	return true;
+}
+
+
+bool Cmd_ToggleCombatMusic_Execute(COMMAND_ARGS) {
+	*result = 0;
+	uint32_t toggle = 1;
+	ExtractArgs(EXTRACT_ARGS, &toggle);
+	bCombatMusicDisabled = (toggle == 0);
+	return true;
+}
+
+bool Cmd_IsCombatMusicEnabled_Execute(COMMAND_ARGS) {
+	*result = (bCombatMusicDisabled == 0);
+	if (IsConsoleMode()) Console_Print("IsCombatMusicEnabled >> %.f", *result);
+	return true;
+}
+
 bool Cmd_GetFormFlag_Execute(COMMAND_ARGS)
 {
 	TESForm* form = nullptr;
