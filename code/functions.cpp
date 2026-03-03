@@ -28,6 +28,53 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 traitID;
+	float value;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID, &value) && weather && (traitID <= 20)) {
+		switch (traitID)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			weather->ucCloudSpeed[traitID] = (value > 0.1) ? 255 : (value * 2550);
+			break;
+		case 4:
+			weather->ucWeatherData[0] = (value > 1) ? 255 : (value * 255);
+			break;
+		case 5:
+			weather->ucWeatherData[3] = (value > 0.25) ? 255 : (value * 1000);
+			break;
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+			weather->ucWeatherData[traitID - 2] = (value > 1) ? 255 : (value * 255);
+			break;
+		case 13:
+			if (UInt32 intVal = (int)value; !(intVal & (intVal - 1)))
+				weather->ucWeatherData[11] = intVal;
+			break;
+		case 14:
+			if (UInt32 hexRGB = (UInt32)value; hexRGB <= 0xFFFFFF) {
+				weather->ucWeatherData[12] = (hexRGB >> 16) & 0xFF;
+				weather->ucWeatherData[13] = (hexRGB >> 8) & 0xFF;
+				weather->ucWeatherData[14] = hexRGB & 0xFF;
+			}
+			break;
+		default:
+			weather->fFogData[traitID - 15] = value;
+		}
+	}
+	return true;
+}
+
 bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
