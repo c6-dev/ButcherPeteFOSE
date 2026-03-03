@@ -147,6 +147,8 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetInventoryWeight);
 	REG_CMD(GetWeatherTraitNumeric);
 	REG_CMD(SetWeatherTraitNumeric);
+	REG_CMD(SetWeatherTexture);
+	REG_CMD(TriggerLightningFX); 
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
 

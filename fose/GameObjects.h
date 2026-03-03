@@ -2006,13 +2006,19 @@ public:
 	TESWeather* transWeather;			// 014	Previous weather, gradually fading, on weather transition
 	TESWeather* defaultWeather;			// 018	Picked from currClimate weathers list. currClimate is set to this unless there's a regional weather
 	TESWeather* overrideWeather;		// 01C
-	BYTE		unk020[(0x12C - 0x20)];	// 020
+	BYTE		unk020[(0x100 - 0x20)];	// 020
+	float fFlash;						// 0x100
+	BYTE unk104[0x12C - 0x104];			// 104
 
 	__forceinline static Sky* Get() { return *(Sky**)0x107A0E8; }
 
 	__forceinline void RefreshClimate(TESClimate* climate, bool immediate = true)
 	{
 		ThisCall(0x57E3B0, this, climate, immediate);
+	}
+	__forceinline bool GetIsRaining()
+	{
+		return ThisCall(0x50EA20, this);
 	}
 };
 static_assert(sizeof(Sky) == 0x12C);

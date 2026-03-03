@@ -28,6 +28,25 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_TriggerLightningFX_Execute(COMMAND_ARGS)
+{
+	Sky* currentSky = Sky::Get();
+	if (currentSky->GetIsRaining())
+		currentSky->fFlash = 1;
+	return true;
+}
+
+bool Cmd_SetWeatherTexture_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather;
+	UInt32 layer;
+	char path[0x80];
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &layer, &path) && (layer <= 3))
+		weather->kCloudTextures[layer].ddsPath.Set(path);
+	return true;
+}
+
+
 bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
