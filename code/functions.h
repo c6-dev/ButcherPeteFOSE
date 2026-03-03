@@ -93,6 +93,7 @@ DEFINE_COMMAND_PLUGIN(SetScopeModelPath, 0, kParams_OneString_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(IsPlayable, 0, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(SetIsPlayable, 0, kParams_OneInt_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(GetInventoryWeight, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetWeatherTraitNumeric, 0, kParams_OneForm_OneInt);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

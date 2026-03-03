@@ -11,7 +11,7 @@ IDebugLog		g_log("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 272;
+int g_version = 280;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -145,6 +145,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(IsPlayable);
 	REG_CMD(SetIsPlayable);
 	REG_CMD(GetInventoryWeight);
+	REG_CMD(GetWeatherTraitNumeric);
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);
 

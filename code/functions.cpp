@@ -1,4 +1,4 @@
-#include "functions.h"
+﻿#include "functions.h"
 #include <string>
 #include <unordered_map>
 #include "CommandTable.h"
@@ -9,7 +9,6 @@
 #include "GameExtraData.h"
 #include "SafeWrite.h"
 #include "GameMenus.h"
-
 extern int g_version;
 
 extern char* s_strArgBuffer;
@@ -29,6 +28,48 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 traitID;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID) && weather && (traitID <= 20)) {
+		switch (traitID)
+		{
+		case 0:
+		case 1:
+		case 2:
+		case 3:
+			*result = weather->ucCloudSpeed[traitID] * (1 / 2550.0);
+			break;
+		case 4:
+			*result = weather->ucWeatherData[0] * (1 / 255.0);
+			break;
+		case 5:
+			*result = weather->ucWeatherData[3] * 0.001;
+			break;
+		case 6:
+		case 7:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+			*result = weather->ucWeatherData[traitID - 2] * (1 / 255.0);
+			break;
+		case 13:
+			*result = weather->ucWeatherData[11];
+			break;
+		case 14:
+			*result = ((weather->ucWeatherData[12] << 16) | (weather->ucWeatherData[13] << 8) | weather->ucWeatherData[14]);
+			break;
+		default:
+			*result = weather->fFogData[traitID - 15];
+		}
+	}
+	if (IsConsoleMode()) Console_Print("GetWeatherTraitNumeric >> %.5f", *result);
+	return true;
+}
 
 bool Cmd_GetInventoryWeight_Execute(COMMAND_ARGS)
 {

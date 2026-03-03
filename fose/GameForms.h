@@ -1,6 +1,7 @@
 #pragma once
 
 
+class TESImageSpaceModifier;
 static const UInt32 _TESValueForm_SetValue = 0x0045BE20;
 
 
@@ -2861,8 +2862,37 @@ public:
 // TESLevItem (44)
 class TESLevItem;
 
+class TESImageSpaceModifiableCountForm : public BaseFormComponent
+{
+public:
+	TESImageSpaceModifier* pFormImageSpaceModifying[4];
+};
+
+
 // TESWeather (2F4)
-class TESWeather;
+class TESWeather : public TESForm, public TESImageSpaceModifiableCountForm
+{
+public:
+	TESWeather();
+	virtual ~TESWeather();
+	struct WeatherSound
+	{
+		UInt32		soundID;	// refID of TESSound
+		UInt32		type;		// 0 - Default; 1 - Precip; 2 - Wind; 3 - Thunder
+	};
+
+	TESTexture kCloudTextures[4];
+	UInt8 ucCloudSpeed[4];
+	UInt32 uiCloudColorData[4][4];
+	TESModel kModel;
+	UInt8 ucWeatherData[15];
+	float fFogData[6];
+	unsigned int uiColorData[10][4];
+	tList<WeatherSound> kSoundList;
+	char unk188[360];
+	UInt32 uiNumCloudLayers;
+};
+static_assert(sizeof(TESWeather) == 0x2F4);
 
 struct WeatherEntry
 {
