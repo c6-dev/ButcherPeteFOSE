@@ -900,7 +900,7 @@ public:
 
 	virtual void *	Destroy(bool noDealloc);	// 04
 	virtual char *	GetPath(void);
-	virtual void	SetPath(char * path);		// 06
+	virtual void	SetModelPath(char * path);		// 06
 
 	BSString	nifPath;		// 04
 	UInt32	unk0C;			// 0C

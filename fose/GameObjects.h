@@ -2006,7 +2006,10 @@ public:
 	TESWeather* transWeather;			// 014	Previous weather, gradually fading, on weather transition
 	TESWeather* defaultWeather;			// 018	Picked from currClimate weathers list. currClimate is set to this unless there's a regional weather
 	TESWeather* overrideWeather;		// 01C
-	BYTE		unk020[(0x100 - 0x20)];	// 020
+	BYTE		unk020[(0xCC - 0x20)];	// 020
+	float windSpeed;					// 0CC
+	float windAngle;					// 0D0
+	BYTE unkD4[0x100 - 0xD4];			// D4
 	float fFlash;						// 0x100
 	BYTE unk104[0x12C - 0x104];			// 104
 

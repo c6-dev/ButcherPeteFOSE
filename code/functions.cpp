@@ -28,8 +28,90 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+
+// TODO extract color channels?
+bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 type, time, layer = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &layer) && (type <= 9) && (time <= 3))
+		if (type != 2)
+			*result = weather->uiColorData[type][time];
+		else if (layer <= 3)
+			*result = weather->uiCloudColorData[layer][time];
+	return true;
+}
+
+// TODO extract color channels?
+bool Cmd_SetWeatherRGBColor_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 type, time, rgb, layer = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &rgb, &layer) && (type <= 9) && (time <= 3) && (rgb <= 255255255))
+		if (type != 2)
+			weather->uiColorData[type][time] = rgb;
+		else if (layer <= 3)
+			weather->uiCloudColorData[layer][time] = rgb;
+	return true;
+}
+
+bool Cmd_SetWindDirection_Execute(COMMAND_ARGS)
+{
+	float windDirection;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &windDirection)) {
+		Sky* currentSky = Sky::Get();
+		if (currentSky) {
+			currentSky->windAngle = windDirection * -0.01745329238F;
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetWindDirection_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	Sky* currentSky = Sky::Get();
+	if (currentSky) {
+		*result = currentSky->windAngle * -57.29577951308232;
+	}
+	if (IsConsoleMode()) Console_Print("GetWindDirection >> %.2f", *result);
+	return true;
+}
+
+bool Cmd_SetWeatherImageSpaceMod_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 time;
+	TESImageSpaceModifier* imgSpcMod = nullptr;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &time, &imgSpcMod) && weather && imgSpcMod && (time <= 3))
+		weather->pFormImageSpaceModifying[time] = imgSpcMod;
+	return true;
+}
+
+bool Cmd_GetWeatherImageSpaceMod_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	UInt32 time;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &time) && (time <= 3) && weather->pFormImageSpaceModifying[time])
+		*(UInt32*)result = weather->pFormImageSpaceModifying[time]->refID;
+	return true;
+}
+
+bool Cmd_SetWeatherPrecipitationModel_Execute(COMMAND_ARGS)
+{
+	TESWeather* weather = nullptr;
+	char path[0x80];
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &path) && weather)
+		weather->kModel.SetModelPath(path);
+	return true;
+}
+
 bool Cmd_TriggerLightningFX_Execute(COMMAND_ARGS)
 {
+	*result = 0;
 	Sky* currentSky = Sky::Get();
 	if (currentSky->GetIsRaining())
 		currentSky->fFlash = 1;
@@ -38,9 +120,10 @@ bool Cmd_TriggerLightningFX_Execute(COMMAND_ARGS)
 
 bool Cmd_SetWeatherTexture_Execute(COMMAND_ARGS)
 {
-	TESWeather* weather;
+	TESWeather* weather = nullptr;
 	UInt32 layer;
 	char path[0x80];
+	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &layer, &path) && (layer <= 3))
 		weather->kCloudTextures[layer].ddsPath.Set(path);
 	return true;
@@ -52,7 +135,8 @@ bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	UInt32 traitID;
 	float value;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID, &value) && weather && (traitID <= 20)) {
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID, &value) && weather && (traitID <= 22)) {
 		switch (traitID)
 		{
 		case 0:
@@ -81,14 +165,13 @@ bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 				weather->ucWeatherData[11] = intVal;
 			break;
 		case 14:
-			if (UInt32 hexRGB = (UInt32)value; hexRGB <= 0xFFFFFF) {
-				weather->ucWeatherData[12] = (hexRGB >> 16) & 0xFF;
-				weather->ucWeatherData[13] = (hexRGB >> 8) & 0xFF;
-				weather->ucWeatherData[14] = hexRGB & 0xFF;
-			}
+		case 15:
+		case 16:
+			weather->ucWeatherData[traitID - 2] = (UInt8)value;
 			break;
 		default:
-			weather->fFogData[traitID - 15] = value;
+			weather->fFogData[traitID - 17] = value;
+			break;
 		}
 	}
 	return true;
@@ -99,7 +182,7 @@ bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	UInt32 traitID;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID) && weather && (traitID <= 20)) {
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID) && weather && (traitID <= 22)) {
 		switch (traitID)
 		{
 		case 0:
@@ -127,10 +210,13 @@ bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 			*result = weather->ucWeatherData[11];
 			break;
 		case 14:
-			*result = ((weather->ucWeatherData[12] << 16) | (weather->ucWeatherData[13] << 8) | weather->ucWeatherData[14]);
+		case 15:
+		case 16:
+			*result =(weather->ucWeatherData[traitID-2]);
 			break;
 		default:
-			*result = weather->fFogData[traitID - 15];
+			*result = weather->fFogData[traitID - 17];
+			break;
 		}
 	}
 	if (IsConsoleMode()) Console_Print("GetWeatherTraitNumeric >> %.5f", *result);
