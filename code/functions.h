@@ -100,8 +100,8 @@ DEFINE_COMMAND_PLUGIN(TriggerLightningFX, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetWeatherPrecipitationModel, 0, kParams_OneForm_OneString);
 DEFINE_COMMAND_PLUGIN(GetWindDirection, 0, NULL);
 DEFINE_COMMAND_PLUGIN(SetWindDirection, 0, kParams_OneFloat);
-DEFINE_COMMAND_PLUGIN(GetWeatherRGBColor, 0, kParams_OneForm_TwoInts_OneOptionalInt);
-DEFINE_COMMAND_PLUGIN(SetWeatherRGBColor, 0, kParams_OneForm_ThreeInts_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(GetWeatherRGBColor, 0, kParams_OneForm_ThreeInts_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(SetWeatherRGBColor, 0, kParams_OneForm_FiveInts_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(GetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt_OneForm);
 

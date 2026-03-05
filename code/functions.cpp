@@ -29,29 +29,37 @@ TESObjectREFR* s_tempPosMarker;
 extern bool bCombatMusicDisabled;
 
 
-// TODO extract color channels?
 bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
-	UInt32 type, time, layer = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &layer) && (type <= 9) && (time <= 3))
+	UInt32 type, time, channel, layer = 0;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >= 1 && channel <=3)
+	{
+		UInt32 color = 0;
 		if (type != 2)
-			*result = weather->uiColorData[type][time];
+			color = weather->uiColorData[type][time];
 		else if (layer <= 3)
-			*result = weather->uiCloudColorData[layer][time];
-	return true;
+			color = weather->uiCloudColorData[layer][time];
+
+		*result = (color >> ((channel - 1) * 8)) & 0xFF;
+	}
+	if (IsConsoleMode()) Console_Print("GetWeatherRGBColor >> %.f", *result);
+	return true; 
 }
 
-// TODO extract color channels?
+
 bool Cmd_SetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
-	UInt32 type, time, rgb, layer = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &rgb, &layer) && (type <= 9) && (time <= 3) && (rgb <= 255255255))
+	UInt32 type, time, r, g, b, layer = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <= 255) && (g <= 255) && (b <= 255)) {
+		UInt32 rgb = r | (g << 8) | (b << 16);
 		if (type != 2)
 			weather->uiColorData[type][time] = rgb;
 		else if (layer <= 3)
 			weather->uiCloudColorData[layer][time] = rgb;
+	}
 	return true;
 }
 
@@ -96,6 +104,7 @@ bool Cmd_GetWeatherImageSpaceMod_Execute(COMMAND_ARGS)
 	UInt32 time;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &time) && (time <= 3) && weather->pFormImageSpaceModifying[time])
 		*(UInt32*)result = weather->pFormImageSpaceModifying[time]->refID;
+	if (IsConsoleMode()) Console_Print("GetWeatherImageSpaceMod >> 0x%08X", *result);
 	return true;
 }
 
