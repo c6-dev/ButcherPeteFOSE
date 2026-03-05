@@ -32,7 +32,7 @@ extern bool bCombatMusicDisabled;
 bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
-	UInt32 type, time, channel, layer = 0;
+	UInt32 type, time, channel = 0, layer = 0;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >= 1 && channel <=3)
 	{
@@ -52,7 +52,7 @@ bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 bool Cmd_SetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
-	UInt32 type, time, r, g, b, layer = 0;
+	UInt32 type, time, r = 0, g = 0, b = 0, layer = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <= 255) && (g <= 255) && (b <= 255)) {
 		UInt32 rgb = r | (g << 8) | (b << 16);
 		if (type != 2)
