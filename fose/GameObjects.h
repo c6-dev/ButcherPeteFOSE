@@ -251,7 +251,7 @@ public:
 	virtual void	Unk_47(void);
 	virtual void	Unk_48(void);
 	virtual void	Unk_49(void);
-	virtual void	Unk_4A(void);
+	virtual TESForm* GetTarget(void);
 	virtual void	Unk_4B(void);
 	virtual void	Unk_4C(void);
 	virtual void	Unk_4D(void);
@@ -1399,7 +1399,7 @@ public:
 	virtual void		Unk_10B(void);
 	virtual void		Unk_10C(void);
 	virtual void		Unk_10D(void);
-	virtual void		Unk_10E(void);
+	virtual bool		IsTrespassing(void);
 	virtual void		Unk_10F(void);
 	virtual void		Unk_110(void);
 	virtual void		Unk_111(void);

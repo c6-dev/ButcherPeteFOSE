@@ -183,6 +183,29 @@ bool __fastcall CombatMusicHook(uint32_t* a1) {
 	return ThisCall<bool>(0x7A8580, a1);
 }
 
+// Fixes conditions that got inverted when refactoring the function from Oblivion->FO3
+// The biggest issue was: when trespassing, player can open any door in existence, due to CanActorIgnoreDoorLock being ran last, if at all - IsTrespassing gets called before it, returning true.
+// The fix simply restores the original Oblivion order.
+bool TESObjectDOOR__CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectREFR* apDoorRef, bool abActivate, bool abMovement)
+{
+	if (!apActor || !apLock)
+		return false;
+
+	if (ThisCall<bool>(0x4AA0F0, apLock, apActor, abActivate, abMovement)) // DoorLock::CanActorIgnoreDoorLock
+		return true;
+
+	if (apActor == PlayerCharacter::GetSingleton())
+		return false;
+	// Actor::IsFollowing - TESObjectREFR::GetTeleport
+	if (ThisCall<bool>(0x6F57B0, apActor) && apActor->baseProcess->GetTarget() == PlayerCharacter::GetSingleton() && ThisCall<UInt32*>(0x4E74A0, apDoorRef))
+		return true;
+
+	if (apActor->IsTrespassing())
+		return true;
+
+	return false;
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -207,6 +230,8 @@ void WritePatches() {
 	// ToggleCombatMusic
 	WriteRelCall(0x6C047D, (UInt32)CombatMusicHook);
 	WriteRelCall(0x6C08DF, (UInt32)CombatMusicHook);
+
+	WriteRelJump(0x4B7C70, UInt32(TESObjectDOOR__CanActorIgnoreLock));
 }
 
 void WriteEditorPatches()
