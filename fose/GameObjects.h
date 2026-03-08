@@ -1414,7 +1414,7 @@ public:
 	virtual void		Unk_11A(void);
 	virtual void		Unk_11B(void);
 	virtual void		Unk_11C(void);
-	virtual void		Unk_11D(void);
+	virtual float		InternalGetActorValue(int aeIndex, bool& arFound);
 	virtual void		Unk_11E(void);
 	virtual void		Unk_11F(void);
 	virtual void		Unk_120(void);
@@ -1525,6 +1525,18 @@ public:
 	float fFlyInventoryWeight;
 };
 STATIC_ASSERT(sizeof(Character) == 0x1B0);
+
+class Creature : public Actor
+{
+public:
+	Creature();
+	~Creature();
+	bool bHasRagdoll;
+	float fTotalArmorDR;
+};
+STATIC_ASSERT(sizeof(Creature) == 0x1A8);
+
+
 // 9BC
 
 struct CompassTarget

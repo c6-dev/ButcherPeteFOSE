@@ -227,6 +227,22 @@ void __cdecl OnFreeRefRemoveFromSelectableList(TESObjectREFR* ref)
 	InterfaceManager::GetSingleton()->selectableRefs.Remove(ref);
 }
 
+double __fastcall Creature__GetTotalArmorDR(Creature* apThis) {
+	if (apThis->fTotalArmorDR >= 0.0)
+		return apThis->fTotalArmorDR;
+
+	UInt32 eIndex = 18; // Damage Resistance
+	float fInternalValue = 0.f;
+	bool bFound = false;
+	float v6 = apThis->InternalGetActorValue(eIndex, bFound);
+	if (bFound)
+		fInternalValue = v6;
+
+	apThis->fTotalArmorDR = apThis->avOwner.GetActorValueDamage(eIndex) + apThis->avOwner.GetPermActorValue(eIndex) + fInternalValue;
+
+	return apThis->fTotalArmorDR;
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -261,6 +277,9 @@ void WritePatches() {
 	// prevent Actor::RestoreHealth being called in PlayerCharacter::PlayerSleep since it also gets called in Actor::UpdateMagic
 	// which lead to healing twice as much when waiting
 	PatchMemoryNop(0x76C9E4, 19);
+
+	// Fix for doubled DR on creatures
+	SafeWrite32(0xE14EAC, UInt32(Creature__GetTotalArmorDR));
 }
 
 void WriteEditorPatches()
