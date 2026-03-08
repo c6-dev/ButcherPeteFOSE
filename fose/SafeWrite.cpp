@@ -54,3 +54,16 @@ UInt32 GetRelJumpAddr(UInt32 jumpSrc)
 	// ...and adds 5 (since the relative address ignores the 5 bytes of the jump/call)
 	return *(UInt32*)(jumpSrc + 1) + jumpSrc + 5;
 }
+
+void PatchMemoryNop(ULONG_PTR Address, SIZE_T Size)
+{
+	DWORD d = 0;
+	VirtualProtect((LPVOID)Address, Size, PAGE_EXECUTE_READWRITE, &d);
+
+	for (SIZE_T i = 0; i < Size; i++)
+		*(volatile BYTE*)(Address + i) = 0x90; //0x90 == opcode for NOP
+
+	VirtualProtect((LPVOID)Address, Size, d, &d);
+
+	FlushInstructionCache(GetCurrentProcess(), (LPVOID)Address, Size);
+}

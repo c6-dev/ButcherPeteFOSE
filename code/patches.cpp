@@ -257,6 +257,10 @@ void WritePatches() {
 	WriteRelCall(0x512599, UInt32(GetOffersServicesNow));
 
 	WriteRelCall(0x61E33D, UInt32(OnFreeRefRemoveFromSelectableList));
+
+	// prevent Actor::RestoreHealth being called in PlayerCharacter::PlayerSleep since it also gets called in Actor::UpdateMagic
+	// which lead to healing twice as much when waiting
+	PatchMemoryNop(0x76C9E4, 19);
 }
 
 void WriteEditorPatches()

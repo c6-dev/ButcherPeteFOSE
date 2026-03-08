@@ -9,3 +9,4 @@ void SafeWriteBuf(UInt32 addr, void * data, UInt32 len);
 void WriteRelJump(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelCall(UInt32 jumpSrc, UInt32 jumpTgt);
 UInt32 GetRelJumpAddr(UInt32 jumpSrc);
+void PatchMemoryNop(ULONG_PTR Address, SIZE_T Size);
