@@ -206,6 +206,15 @@ bool TESObjectDOOR__CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectRE
 	return false;
 }
 
+// Fixes crash in GetOffersServices when an actor doesn't have a base process
+bool __fastcall GetOffersServicesNow(Actor* apThis)
+{
+	if (apThis->baseProcess)
+		return ThisCall<bool>(0x6F7980, apThis);
+
+	return false;
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -232,6 +241,8 @@ void WritePatches() {
 	WriteRelCall(0x6C08DF, (UInt32)CombatMusicHook);
 
 	WriteRelJump(0x4B7C70, UInt32(TESObjectDOOR__CanActorIgnoreLock));
+
+	WriteRelCall(0x512599, UInt32(GetOffersServicesNow));
 }
 
 void WriteEditorPatches()
