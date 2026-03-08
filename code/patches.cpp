@@ -243,6 +243,16 @@ double __fastcall Creature__GetTotalArmorDR(Creature* apThis) {
 	return apThis->fTotalArmorDR;
 }
 
+void __fastcall OnResetLoadedRefData(TESObjectREFR* ref, void* edx, NiNode* node)
+{
+	ThisCall(0x4F8E00, ref, node);
+
+	if (ref->CanHaveSound())
+	{
+		ref->AttachSound(node != nullptr);
+	}
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -280,6 +290,10 @@ void WritePatches() {
 
 	// Fix for doubled DR on creatures
 	SafeWrite32(0xE14EAC, UInt32(Creature__GetTotalArmorDR));
+
+	// ensures refs play their attached sounds when nodes are set
+	WriteRelCall(0x4FACB9, UInt32(OnResetLoadedRefData));
+	WriteRelCall(0x4FACD2, UInt32(OnResetLoadedRefData));
 }
 
 void WriteEditorPatches()

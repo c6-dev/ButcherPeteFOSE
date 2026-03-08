@@ -94,6 +94,31 @@ void TESObjectREFR::SetPos(const NiVector3& posVector)
 		
 }
 
+bool TESObjectREFR::CanHaveSound() const
+{
+	if (!baseForm)
+	{
+		return false;
+	}
+	switch (baseForm->typeID)
+	{
+		case kFormType_Sound:
+		case kFormType_Activator:
+		case kFormType_Terminal:
+		case kFormType_Door:
+		case kFormType_Light:
+		case kFormType_MoveableStatic:
+		case kFormType_PlaceableWater:
+			return true;
+		default:
+			return false;
+	}
+}
+
+void TESObjectREFR::AttachSound(bool bAttach)
+{
+	ThisCall(0x4F5F00, this, bAttach);
+}
 
 static PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x0107A104;
 

@@ -1234,6 +1234,8 @@ public:
 	bhkCharacterController* GetCharacterController() const;
 	void MoveToCell(TESObjectCELL* cell, const NiVector3& posVector);
 	void SetPos(const NiVector3& posVector);
+	bool CanHaveSound() const;
+	void AttachSound(bool bAttach);
 
 
 };
