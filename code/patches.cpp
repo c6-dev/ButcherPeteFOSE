@@ -1,5 +1,7 @@
 #include "patches.h"
 #include <unordered_map>
+
+#include "GameMenus.h"
 #include "havok.h"
 #include "SafeWrite.h"
 #include "GameSettings.h"
@@ -215,6 +217,16 @@ bool __fastcall GetOffersServicesNow(Actor* apThis)
 	return false;
 }
 
+void __cdecl OnFreeRefRemoveFromSelectableList(TESObjectREFR* ref)
+{
+	auto hud = HUDMainMenu::GetSingleton();
+	if (hud && hud->crosshairRef == ref)
+	{
+		hud->crosshairRef = nullptr;
+	}
+	InterfaceManager::GetSingleton()->selectableRefs.Remove(ref);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -243,6 +255,8 @@ void WritePatches() {
 	WriteRelJump(0x4B7C70, UInt32(TESObjectDOOR__CanActorIgnoreLock));
 
 	WriteRelCall(0x512599, UInt32(GetOffersServicesNow));
+
+	WriteRelCall(0x61E33D, UInt32(OnFreeRefRemoveFromSelectableList));
 }
 
 void WriteEditorPatches()

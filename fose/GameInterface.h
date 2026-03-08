@@ -133,8 +133,7 @@ public:
 	UInt32				unk024;							// 024
 	Tile				* cursor;						// 028
 	UInt32				unk02C[(0x070 - 0x02C) >> 2];	// 02C
-	TESObjectREFR		* debugSelection;				// 070
-	UInt32				unk074;							// 074
+	tList<TESObjectREFR>	selectableRefs;				// 070
 	UInt32				unk078;							// 078
 	UInt32				unk07C;							// 07C
 	NiNode				* niNode080;					// 080
