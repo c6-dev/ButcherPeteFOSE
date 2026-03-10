@@ -412,7 +412,7 @@ public:
 	virtual void	Unk_E8();
 	virtual void	Unk_E9();
 	virtual void	Unk_EA();
-	virtual void	Unk_EB();
+	virtual void	SetCachedActorValueOutOfDate(int avCode);
 	virtual void	Unk_EC();
 	virtual void	Unk_ED();
 	virtual void	Unk_EE();
@@ -1416,9 +1416,9 @@ public:
 	virtual void		Unk_11A(void);
 	virtual void		Unk_11B(void);
 	virtual void		Unk_11C(void);
-	virtual float		InternalGetActorValue(int aeIndex, bool& arFound);
+	virtual void		Unk_11D(void);
 	virtual void		Unk_11E(void);
-	virtual void		Unk_11F(void);
+	virtual float		InternalGetActorValue(int aeIndex, bool& arFound);
 	virtual void		Unk_120(void);
 	virtual void		Unk_121(void);
 	virtual void		Unk_122(void);
@@ -1520,7 +1520,7 @@ public:
 	~Character();
 
 	BipedAnim* bipedAnim;
-	float fTotalArmorDT;
+	float fTotalArmorDR;
 	UInt8 bIsTrespassing;
 	UInt8 bIsGuard;
 	UInt16 unk1C2;
