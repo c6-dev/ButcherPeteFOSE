@@ -253,6 +253,19 @@ void __fastcall OnResetLoadedRefData(TESObjectREFR* ref, void* edx, NiNode* node
 	}
 }
 
+// Fixes DR not updating when armor is changed by non-player actors
+	// Works both for Creatures and Characters (same offsets)
+	// Thanks to IntoTheRough for identifying the issue
+void __fastcall ResetArmorRating(Character* apCharacter)
+{
+	apCharacter->fTotalArmorDR = -1.f;
+	BaseProcess* pProcess = apCharacter->baseProcess;
+	if (pProcess)
+	{
+		pProcess->SetCachedActorValueOutOfDate(eActorVal_DamageResistance);
+	}
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -290,10 +303,13 @@ void WritePatches() {
 
 	// Fix for doubled DR on creatures
 	SafeWrite32(0xE14EAC, UInt32(Creature__GetTotalArmorDR));
-
+	 
 	// ensures refs play their attached sounds when nodes are set
 	WriteRelCall(0x4FACB9, UInt32(OnResetLoadedRefData));
 	WriteRelCall(0x4FACD2, UInt32(OnResetLoadedRefData));
+
+	// Fixes DR not updating when armor is changed by non - player actors
+	WriteRelJump(0x728240, UInt32(ResetArmorRating));
 }
 
 void WriteEditorPatches()
