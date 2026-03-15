@@ -1,5 +1,6 @@
 #include "netimmerse.h"
 #include "GameForms.h"
+#include "havok.h"
 void NiAVObject::SetLocalTranslate(const NiPoint3& pos) {
 	m_kLocal.translate.x = pos.x;
 	m_kLocal.translate.y = pos.y;
@@ -341,6 +342,22 @@ bool NiMatrix3::Inverse(NiMatrix3& inv) const {
 		 }
 	 }
 	 return nullptr;
+ }
+
+ void NiNode::ResetCollision()
+ {
+	 // If this node has a collision object, set the Reset flag
+	 // so the engine re-syncs the collision transform on next update
+	 if (m_collisionObject)
+		 m_collisionObject->flags |= bhkNiCollisionObject::kFlag_Reset;
+
+	 // Recurse into all child NiNodes
+	 for (UInt16 i = m_children.firstFreeEntry; i > 0;)
+	 {
+		 NiAVObject* child = m_children.data[--i];
+		 if (child && child->IsNiNode())
+			 ((NiNode*)child)->ResetCollision();
+	 }
  }
 
  char* NiGlobalStringTable::AddString(const char* string) {

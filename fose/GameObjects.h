@@ -7,6 +7,7 @@
 #if RUNTIME
 
 
+class BSFile;
 static const UInt32 kTESObjectREFR_IsOffLimitsToPlayerAddr = 0x004DEBF0;
 
 
@@ -1214,8 +1215,8 @@ public:
 	TESChildCell	childCell;				// 018
 	TESForm*		baseForm;				// 01C
 	
-	float			rotX, rotY, rotZ;		// 020 - either public or accessed via simple inline accessor common to all child classes
-	float			posX, posY, posZ;		// 02C - seems to be private
+	NiVector3		rotation;		// 020 - either public or accessed via simple inline accessor common to all child classes
+	NiVector3		position;				// 02C - seems to be private
 	float			scale;					// 038 
 
 	TESObjectCELL*	parentCell;				// 03C
@@ -1236,6 +1237,7 @@ public:
 	void SetPos(const NiVector3& posVector);
 	bool CanHaveSound() const;
 	void AttachSound(bool bAttach);
+	__m128 __vectorcall GetTranslatedPos(const NiVector3& posMods) const;
 
 
 };
@@ -2039,3 +2041,33 @@ public:
 	}
 };
 static_assert(sizeof(Sky) == 0x12C);
+
+class CAsyncStream
+{
+public:
+	CAsyncStream();
+	~CAsyncStream();
+
+	virtual void* Destroy(bool doFree);
+	virtual void Seek();
+	virtual void Read();
+	virtual void GetFileSize();
+	virtual void Unk04();
+	virtual void Lock();
+	virtual void Unlock();
+
+};
+
+class CBSAStream : public CAsyncStream
+{
+public:
+	CBSAStream();
+	~CBSAStream();
+	char streamPath[260];
+	BSFile* pFile;
+	struct _RTL_CRITICAL_SECTION kLock;
+	uint32_t unk124;
+	LARGE_INTEGER ullFileSize;
+	LARGE_INTEGER ullBytesRead;
+};
+static_assert(sizeof(CBSAStream) == 0x138);

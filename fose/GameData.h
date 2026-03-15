@@ -19,8 +19,77 @@ static const UInt32* g_CreatedObjectSize = (UInt32*)0x0106DD24;
 
 
 class TESRegionManager;
-class BSFile;
 
+
+class NiBinaryStream
+{
+public:
+	typedef unsigned int(__cdecl* NIBINARYSTREAM_WRITEFN)(NiBinaryStream* pkThis, const void* pvBuffer, unsigned int uiBytes, unsigned int* puiComponentSizes, unsigned int uiNumComponents);
+	typedef unsigned int(__cdecl* NIBINARYSTREAM_READFN)(NiBinaryStream* pkThis, void* pvBuffer, unsigned int uiBytes, unsigned int* puiComponentSizes, unsigned int uiNumComponents);
+
+	virtual void Destroy(bool);
+	virtual bool Bool();
+	virtual void Seek(int);
+	virtual unsigned int GetPosition();
+	virtual void SetEndianSwap(bool);
+
+	unsigned int m_uiAbsoluteCurrentPos;
+	NIBINARYSTREAM_READFN m_pfnRead;
+	NIBINARYSTREAM_WRITEFN m_pfnWrite;
+};
+
+
+class NiFile : public NiBinaryStream
+{
+public:
+	void SeekAlt(int iOffset, int iWhence);
+	unsigned int GetFileSize();
+
+	enum OpenMode : __int32
+	{
+		READ_ONLY = 0x0,
+		WRITE_ONLY = 0x1,
+		APPEND_ONLY = 0x2,
+	};
+
+	unsigned int m_uiBufferAllocSize;
+	unsigned int m_uiBufferReadSize;
+	unsigned int m_uiPos;
+	unsigned int m_uiCurrentFilePos;
+	char* m_pBuffer;
+	FILE* m_pFile;
+	OpenMode m_eMode;
+	bool m_bGood;
+};
+
+class BSFile : public NiFile
+{
+public:
+		bool Open(bool, bool);
+		bool OpenByFilePointer(unsigned int);
+		unsigned int GetSize();
+		unsigned int ReadString(char*, unsigned int);
+		unsigned int ReadStringAlt(void*, unsigned int);
+		unsigned int GetLine(void*, unsigned int, __int16);
+		unsigned int WriteString(void*, unsigned __int8);
+		unsigned int WriteStringAlt(void*, unsigned __int8);
+		bool IsReadable();
+		unsigned int DoRead(void*, unsigned int);
+		unsigned int DoWrite(void*, unsigned int);
+
+	bool bUseAuxBuffer;
+	void* pAuxBuffer;
+	SInt32 iAuxTrueFilePos;
+	uint32_t uiAuxBufferMinIndex;
+	uint32_t uiAuxBufferMaxIndex;
+	char cFileName[260];
+	UInt32 uiResult;
+	UInt32 uiIOSize;
+	UInt32 uiTrueFilePos;
+	UInt32 uiFileSize;
+};
+
+static_assert(sizeof(BSFile) == 0x158);
 // 10
 class BoundObjectListHead
 {

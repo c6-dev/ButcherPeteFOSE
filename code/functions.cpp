@@ -1196,7 +1196,7 @@ bool Cmd_ResetFallTime_Execute(COMMAND_ARGS)
 		if (proc->uiProcessLevel <= 1) {
 			bhkCharacterController* charCtrl = proc->GetCharacterController();
 			if (charCtrl) {
-				charCtrl->fallStartHeight = thisObj->posZ;
+				charCtrl->fallStartHeight = thisObj->position.z;
 				charCtrl->fallTime = 0;
 				*result = 1;
 			}
@@ -1554,7 +1554,7 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS) {
 		NiMatrix33 zMatrix = NiMatrix33();
 		zMatrix.MakeZRotation(player->AdjustRot(0));
 		NiMatrix33 xMatrix = NiMatrix33();
-		xMatrix.MakeXRotation(player->rotX);
+		xMatrix.MakeXRotation(player->rotation.x);
 
 		NiMatrix33 outMatrix = zMatrix.TransposeTimes(xMatrix);
 		NiPoint3 rot = outMatrix.GetCol(1);

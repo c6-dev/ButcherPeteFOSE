@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObjects.h"
+class hkpShapePhantom;
 typedef bool hkBool;
 typedef UInt16 hkHalf;
 
@@ -491,8 +492,9 @@ public:
 	hkArray<hkpProperty> m_properties;
 };
 static_assert(sizeof(hkpWorldObject) == 0x80);
-STATIC_ASSERT(offsetof(hkpWorldObject, m_collidable) == 0x10);
-STATIC_ASSERT(offsetof(hkpWorldObject, m_properties) == 0x74);
+static_assert(offsetof(hkpWorldObject, m_collidable) == 0x10);
+static_assert(offsetof(hkpWorldObject, m_properties) == 0x74);
+static_assert(offsetof(hkpWorldObject, m_world) == 0x8);
 
 class hkpConstraintAtom
 {
@@ -763,9 +765,20 @@ public:
 	hkpPhantomListener		phantomListener;	// 0C
 
 	hkVector4				velocity;			// 10
-	hkVector4				vector20;			// 20
-	void* shapePhantom;		// 30
-	UInt32					unk34[16];			// 34
+	hkVector4				m_oldDisplacement;			// 20
+	hkpShapePhantom* shapePhantom;		// 30
+	float m_dynamicFriction;
+	float m_staticFriction;
+	hkVector4 m_up;
+	float m_extraUpStaticFriction;
+	float m_extraDownStaticFriction;
+	float m_keepDistance;
+	float m_keepContactTolerance;
+	float m_contactAngleSensitivity;
+	SInt32 m_userPlanes;
+	float m_maxCharacterSpeedForSolver;
+	float m_characterStrength;
+	float m_characterMass;
 	hkArray<UInt32>			cdPoints;			// 74
 	hkArray<UInt32>			arr80;				// 80
 	hkArray<UInt32>			arr8C;				// 8C
@@ -867,6 +880,33 @@ public:
 STATIC_ASSERT(sizeof(hkpShapePhantom) == 0x150);
 
 
+
+class hkpContactMgr : public hkReferencedObject
+{
+public:
+	UInt32 m_type;
+};
+
+
+class hkpCollisionAgent : public hkReferencedObject
+{
+public:
+	hkpContactMgr* m_contactMgr;
+};
+
+
+class hkpCachingShapePhantom : public hkpShapePhantom
+{
+public:
+	struct hkpCollisionDetail
+	{
+		hkpCollisionAgent* m_agent;
+		hkpCollidable* m_collidable;
+	};
+	hkArray<hkpCollisionDetail> m_collisionDetails;
+	bool m_orderDirty;
+};
+static_assert(sizeof(hkpCachingShapePhantom) == 0x160);
 // 170
 class hkpSimpleShapePhantom : public hkpShapePhantom
 {
@@ -937,6 +977,16 @@ STATIC_ASSERT(sizeof(bhkWorldObject) == 0x14);
 class bhkPhantom : public bhkWorldObject {
 public:
 	bool unk14;
+};
+
+class bhkShapePhantom : public bhkPhantom
+{
+
+};
+
+class bhkCachingShapePhantom : public bhkShapePhantom
+{
+	
 };
 
 STATIC_ASSERT(sizeof(bhkPhantom) == 0x18);
@@ -1069,12 +1119,19 @@ public:
 	float swimFloatHeight;
 	float actorHeight;
 	float speedPct;
-	UInt32 unk3F8[(0x498 - 0x3F8) >> 2];
+	UInt32 unk4F8;
+	hkVector4 kRotCenter;
+	hkVector4 kPushDelta;
+	UInt32 iPushCount;
+	bhkCachingShapePhantom* spShapePhantom;
+	UInt32 unk428[(0x498 - 0x428) >> 2];
 	UInt32 unk498;
 	hkpRigidBody* spSupportBody; 
 	UInt32 unk4A0[(0x4F0 - 0x4A0) >> 2];
 };
-STATIC_ASSERT(sizeof(bhkCharacterController) == 0x4F0);
-STATIC_ASSERT(offsetof(bhkCharacterController, velocity) == 0x390);
-STATIC_ASSERT(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
+static_assert(sizeof(bhkCharacterController) == 0x4F0);
+static_assert(offsetof(bhkCharacterController, velocity) == 0x390);
+static_assert(offsetof(bhkCharacterController, spShapePhantom) == 0x424);
+static_assert(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
+static_assert(offsetof(bhkCharacterController, kRotCenter) == 0x400);
 //STATIC_ASSERT(offsetof(bhkCharacterController, wantState) == 0x350);

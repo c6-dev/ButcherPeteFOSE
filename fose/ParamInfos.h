@@ -249,6 +249,13 @@ static ParamInfo kParams_SetEquippedFloat[2] =
 	{	"slot", kParamType_Integer, 0 },
 };
 
+static ParamInfo kParams_ThreeFloats[3] =
+{
+	{	"float", kParamType_Float, 0 },
+	{	"float", kParamType_Float, 0 },
+	{	"float", kParamType_Float, 0 },
+};
+
 static ParamInfo kParams_FormListInteger[2] =
 {
 	{	"form list", kParamType_FormList,	0		},

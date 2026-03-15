@@ -60,39 +60,112 @@ void TESObjectREFR::MoveToCell(TESObjectCELL* cell, const NiVector3& posVector)
 	else
 	{
 		s_tempPosMarker->parentCell = cell;
-		s_tempPosMarker->rotX = this->rotX;
-		s_tempPosMarker->rotY = this->rotY;
-		s_tempPosMarker->rotZ = this->rotZ;
-		s_tempPosMarker->posX = posVector.x;
-		s_tempPosMarker->posY = posVector.y;
-		s_tempPosMarker->posZ = posVector.z;
+		s_tempPosMarker->rotation.x = this->rotation.x;
+		s_tempPosMarker->rotation.y = this->rotation.y;
+		s_tempPosMarker->rotation.z = this->rotation.z;
+		s_tempPosMarker->position.x = posVector.x;
+		s_tempPosMarker->position.y = posVector.y;
+		s_tempPosMarker->position.z = posVector.z;
 		CdeclCall<void>(0x528730, this, s_tempPosMarker, 0, 0, 0);
 	}
 }
 
 void TESObjectREFR::SetPos(const NiVector3& posVector)
 {
-		
-		ThisCall<void>(0x4EEAE0, this, &posVector);
-		MobileObject* mobileObj = DYNAMIC_CAST(this, TESObjectREFR, MobileObject);
-		if (mobileObj)
+	// TESObjectREFR::SetLocation(TESObjectREFR *this, NiPoint3 *a2)
+	ThisCall(0x4EEAE0, this, &posVector);
+
+	RenderState* rs = loadedData;
+	if (!rs)
+		return;
+	NiNode* rootNode = rs->rootNode;
+	if (!rootNode)
+		return;
+
+	rootNode->m_localTranslate.x = position.x;
+	rootNode->m_localTranslate.y = position.y;
+	rootNode->m_localTranslate.z = position.z;
+
+	// 4. Handle collision update based on Actor vs non-Actor
+	if (IsActor())
+	{
+		Actor* actor = (Actor*)this;
+		BaseProcess* process = actor->baseProcess;
+
+		if (process && process->uiProcessLevel <= 1)
 		{
-			bhkCharacterController* ctrl = mobileObj->GetCharacterController();
-			if (ctrl && ctrl->chrContext.hkState != 4)
+			bhkCharacterController* charCtrl =
+				((MiddleHighProcess*)process)->spCharCtrl;
+
+			if (charCtrl && charCtrl->chrContext.hkState != 4)
 			{
-					ThisCall<void>(0x4E6580, ctrl, &posVector);
+				bhkCachingShapePhantom* bhkPhantom = charCtrl->spShapePhantom;
+
+				if (bhkPhantom)
+				{
+					hkpCachingShapePhantom* hkPhantom =
+						(hkpCachingShapePhantom*)bhkPhantom->phkObject;
+
+					if (hkPhantom)
+					{
+						hkMotionState* ms = &hkPhantom->m_motionState;
+
+						// Convert Gamebryo ? Havok units (scale ? 1/70)
+						__m128 hkPos = _mm_mul_ps(
+							_mm_loadu_ps((float*)&position),
+							_mm_set1_ps(0.01428571f)
+						);
+
+						// Apply rotation center offset: hkPos += rot * rotCenter
+						hkVector4& rotCenter = charCtrl->kRotCenter;
+						hkMatrix3x4& rot = ms->transform.rotation;
+						__m128 rc = _mm_load_ps((float*)&rotCenter);
+
+						hkPos = _mm_add_ps(hkPos, _mm_mul_ps(
+							_mm_shuffle_ps(rc, rc, 0x00),
+							_mm_load_ps(&rot.cr[0][0])));
+						hkPos = _mm_add_ps(hkPos, _mm_mul_ps(
+							_mm_shuffle_ps(rc, rc, 0x55),
+							_mm_load_ps(&rot.cr[1][0])));
+						hkPos = _mm_add_ps(hkPos, _mm_mul_ps(
+							_mm_shuffle_ps(rc, rc, 0xAA),
+							_mm_load_ps(&rot.cr[2][0])));
+
+
+						hkpCharacterProxy* hkProxy =
+							(hkpCharacterProxy*)charCtrl->phkObject;
+
+						float extraTolerance = hkProxy->m_keepDistance + hkProxy->m_keepContactTolerance;
+
+
+						_mm_store_ps((float*)&hkProxy->m_oldDisplacement, _mm_setzero_ps());
+
+
+						hkpShapePhantom* proxyPhantom = hkProxy->shapePhantom;
+
+						hkVector4* phantomTranslation =
+							&proxyPhantom->m_motionState.transform.translation;
+
+						_mm_store_ps((float*)phantomTranslation, hkPos);
+
+						// hkpShapePhantom::setPosition(this=proxyPhantom, &translation, extraTolerance)
+						ThisCall(0x90DDA0, proxyPhantom, phantomTranslation, extraTolerance);
+					}
+				}
 			}
 		}
-		NiNode* node = this->GetNiNode();
-		if (node)
-		{
-			node->m_localTranslate = posVector;
-			CdeclCall<void>(0x8DA3B0, node, 1);
-			NiUpdateData updateData;
-			ThisCall<void>(0x8264C0, node, &updateData);
-		}
-		
+	}
+	else
+	{
+		// Non-actor: reset collision to match new transform
+		rootNode->ResetCollision();
+	}
+
+	// 5. Propagate transform change through the scene graph
+	NiUpdateData updateData;
+	rootNode->UpdateDownwardPass(updateData, 0);
 }
+
 
 bool TESObjectREFR::CanHaveSound() const
 {

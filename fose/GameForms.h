@@ -1,6 +1,7 @@
 #pragma once
 
 
+class BGSEncounterZone;
 class TESImageSpaceModifier;
 static const UInt32 _TESValueForm_SetValue = 0x0045BE20;
 
@@ -2942,7 +2943,7 @@ public:
 	};
 
 	TESFullName				fullName;			// 018
-	UInt32					unk024;				// 024
+	UInt32					ucCellFlags;				// 024
 	ExtraDataList			extraDataList;		// 028
 	CellCoordinates			* coords;			// 044
 	TESObjectLAND			* land;				// 048
@@ -3016,7 +3017,7 @@ public:
 	UInt32				unk0AC[6];			// 0AC	?$NiTMap@PAVTESFile@@PAUOFFSET_DATA@TESWorldSpace@@@@ (embedded)
 	float				unk0C4;				// 0C4
 	float				unk0C8;				// 0C8
-	UInt32				unk0CC;				// 0CC
+	BGSEncounterZone*	pEncounterZone;		// 0D0
 	TESTexture			tex0D0;				// 0D0
 	TESTexture			tex0DC;				// 0DC
 };

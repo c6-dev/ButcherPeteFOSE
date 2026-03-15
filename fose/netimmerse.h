@@ -287,6 +287,14 @@ public:
 	static const NiPoint3 UNIT_Z;
 	static const NiPoint3 UNIT_ALL;
 	static const NiPoint3 ZERO;
+
+	__forceinline NiPoint3& SetPS(const __m128 rhs)
+	{
+		_mm_storeu_si64(this, _mm_castps_si128(rhs));
+		_mm_store_ss(&z, _mm_unpackhi_ps(rhs, rhs));
+		return *this;
+	}
+	__forceinline __m128 PS() const {return _mm_loadu_ps(&x);}
 };
 
 STATIC_ASSERT(sizeof(NiPoint3) == 0xC);
@@ -780,6 +788,7 @@ public:
 
 	NiAVObject* GetBlock(const char* blockName);
 	NiAVObject* GetBip01();
+	void ResetCollision();
 
 };
 STATIC_ASSERT(sizeof(NiNode) == 0xAC);
