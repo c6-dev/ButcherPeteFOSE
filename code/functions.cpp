@@ -2,6 +2,7 @@
 #include <string>
 #include <unordered_map>
 #include "CommandTable.h"
+#include "custom_terminal_models.h"
 #include "GameAPI.h"
 #include "GameEffects.h"
 #include "GameObjects.h"
@@ -9,6 +10,7 @@
 #include "GameExtraData.h"
 #include "SafeWrite.h"
 #include "GameMenus.h"
+
 extern int g_version;
 
 extern char* s_strArgBuffer;
@@ -29,6 +31,56 @@ TESObjectREFR* s_tempPosMarker;
 extern bool bCombatMusicDisabled;
 
 
+void DoPurgePath(char* path)
+{
+	if (!path) return;
+	const char* currentPath = *(const char**)0x11A0BB0;
+	if (currentPath == path)
+	{
+		ThisCall(0x69D7D0, nullptr); // PurgeTerminalModel
+		currentPath = g_terminalModelDefault;
+	}
+	free(path);
+}
+
+bool Cmd_SetTerminalUIModel_Execute(COMMAND_ARGS)
+{
+	TESForm* form;
+	char modelPath[0x80];
+	modelPath[0] = 0;
+	*result = 0;
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &modelPath)) return true;
+	bool bRemove = !modelPath[0];
+	tList<TESForm> tempList;
+	tempList.Init(form);
+	if IS_ID(form, ListForm)
+		tempList = ((BGSListForm*)form)->list;
+	auto lstIter = tempList.Head();
+	BGSTerminal* terminal;
+	do
+	{
+		terminal = (BGSTerminal*)lstIter->data;
+		if (!terminal || NOT_ID(terminal, Terminal)) continue;
+		auto it = s_terminalAltModelsMap.find(terminal);
+		if (bRemove) {
+			if (it != s_terminalAltModelsMap.end()) {
+				DoPurgePath(it->second);
+				s_terminalAltModelsMap.erase(it);
+			}
+		}
+		else
+		{
+			if (it != s_terminalAltModelsMap.end()) {
+				DoPurgePath(it->second);
+				it->second = _strdup(modelPath);
+			}
+			else {
+				s_terminalAltModelsMap.insert({ terminal, _strdup(modelPath) });
+			}
+		}
+	} while (lstIter = lstIter->next);
+	return true;
+}
 bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
@@ -122,8 +174,11 @@ bool Cmd_TriggerLightningFX_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	Sky* currentSky = Sky::Get();
-	if (currentSky->GetIsRaining())
+	if (currentSky->GetIsRaining()) {
+
 		currentSky->fFlash = 1;
+		currentSky->uiFlashTime = *(UInt32*)0x1090BB0;
+	}
 	return true;
 }
 

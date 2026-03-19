@@ -1,17 +1,17 @@
-#include "patches.h"
 #include <unordered_map>
-
+#include "custom_terminal_models.h"
 #include "GameMenus.h"
-#include "havok.h"
 #include "SafeWrite.h"
 #include "GameSettings.h"
 
 std::unordered_map<UInt32, char*> markerIconMap;
+
 char** defaultMarkerList = (char**)0xF6B13C;
 
 TESClimate* s_forcedClimate = nullptr;
 
 bool bCombatMusicDisabled = false;
+
 
 void __fastcall SetClimateHook(Sky* sky, void* edx, TESClimate* climate, bool a3)
 {
@@ -266,6 +266,50 @@ void __fastcall ResetArmorRating(Character* apCharacter)
 	}
 }
 
+TESObjectREFR* GetHackingMenuRef(HackingMenu* pHackingMenu)
+{
+	if (pHackingMenu->tileChildList174[2])
+	{
+		return pHackingMenu->pTargetRef;
+	}
+	InterfaceManager* pManager = InterfaceManager::GetSingleton();
+	return pManager->crosshairRef;
+}
+
+void __fastcall SetTerminalModelHook(void* a1)
+{
+	char* newPath = (char*)g_terminalModelDefault;
+	if (!s_terminalAltModelsMap.empty()) {
+		TESObjectREFR* targetRef = nullptr;
+		
+		
+		ComputersMenu* pComputersMenu = ComputersMenu::GetInstance();
+		if (pComputersMenu)                 
+		{
+			targetRef = pComputersMenu->pTargetRef;
+		}
+		else
+		{
+			HackingMenu* pHackingMenu = HackingMenu::GetInstance(); 
+			if (pHackingMenu) {
+				targetRef = GetHackingMenuRef(pHackingMenu);
+			}
+		}
+		if (targetRef)
+		{
+			auto it = s_terminalAltModelsMap.find(reinterpret_cast<BGSTerminal*>(targetRef->baseForm));
+			if (it != s_terminalAltModelsMap.end()) {
+				ThisCall(0x69D7D0, nullptr); // PurgeTerminalModel
+				newPath = it->second;
+			}
+			
+		}
+		
+	}
+	*(char**)0xF6B70C = newPath;  // pTerminalFile
+	ThisCall(0x69D980, a1);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -310,6 +354,10 @@ void WritePatches() {
 
 	// Fixes DR not updating when armor is changed by non - player actors
 	WriteRelJump(0x728240, UInt32(ResetArmorRating));
+
+	SafeWrite32(0xE03590, UInt32(SetTerminalModelHook));
+
+	g_terminalModelDefault = *(const char**)0xF6B70C;
 }
 
 void WriteEditorPatches()

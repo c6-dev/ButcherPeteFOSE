@@ -104,6 +104,7 @@ DEFINE_COMMAND_PLUGIN(GetWeatherRGBColor, 0, kParams_OneForm_ThreeInts_OneOption
 DEFINE_COMMAND_PLUGIN(SetWeatherRGBColor, 0, kParams_OneForm_FiveInts_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(GetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt_OneForm);
+DEFINE_COMMAND_PLUGIN(SetTerminalUIModel, 0, kParams_OneForm_OneOptionalString);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

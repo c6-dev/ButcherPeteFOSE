@@ -2027,7 +2027,8 @@ public:
 	float windAngle;					// 0D0
 	BYTE unkD4[0x100 - 0xD4];			// D4
 	float fFlash;						// 0x100
-	BYTE unk104[0x12C - 0x104];			// 104
+	UInt32 uiFlashTime;					// 0x104
+	BYTE unk104[0x12C - 0x108];			// 108
 
 	__forceinline static Sky* Get() { return *(Sky**)0x107A0E8; }
 
@@ -2041,6 +2042,7 @@ public:
 	}
 };
 static_assert(sizeof(Sky) == 0x12C);
+static_assert(offsetof(Sky, fFlash) == 0x100);
 
 class CAsyncStream
 {

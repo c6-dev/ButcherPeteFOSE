@@ -11,7 +11,7 @@ IDebugLog		g_log("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 280;
+int g_version = 290;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -156,6 +156,7 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(SetWindDirection);
 	REG_CMD(GetWeatherImageSpaceMod);
 	REG_CMD(SetWeatherImageSpaceMod);
+	REG_CMD(SetTerminalUIModel);
 
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);

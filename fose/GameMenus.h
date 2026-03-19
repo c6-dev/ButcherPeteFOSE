@@ -455,3 +455,32 @@ public:
 	}
 };
 STATIC_ASSERT(sizeof(HUDMainMenu) == 0x244);
+
+class HackingMenu : Menu
+{
+public:
+	HackingMenu();
+	~HackingMenu();
+	char gap28[0x174 - 0x28];
+	uint32_t tileChildList174[3];
+	char gap180[0x194 - 0x180];
+	TESObjectREFR* pTargetBaseRef;
+	TESObjectREFR* pTargetRef;
+
+	static HackingMenu* GetInstance() { return  *(HackingMenu**)0x10761CC; }
+};
+static_assert(offsetof(HackingMenu, tileChildList174) == 0x174);
+static_assert(offsetof(HackingMenu, pTargetRef) == 0x198);
+
+class ComputersMenu : Menu
+{
+public:
+	ComputersMenu();
+	~ComputersMenu();
+	char gap28[0xAC - 0x28];
+	TESObjectREFR* pTargetRef;
+
+	static ComputersMenu* GetInstance() { return *(ComputersMenu**)0x1075FF4; }
+};
+static_assert(offsetof(ComputersMenu, pTargetRef) == 0xAC);
+
