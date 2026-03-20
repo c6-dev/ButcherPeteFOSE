@@ -310,6 +310,79 @@ void __fastcall SetTerminalModelHook(void* a1)
 	ThisCall(0x69D980, a1);
 }
 
+bool __fastcall GetINISettingHook(IniSettingCollection* ini, void* edx, char* name, Setting** setting) {
+	if (ini && !ini->settings.Empty()) {
+		auto iter = ini->settings.Head();
+		while (iter && iter->data != nullptr) {
+			Setting* pSetting = iter->data;
+			iter = iter->Next();
+			if (_stricmp(pSetting->name, name) == 0) {
+				*setting = pSetting;
+				return true; 
+			}
+		}
+	}
+	RendererSettingCollection* rendererSettings = RendererSettingCollection::GetCollection();
+	if (rendererSettings && !rendererSettings->settings.Empty()) {
+		auto iter = rendererSettings->settings.Head();
+		while (iter && iter->data != nullptr) {
+			Setting* pSetting = iter->data;
+			iter = iter->Next();
+			if (_stricmp(pSetting->name, name) == 0) {  
+				*setting = pSetting;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+void __stdcall HandleSettingType(Setting* setting, Setting::EType type) {
+	switch (type) {
+	case Setting::kSetting_Bool:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> %i", setting->name, setting->data.b);
+		break;
+	case Setting::kSetting_Integer:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> %d", setting->name, setting->data.i);
+		break;
+	case Setting::kSetting_Unsigned:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> %X", setting->name, setting->data.u);
+		break;
+	case Setting::kSetting_Float:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> %.2f", setting->name, setting->data.f);
+		break;
+	case Setting::kSetting_String:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> '%s'", setting->name, setting->data.str);
+		break;
+	case Setting::kSetting_r:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> R: %d G: %d B: %d", setting->name, setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1]);
+		break;
+	case Setting::kSetting_a:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> R: %d G: %d B: %d alpha: %d", setting->name, setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1], setting->data.rgb[0]);
+		break;
+	default:
+		if (IsConsoleMode()) Console_Print("INISetting %s >> UNKNOWN TYPE", setting->name);
+		break;
+	}
+}
+
+__declspec(naked) void GetINISettingTypeHook() {
+	__asm {
+		push eax
+		mov eax, esi
+		push eax
+		call HandleSettingType
+		mov eax, 0x53E83C
+		jmp eax
+	}
+}
+
+bool __stdcall SaveINIHook() {
+	
+	RendererSettingCollection* rendererSettings = RendererSettingCollection::GetCollection();
+	ThisCall<bool>(0x539FA0, rendererSettings, rendererSettings->iniPath);
+	return StdCall<bool>(0x53E440);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -358,6 +431,12 @@ void WritePatches() {
 	SafeWrite32(0xE03590, UInt32(SetTerminalModelHook));
 
 	g_terminalModelDefault = *(const char**)0xF6B70C;
+
+	// fix for Get/Set/SaveINISetting not reading renderer INI setting list
+	WriteRelCall(0x53E786, (uint32_t)GetINISettingHook);
+	WriteRelCall(0x53E92E, (uint32_t)GetINISettingHook);
+	SafeWrite32(0xF53CB8, (uint32_t)SaveINIHook);
+	WriteRelJump(0x53E7A3, (uint32_t)GetINISettingTypeHook);
 }
 
 void WriteEditorPatches()

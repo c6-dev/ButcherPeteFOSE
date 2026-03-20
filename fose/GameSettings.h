@@ -22,15 +22,20 @@ public:
 		kSetting_Other
 	};
 	union Info {
-		UInt32		uint;
-		int			i;
-		float		f;
-		char		* str;
+		const char*		str;
+		int32_t			i;
+		uint32_t		u;
+		float			f;
+		bool			b;
+		int8_t			c;
+		uint8_t			h;
+		DWORD			r;
+		uint8_t			rgb[4];
 	};
 
 	// void		** vtbl				// 00
 	Info		data;				// 04
-	char		* name;				// 08
+	char*		name;				// 08
 
 	UInt32 GetType();
 	bool Get(double& out);
@@ -99,3 +104,9 @@ public:
 STATIC_ASSERT(sizeof(IniSettingCollection) == 0x114);
 
 bool GetIniSetting(const char* settingName, Setting** out);
+
+class RendererSettingCollection : public IniSettingCollection
+{
+public:
+	static RendererSettingCollection* GetCollection() { return StdCall<RendererSettingCollection*>(0x43B7A0); }
+};
