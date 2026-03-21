@@ -383,6 +383,13 @@ bool __stdcall SaveINIHook() {
 	return StdCall<bool>(0x53E440);
 }
 
+void __fastcall DOFFOVHook(void* a1, void* edx, float a3, bool a4, NiCamera* a5, bool a6)
+{
+	DWORD g_VATSCameraMode = *(DWORD*)0x108D0A0;
+	if (!g_VATSCameraMode) return;
+	ThisCall(0xAAEAF0, a1, a3, a4, a5, a6);
+}
+
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -437,6 +444,10 @@ void WritePatches() {
 	WriteRelCall(0x53E92E, (uint32_t)GetINISettingHook);
 	SafeWrite32(0xF53CB8, (uint32_t)SaveINIHook);
 	WriteRelJump(0x53E7A3, (uint32_t)GetINISettingTypeHook);
+
+	// fix DOF changing world/1stPerson cam FOV outside of VATS, resulting in turn speed looking different
+	WriteRelCall(0x6EADD9, (UInt32)DOFFOVHook);
+	WriteRelCall(0x6EAE4E, (UInt32)DOFFOVHook);
 }
 
 void WriteEditorPatches()
