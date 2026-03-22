@@ -30,6 +30,122 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_IsRadioRef_Execute(COMMAND_ARGS)
+{
+	if (thisObj->extraDataList.HasType(kExtraData_RadioData)) 
+	{
+		*result = 1;
+	}
+	if (IsConsoleMode()) Console_Print("IsRadioRef >> %.f", *result);
+	return true;
+}
+
+bool Cmd_GetRadioBroadcastType_Execute(COMMAND_ARGS)
+{
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData))
+	{
+		*result = (int)xRadio->rangeType;
+	}
+	if (IsConsoleMode()) Console_Print("GetRadioBroadcastType >> %.f", *result);
+	return true;
+}
+
+bool Cmd_SetRadioBroadcastType_Execute(COMMAND_ARGS)
+{
+	UInt32 type;
+	if (ExtractArgs(EXTRACT_ARGS, &type) && (type <= 4))
+	{
+		if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData))
+		{
+			if (xRadio->rangeType = type)
+			{
+				xRadio->radius = 0;
+				xRadio->staticPerc = 0;
+			}
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetRadioRadius_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
+	{
+		*result = xRadio->radius;
+	}
+	if (IsConsoleMode()) Console_Print("GetRadioRadius >> %.3f", *result);
+	return true;
+}
+
+bool Cmd_SetRadioRadius_Execute(COMMAND_ARGS)
+{
+	float radius;
+	if (ExtractArgs(EXTRACT_ARGS, &radius) && (radius >= 0))
+	{
+		if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
+		{
+			xRadio->radius = radius;
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetRadioStatic_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
+	{
+		*result = xRadio->staticPerc;
+	}
+	if (IsConsoleMode()) Console_Print("GetRadioStatic >> %.3f", *result);
+	return true;
+}
+
+bool Cmd_SetRadioStatic_Execute(COMMAND_ARGS)
+{
+	float radStatic;
+	if (ExtractArgs(EXTRACT_ARGS, &radStatic) && (radStatic >= 0))
+	{
+		if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
+		{
+			xRadio->staticPerc = radStatic;
+		}
+	}
+	return true;
+}
+
+bool Cmd_GetRadioPosRef_Execute(COMMAND_ARGS)
+{
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType && xRadio->positionRef)
+	{
+		*(UInt32*)result = xRadio->positionRef->refID;
+	}
+	if (IsConsoleMode()) Console_Print("GetRadioPosRef >> 0x%08X", *result);
+	return true;
+}
+
+bool Cmd_SetRadioPosRef_Execute(COMMAND_ARGS)
+{
+	TESObjectREFR* refr;
+	if (ExtractArgs(EXTRACT_ARGS, &refr))
+		if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
+		{
+			xRadio->positionRef = refr;
+		}
+	return true;
+}
+
+bool Cmd_GetPipBoyRadio_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	RadioEntry* pipboyRadio =  *(RadioEntry**)0x10791C4;
+	if (pipboyRadio && pipboyRadio->pReference) {
+		*(UInt32*)result = pipboyRadio->pReference->refID; 
+	}
+	if (IsConsoleMode()) Console_Print("GetPipBoyRadio >> 0x%08X", *result);
+	return true;
+}
 
 void DoPurgePath(char* path)
 {

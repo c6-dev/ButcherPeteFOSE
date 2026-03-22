@@ -157,6 +157,16 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetWeatherImageSpaceMod);
 	REG_CMD(SetWeatherImageSpaceMod);
 	REG_CMD(SetTerminalUIModel);
+	REG_CMD(GetPipBoyRadio);
+	REG_CMD(IsRadioRef);
+	REG_CMD(GetRadioBroadcastType);
+	REG_CMD(SetRadioBroadcastType);
+	REG_CMD(GetRadioRadius);
+	REG_CMD(SetRadioRadius);
+	REG_CMD(GetRadioStatic);
+	REG_CMD(SetRadioStatic);
+	REG_CMD(GetRadioPosRef);
+	REG_CMD(SetRadioPosRef);
 
 	s_strArgBuffer = (char*)malloc(0x4000);
 	s_strValBuffer = (char*)malloc(0x10000);

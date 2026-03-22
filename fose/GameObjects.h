@@ -2073,3 +2073,9 @@ public:
 	LARGE_INTEGER ullBytesRead;
 };
 static_assert(sizeof(CBSAStream) == 0x138);
+
+struct RadioEntry
+{
+	TESObjectREFR* pReference;
+	// TODO
+};

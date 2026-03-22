@@ -3,6 +3,7 @@
 #include "GameMenus.h"
 #include "SafeWrite.h"
 #include "GameSettings.h"
+#include "patches.h"
 
 std::unordered_map<UInt32, char*> markerIconMap;
 
@@ -390,6 +391,24 @@ void __fastcall DOFFOVHook(void* a1, void* edx, float a3, bool a4, NiCamera* a5,
 	ThisCall(0xAAEAF0, a1, a3, a4, a5, a6);
 }
 
+__declspec(naked) void FixNewGameMusic() {
+	__asm {
+		test esi, esi
+		jz SETDEFAULT
+		cmp dword ptr ds:[0x1079054], esi
+		jnz NEXTCHECK
+		mov eax, 0x6BDCDD
+		jmp eax
+		SETDEFAULT:
+		mov eax, 0x6BDD01
+		jmp eax
+		NEXTCHECK:
+		mov eax, 0x6BDCE8
+		jmp eax
+	}
+
+}
+ 
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
@@ -448,6 +467,8 @@ void WritePatches() {
 	// fix DOF changing world/1stPerson cam FOV outside of VATS, resulting in turn speed looking different
 	WriteRelCall(0x6EADD9, (UInt32)DOFFOVHook);
 	WriteRelCall(0x6EAE4E, (UInt32)DOFFOVHook);
+
+	WriteRelJump(0x6BDCD5, UInt32(FixNewGameMusic));
 }
 
 void WriteEditorPatches()

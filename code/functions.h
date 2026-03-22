@@ -105,6 +105,16 @@ DEFINE_COMMAND_PLUGIN(SetWeatherRGBColor, 0, kParams_OneForm_FiveInts_OneOptiona
 DEFINE_COMMAND_PLUGIN(GetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt);
 DEFINE_COMMAND_PLUGIN(SetWeatherImageSpaceMod, 0, kParams_OneForm_OneInt_OneForm);
 DEFINE_COMMAND_PLUGIN(SetTerminalUIModel, 0, kParams_OneForm_OneOptionalString);
+DEFINE_COMMAND_PLUGIN(GetPipBoyRadio, 0, NULL);
+DEFINE_COMMAND_PLUGIN(IsRadioRef, 1, NULL);
+DEFINE_COMMAND_PLUGIN(GetRadioBroadcastType, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetRadioBroadcastType, 1, kParams_OneInt);
+DEFINE_COMMAND_PLUGIN(GetRadioRadius, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetRadioRadius, 1, kParams_OneFloat);
+DEFINE_COMMAND_PLUGIN(GetRadioStatic, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetRadioStatic, 1, kParams_OneFloat);
+DEFINE_COMMAND_PLUGIN(GetRadioPosRef, 1, NULL);
+DEFINE_COMMAND_PLUGIN(SetRadioPosRef, 1, kParams_OneObjectRef);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

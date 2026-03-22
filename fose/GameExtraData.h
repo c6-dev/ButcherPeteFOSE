@@ -1120,13 +1120,14 @@ public:
 // 01C
 class ExtraRadioData : public BSExtraData
 {
+public:
 	ExtraRadioData();
 	virtual ~ExtraRadioData();
 
-	UInt32	unk00C;		// 00C
-	UInt32	unk010;		// 010
-	UInt32	unk014;		// 014
-	UInt32	unk018;		// 018
+	float radius;
+	UInt32 rangeType;
+	float staticPerc;
+	TESObjectREFR* positionRef;
 };
 STATIC_ASSERT(sizeof(ExtraRadioData) == 0x1C);
 

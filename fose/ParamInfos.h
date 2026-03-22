@@ -69,6 +69,11 @@ static ParamInfo kParams_OneOptionalIdleForm[1] =
 	{	"idle form", kParamType_IdleForm,	1 },
 };
 
+static ParamInfo kParams_OneObjectRef[1] =
+{
+	{	"ref", kParamType_ObjectRef,	0 },
+};
+
 static ParamInfo kParams_OneIdleForm[1] =
 {
 	{	"idle form", kParamType_IdleForm,	0 },
