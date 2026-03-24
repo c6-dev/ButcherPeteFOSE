@@ -4,7 +4,6 @@
 #include "SafeWrite.h"
 #include "GameSettings.h"
 #include "patches.h"
-#include <unordered_set>
 
 std::unordered_map<UInt32, char*> markerIconMap;
 
@@ -13,8 +12,6 @@ char** defaultMarkerList = (char**)0xF6B13C;
 TESClimate* s_forcedClimate = nullptr;
 
 bool bCombatMusicDisabled = false;
-
-std::unordered_set<std::string> s_overrideBSAFiles;
 
 
 void __fastcall SetClimateHook(Sky* sky, void* edx, TESClimate* climate, bool a3)
@@ -412,28 +409,6 @@ __declspec(naked) void FixNewGameMusic() {
 
 }
 
-
-void* __cdecl LoadBSAFileHook(const char* filename, short arg2, bool isOverride)
-{
-	if (s_overrideBSAFiles.count(filename))
-	{
-		isOverride = true;
-	}
-	return CdeclCall<void*>(0xBCBF10, filename, arg2, isOverride);
-}
-
-void LoadBSAOverrides() {
-	char dataPath[0x80];
-	memcpy(dataPath, "data\\", 6);
-	for (DirectoryIterator dirIter("Data\\*.override"); dirIter; ++dirIter)
-		if (dirIter.IsFile())
-		{
-			memcpy(strcpy(dataPath + 5, *dirIter) - 8, "bsa", 4);
-			s_overrideBSAFiles.insert(dataPath);
-		}
-	if (!s_overrideBSAFiles.empty())
-		WriteRelCall(0x44672C, (UInt32)LoadBSAFileHook);
-}
 void WritePatches() {
 
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them

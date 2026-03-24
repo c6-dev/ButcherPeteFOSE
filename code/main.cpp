@@ -173,7 +173,6 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 
 	if (fose->isEditor) {
 		WriteEditorPatches();
-		LoadBSAOverrides();
 	}
 	else {
 		WritePatches();
