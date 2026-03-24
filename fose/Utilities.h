@@ -298,3 +298,34 @@ static UInt8 ScancodeToVirtualKey(UINT dx) {
 
 	return vkCode;
 }
+
+class DirectoryIterator
+{
+	HANDLE				handle;
+	WIN32_FIND_DATA		fndData;
+
+public:
+	DirectoryIterator(const char* path) : handle(FindFirstFile(path, &fndData)) {}
+	~DirectoryIterator() { Close(); }
+
+	bool IsFile() const { return !(fndData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY); }
+	bool IsFolder() const
+	{
+		if (IsFile())
+			return false;
+		UInt32 prefix = *(UInt32*)fndData.cFileName;
+		return ((prefix & 0xFFFF) != '.') && ((prefix & 0xFFFFFF) != '..');
+	}
+	void Close()
+	{
+		if (handle != INVALID_HANDLE_VALUE)
+		{
+			FindClose(handle);
+			handle = INVALID_HANDLE_VALUE;
+		}
+	}
+
+	explicit operator bool() const { return handle != INVALID_HANDLE_VALUE; }
+	const char* operator*() const { return fndData.cFileName; }
+	void operator++() { if (!FindNextFile(handle, &fndData)) Close(); }
+};
