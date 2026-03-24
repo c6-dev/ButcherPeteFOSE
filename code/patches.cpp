@@ -14,7 +14,7 @@ TESClimate* s_forcedClimate = nullptr;
 
 bool bCombatMusicDisabled = false;
 
-std::unordered_set<const char*> s_overrideBSAFiles;
+std::unordered_set<std::string> s_overrideBSAFiles;
 
 
 void __fastcall SetClimateHook(Sky* sky, void* edx, TESClimate* climate, bool a3)
@@ -413,10 +413,9 @@ __declspec(naked) void FixNewGameMusic() {
 }
 
 
-
 void* __cdecl LoadBSAFileHook(const char* filename, short arg2, bool isOverride)
 {
-	if (s_overrideBSAFiles.find(filename) != s_overrideBSAFiles.end())
+	if (s_overrideBSAFiles.count(filename))
 	{
 		isOverride = true;
 	}
