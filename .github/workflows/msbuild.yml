@@ -14,10 +14,10 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2025-vs2026
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -37,14 +37,14 @@ jobs:
       shell: bash
 
     - name: Publish Release
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ButcherPeteFOSE-Release-${{ env.artifact_timestamp }}
         path: |
           Release\ButcherPete.dll
 
     - name: Publish Debug
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: ButcherPeteFOSE-Debug-${{ env.artifact_timestamp }}
         path: |
