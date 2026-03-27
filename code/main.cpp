@@ -11,7 +11,7 @@ IDebugLog		g_log("butcher_pete.log");
 
 PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 290;
+int g_version = 300;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -208,6 +208,13 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 		// more null checks
 		info = cmdTableInterface->GetByOpcode(0x14AD);
 		info->execute = Hook_GetTeleportCell_Execute;
+
+		info = cmdTableInterface->GetByOpcode(0x147E);
+		info->execute = Hook_GetNumericIniSetting_Execute;
+
+		info = cmdTableInterface->GetByOpcode(0x147F);
+		info->execute = Hook_SetNumericIniSetting_Execute;
+
 
 		cmd_IsKeyPressed = cmdTableInterface->GetByOpcode(0x143A);
 	}

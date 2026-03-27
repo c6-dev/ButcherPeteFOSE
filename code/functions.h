@@ -129,3 +129,7 @@ bool Hook_GetRadiationLevel_Eval(COMMAND_ARGS_EVAL);
 bool Hook_GetRepairList_Execute(COMMAND_ARGS);
 
 bool Hook_GetTeleportCell_Execute(COMMAND_ARGS);
+
+bool Hook_GetNumericIniSetting_Execute(COMMAND_ARGS);
+
+bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS);

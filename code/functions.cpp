@@ -10,6 +10,7 @@
 #include "GameExtraData.h"
 #include "SafeWrite.h"
 #include "GameMenus.h"
+#include <GameSettings.h>
 
 extern int g_version;
 
@@ -30,6 +31,52 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS)
+{
+	char settingName[512] = { 0 };
+	float newVal = 0;
+	*result = 0;
+
+	if (ExtractArgs(EXTRACT_ARGS, &settingName, &newVal))
+	{
+		Setting* setting;
+		if (GetIniSetting(settingName, &setting))
+		{
+			if (setting->SetNumeric(newVal))
+				*result = 1;
+		}
+		else if (IsConsoleMode())
+			Console_Print("SetNumericIniSetting >> NOT FOUND");
+	}
+
+	return true;
+}
+
+
+bool Hook_GetNumericIniSetting_Execute(COMMAND_ARGS)
+{
+	char settingName[512] = { 0 };
+	*result = -1;
+
+	if (ExtractArgs(EXTRACT_ARGS, &settingName))
+	{
+		Setting* setting;
+		if (GetIniSetting(settingName, &setting))
+		{
+			double val;
+			if (setting->GetNumeric(val))
+			{
+				*result = val;
+				if (IsConsoleMode())
+					Console_Print("GetNumericIniSetting >> %g", *result);
+			}
+		}
+		else if (IsConsoleMode())
+			Console_Print("GetNumericIniSetting >> SETTING NOT FOUND");
+	}
+
+	return true;
+}
 bool Cmd_IsRadioRef_Execute(COMMAND_ARGS)
 {
 	if (thisObj->extraDataList.HasType(kExtraData_RadioData)) 

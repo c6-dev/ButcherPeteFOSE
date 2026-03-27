@@ -38,8 +38,8 @@ public:
 	char*		name;				// 08
 
 	UInt32 GetType();
-	bool Get(double& out);
-	bool Set(double newVal);
+	bool GetNumeric(double& out);
+	bool SetNumeric(double newVal);
 };
 
 // 120
