@@ -7,9 +7,9 @@
 
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name)
 
-IDebugLog		g_log("butcher_pete.log");
+IDebugLog g_log("butcher_pete.log");
 
-PluginHandle	g_pluginHandle = kPluginHandle_Invalid;
+PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
 int g_version = 300;
 
@@ -20,10 +20,8 @@ CommandInfo* cmd_IsKeyPressed = nullptr;
 FOSECommandTableInterface* cmdTableInterface = nullptr;
 
 extern "C" {
-
-bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
+bool FOSEPlugin_Query(const FOSEInterface* fose, PluginInfo* info)
 {
-
 	info->infoVersion = PluginInfo::kInfoVersion;
 	info->name = "Butcher Pete FOSE";
 	info->version = g_version;
@@ -33,25 +31,26 @@ bool FOSEPlugin_Query(const FOSEInterface * fose, PluginInfo * info)
 		_ERROR("German No-Gore version is not supported");
 		return false;
 	}
-	if(fose->foseVersion < 0x1030020)
+	if (fose->foseVersion < 0x1030020)
 	{
-		MessageBoxA(nullptr, "ButcherPete FOSE plugin requires FOSE version v1.3b2.\n\nInstalled version is too old.", "ButcherPete FOSE", 0);
+		MessageBoxA(nullptr, "ButcherPete FOSE plugin requires FOSE version v1.3b2.\n\nInstalled version is too old.",
+		            "ButcherPete FOSE", 0);
 		_ERROR("FOSE 1.3b2 is required for ButcherPete FOSE. Your version is %08X", fose->foseVersion);
 		return false;
 	}
 
-	if(!fose->isEditor && fose->runtimeVersion != FALLOUT_VERSION_1_7)
+	if (!fose->isEditor && fose->runtimeVersion != FALLOUT_VERSION_1_7)
 	{
 		_ERROR("incorrect runtime version (got %08X need %08X)", fose->runtimeVersion, FALLOUT_VERSION_1_7);
 		return false;
 	}
 
-	
+
 	return true;
 }
 
 
-bool FOSEPlugin_Load(const FOSEInterface * fose)
+bool FOSEPlugin_Load(const FOSEInterface* fose)
 {
 	fose->SetOpcodeBase(0x2220);
 	g_pluginHandle = fose->GetPluginHandle();
@@ -168,20 +167,21 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	REG_CMD(GetRadioPosRef);
 	REG_CMD(SetRadioPosRef);
 
-	s_strArgBuffer = (char*)malloc(0x4000);
-	s_strValBuffer = (char*)malloc(0x10000);
+	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
+	s_strValBuffer = static_cast<char*>(malloc(0x10000));
 
-	if (fose->isEditor) {
+	if (fose->isEditor)
+	{
 		WriteEditorPatches();
 	}
-	else {
+	else
+	{
 		WritePatches();
 	}
 
-	cmdTableInterface = (FOSECommandTableInterface*)fose->QueryInterface(kInterface_CommandTable);
-	if (cmdTableInterface) {
-
-
+	cmdTableInterface = static_cast<FOSECommandTableInterface*>(fose->QueryInterface(kInterface_CommandTable));
+	if (cmdTableInterface)
+	{
 		// fix memory corruption in fose functions
 		CommandInfo* info = cmdTableInterface->GetByOpcode(0x1428);
 		info->execute = Hook_ListAddForm_Execute;
@@ -220,5 +220,4 @@ bool FOSEPlugin_Load(const FOSEInterface * fose)
 	}
 	return true;
 }
-
 };

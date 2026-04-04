@@ -25,7 +25,7 @@ extern TESClimate* s_forcedClimate;
 
 static bool timePatched = false;
 
-const UInt32 kMsgIconsPathAddr[] = { 0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278 };
+const UInt32 kMsgIconsPathAddr[] = {0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD9148, 0xDE3790, 0xDF3278};
 
 TESObjectREFR* s_tempPosMarker;
 
@@ -33,7 +33,7 @@ extern bool bCombatMusicDisabled;
 
 bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS)
 {
-	char settingName[512] = { 0 };
+	char settingName[512] = {0};
 	float newVal = 0;
 	*result = 0;
 
@@ -55,7 +55,7 @@ bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS)
 
 bool Hook_GetNumericIniSetting_Execute(COMMAND_ARGS)
 {
-	char settingName[512] = { 0 };
+	char settingName[512] = {0};
 	*result = -1;
 
 	if (ExtractArgs(EXTRACT_ARGS, &settingName))
@@ -77,9 +77,10 @@ bool Hook_GetNumericIniSetting_Execute(COMMAND_ARGS)
 
 	return true;
 }
+
 bool Cmd_IsRadioRef_Execute(COMMAND_ARGS)
 {
-	if (thisObj->extraDataList.HasType(kExtraData_RadioData)) 
+	if (thisObj->extraDataList.HasType(kExtraData_RadioData))
 	{
 		*result = 1;
 	}
@@ -91,7 +92,7 @@ bool Cmd_GetRadioBroadcastType_Execute(COMMAND_ARGS)
 {
 	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData))
 	{
-		*result = (int)xRadio->rangeType;
+		*result = static_cast<int>(xRadio->rangeType);
 	}
 	if (IsConsoleMode()) Console_Print("GetRadioBroadcastType >> %.f", *result);
 	return true;
@@ -164,7 +165,8 @@ bool Cmd_SetRadioStatic_Execute(COMMAND_ARGS)
 
 bool Cmd_GetRadioPosRef_Execute(COMMAND_ARGS)
 {
-	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType && xRadio->positionRef)
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType && xRadio->
+		positionRef)
 	{
 		*(UInt32*)result = xRadio->positionRef->refID;
 	}
@@ -186,9 +188,10 @@ bool Cmd_SetRadioPosRef_Execute(COMMAND_ARGS)
 bool Cmd_GetPipBoyRadio_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	RadioEntry* pipboyRadio =  *(RadioEntry**)0x10791C4;
-	if (pipboyRadio && pipboyRadio->pReference) {
-		*(UInt32*)result = pipboyRadio->pReference->refID; 
+	RadioEntry* pipboyRadio = *(RadioEntry**)0x10791C4;
+	if (pipboyRadio && pipboyRadio->pReference)
+	{
+		*(UInt32*)result = pipboyRadio->pReference->refID;
 	}
 	if (IsConsoleMode()) Console_Print("GetPipBoyRadio >> 0x%08X", *result);
 	return true;
@@ -217,39 +220,46 @@ bool Cmd_SetTerminalUIModel_Execute(COMMAND_ARGS)
 	tList<TESForm> tempList;
 	tempList.Init(form);
 	if IS_ID(form, ListForm)
-		tempList = ((BGSListForm*)form)->list;
+		tempList = static_cast<BGSListForm*>(form)->list;
 	auto lstIter = tempList.Head();
 	BGSTerminal* terminal;
 	do
 	{
-		terminal = (BGSTerminal*)lstIter->data;
+		terminal = static_cast<BGSTerminal*>(lstIter->data);
 		if (!terminal || NOT_ID(terminal, Terminal)) continue;
 		auto it = s_terminalAltModelsMap.find(terminal);
-		if (bRemove) {
-			if (it != s_terminalAltModelsMap.end()) {
+		if (bRemove)
+		{
+			if (it != s_terminalAltModelsMap.end())
+			{
 				DoPurgePath(it->second);
 				s_terminalAltModelsMap.erase(it);
 			}
 		}
 		else
 		{
-			if (it != s_terminalAltModelsMap.end()) {
+			if (it != s_terminalAltModelsMap.end())
+			{
 				DoPurgePath(it->second);
 				it->second = _strdup(modelPath);
 			}
-			else {
-				s_terminalAltModelsMap.insert({ terminal, _strdup(modelPath) });
+			else
+			{
+				s_terminalAltModelsMap.insert({terminal, _strdup(modelPath)});
 			}
 		}
-	} while (lstIter = lstIter->next);
+	}
+	while (lstIter = lstIter->next);
 	return true;
 }
+
 bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
 	UInt32 type, time, channel = 0, layer = 0;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >= 1 && channel <=3)
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >=
+		1 && channel <= 3)
 	{
 		UInt32 color = 0;
 		if (type != 2)
@@ -260,7 +270,7 @@ bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 		*result = (color >> ((channel - 1) * 8)) & 0xFF;
 	}
 	if (IsConsoleMode()) Console_Print("GetWeatherRGBColor >> %.f", *result);
-	return true; 
+	return true;
 }
 
 
@@ -268,7 +278,9 @@ bool Cmd_SetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
 	UInt32 type, time, r = 0, g = 0, b = 0, layer = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <= 255) && (g <= 255) && (b <= 255)) {
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <=
+		255) && (g <= 255) && (b <= 255))
+	{
 		UInt32 rgb = r | (g << 8) | (b << 16);
 		if (type != 2)
 			weather->uiColorData[type][time] = rgb;
@@ -282,9 +294,11 @@ bool Cmd_SetWindDirection_Execute(COMMAND_ARGS)
 {
 	float windDirection;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &windDirection)) {
+	if (ExtractArgs(EXTRACT_ARGS, &windDirection))
+	{
 		Sky* currentSky = Sky::Get();
-		if (currentSky) {
+		if (currentSky)
+		{
 			currentSky->windAngle = windDirection * -0.01745329238F;
 		}
 	}
@@ -295,7 +309,8 @@ bool Cmd_GetWindDirection_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	Sky* currentSky = Sky::Get();
-	if (currentSky) {
+	if (currentSky)
+	{
 		*result = currentSky->windAngle * -57.29577951308232;
 	}
 	if (IsConsoleMode()) Console_Print("GetWindDirection >> %.2f", *result);
@@ -337,8 +352,8 @@ bool Cmd_TriggerLightningFX_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	Sky* currentSky = Sky::Get();
-	if (currentSky->GetIsRaining()) {
-
+	if (currentSky->GetIsRaining())
+	{
 		currentSky->fFlash = 1;
 		currentSky->uiFlashTime = *(UInt32*)0x1090BB0;
 	}
@@ -363,7 +378,8 @@ bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 	UInt32 traitID;
 	float value;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID, &value) && weather && (traitID <= 22)) {
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID, &value) && weather && (traitID <= 22))
+	{
 		switch (traitID)
 		{
 		case 0:
@@ -388,13 +404,13 @@ bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 			weather->ucWeatherData[traitID - 2] = (value > 1) ? 255 : (value * 255);
 			break;
 		case 13:
-			if (UInt32 intVal = (int)value; !(intVal & (intVal - 1)))
+			if (UInt32 intVal = static_cast<int>(value); !(intVal & (intVal - 1)))
 				weather->ucWeatherData[11] = intVal;
 			break;
 		case 14:
 		case 15:
 		case 16:
-			weather->ucWeatherData[traitID - 2] = (UInt8)value;
+			weather->ucWeatherData[traitID - 2] = static_cast<UInt8>(value);
 			break;
 		default:
 			weather->fFogData[traitID - 17] = value;
@@ -409,7 +425,8 @@ bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	UInt32 traitID;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID) && weather && (traitID <= 22)) {
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &traitID) && weather && (traitID <= 22))
+	{
 		switch (traitID)
 		{
 		case 0:
@@ -439,7 +456,7 @@ bool Cmd_GetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 		case 14:
 		case 15:
 		case 16:
-			*result =(weather->ucWeatherData[traitID-2]);
+			*result = (weather->ucWeatherData[traitID - 2]);
 			break;
 		default:
 			*result = weather->fFogData[traitID - 17];
@@ -454,11 +471,11 @@ bool Cmd_GetInventoryWeight_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	BSExtraData* xData = thisObj->extraDataList.GetByType(kExtraData_ContainerChanges);
-	ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+	auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 
 	if (xChanges && xChanges->data)
 		xChanges->data->totalWgCurrent = -1.0f;
-		*result = ThisCall<double>(0x47EE00, xChanges->data);
+	*result = ThisCall<double>(0x47EE00, xChanges->data);
 	if (IsConsoleMode()) Console_Print("GetInventoryWeight >> %.2f", *result);
 	return true;
 }
@@ -466,7 +483,7 @@ bool Cmd_GetInventoryWeight_Execute(COMMAND_ARGS)
 bool Cmd_IsPlayable_Execute(COMMAND_ARGS)
 {
 	*result = 1;
-	TESForm* form = NULL;
+	TESForm* form = nullptr;
 
 	if (ExtractArgs(EXTRACT_ARGS, &form))
 	{
@@ -477,19 +494,22 @@ bool Cmd_IsPlayable_Execute(COMMAND_ARGS)
 	}
 	if (form)
 	{
-		TESBipedModelForm* biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		auto biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
 		if (biped)
 			*result = biped->IsPlayable() ? 1 : 0;
-		else {
-			TESObjectWEAP* weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
+		else
+		{
+			auto weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
 			if (weap)
 				*result = weap->IsPlayable() ? 1 : 0;
-			else {
-				TESAmmo* ammo = DYNAMIC_CAST(form, TESForm, TESAmmo);
+			else
+			{
+				auto ammo = DYNAMIC_CAST(form, TESForm, TESAmmo);
 				if (ammo)
 					*result = ammo->IsPlayable() ? 1 : 0;
-				else {
-					TESRace* race = DYNAMIC_CAST(form, TESForm, TESRace);
+				else
+				{
+					auto race = DYNAMIC_CAST(form, TESForm, TESRace);
 					if (race)
 						*result = race->IsPlayable() ? 1 : 0;
 				}
@@ -505,7 +525,7 @@ bool Cmd_IsPlayable_Execute(COMMAND_ARGS)
 bool Cmd_SetIsPlayable_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	TESForm* form = NULL;
+	TESForm* form = nullptr;
 	float doSet;
 
 	if (ExtractArgs(EXTRACT_ARGS, &doSet, &form))
@@ -517,16 +537,17 @@ bool Cmd_SetIsPlayable_Execute(COMMAND_ARGS)
 	}
 	if (form)
 	{
-		TESBipedModelForm* biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		auto biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
 		if (biped)
 			biped->SetNonPlayable(0.0 == doSet);
 	}
 	return true;
 }
+
 bool Cmd_SetScopeModelPath_Execute(COMMAND_ARGS)
 {
-	TESForm* form = NULL;
-	TESModel* model = NULL;
+	TESForm* form = nullptr;
+	TESModel* model = nullptr;
 	char pathStr[512];
 	*result = 0;
 
@@ -536,7 +557,7 @@ bool Cmd_SetScopeModelPath_Execute(COMMAND_ARGS)
 			if (thisObj)
 				form = thisObj->baseForm;
 
-		TESObjectWEAP* weapon = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
+		auto weapon = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
 		if (weapon && weapon->HasScope())
 			model = &(weapon->targetNIF);
 
@@ -548,7 +569,8 @@ bool Cmd_SetScopeModelPath_Execute(COMMAND_ARGS)
 }
 
 
-bool Cmd_ToggleCombatMusic_Execute(COMMAND_ARGS) {
+bool Cmd_ToggleCombatMusic_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	uint32_t toggle = 1;
 	ExtractArgs(EXTRACT_ARGS, &toggle);
@@ -556,7 +578,8 @@ bool Cmd_ToggleCombatMusic_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-bool Cmd_IsCombatMusicEnabled_Execute(COMMAND_ARGS) {
+bool Cmd_IsCombatMusicEnabled_Execute(COMMAND_ARGS)
+{
 	*result = (bCombatMusicDisabled == 0);
 	if (IsConsoleMode()) Console_Print("IsCombatMusicEnabled >> %.f", *result);
 	return true;
@@ -582,10 +605,12 @@ bool Cmd_SetFormFlag_Execute(COMMAND_ARGS)
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &form, &flag, &inval))
 	{
-		if (inval) {
+		if (inval)
+		{
 			form->flags |= flag;
 		}
-		else {
+		else
+		{
 			form->flags &= ~flag;
 		}
 		*result = 1;
@@ -598,7 +623,8 @@ bool Cmd_SetLandTextureTextureSet_Execute(COMMAND_ARGS)
 	TESLandTexture* landTex = nullptr;
 	BGSTextureSet* texSet = nullptr;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &landTex, &texSet)) {
+	if (ExtractArgs(EXTRACT_ARGS, &landTex, &texSet))
+	{
 		landTex->textureSet = texSet;
 		*result = 1;
 	}
@@ -609,7 +635,8 @@ bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESClimate* climate = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &climate) && (!climate || IS_TYPE(climate, TESClimate))) {
+	if (ExtractArgs(EXTRACT_ARGS, &climate) && (!climate || IS_TYPE(climate, TESClimate)))
+	{
 		s_forcedClimate = climate;
 		*result = 1;
 	}
@@ -620,10 +647,14 @@ bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	MagicItem* magicItem = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &magicItem) && thisObj->IsActor()) {
-		Actor* actor = (Actor*)thisObj;
-		for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next) {
-			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !activeEff->bTerminated) {
+	if (ExtractArgs(EXTRACT_ARGS, &magicItem) && thisObj->IsActor())
+	{
+		auto actor = static_cast<Actor*>(thisObj);
+		for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next)
+		{
+			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->
+				bActive && !activeEff->bTerminated)
+			{
 				*result = 1;
 				break;
 			}
@@ -632,6 +663,7 @@ bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 	if (IsConsoleMode()) Console_Print("IsSpellTargetAlt >> %.f", *result);
 	return true;
 }
+
 bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
 	*result = CdeclCall<int>(0x6191A0);
@@ -641,9 +673,11 @@ bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 bool Cmd_GetCellImageSpace_Execute(COMMAND_ARGS)
 {
 	TESObjectCELL* cell = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &cell) && IS_TYPE(cell, TESObjectCELL)) {
-		ExtraCellImageSpace* xCellIS = (ExtraCellImageSpace*)cell->extraDataList.GetByType(kExtraData_CellImageSpace);
-		if (xCellIS && xCellIS->imageSpace) {
+	if (ExtractArgs(EXTRACT_ARGS, &cell) && IS_TYPE(cell, TESObjectCELL))
+	{
+		auto xCellIS = static_cast<ExtraCellImageSpace*>(cell->extraDataList.GetByType(kExtraData_CellImageSpace));
+		if (xCellIS && xCellIS->imageSpace)
+		{
 			*(UInt32*)result = xCellIS->imageSpace->refID;
 			if (IsConsoleMode()) Console_Print("GetCellImageSpace >> 0x%X", *result);
 		}
@@ -657,7 +691,8 @@ bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
 	TESClimate* climate = currentSky->currClimate;
 	if (climate)
 		*(UInt32*)result = climate->refID;
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("GetCurrentClimate >> 0x%X", climate->refID);
 	}
 	return true;
@@ -688,7 +723,8 @@ bool Cmd_GetClimateTraitNumeric_Execute(COMMAND_ARGS)
 {
 	TESClimate* climate;
 	UInt32 traitID;
-	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID) && IS_TYPE(climate, TESClimate)) {
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID) && IS_TYPE(climate, TESClimate))
+	{
 		switch (traitID)
 		{
 		case 0:
@@ -725,7 +761,8 @@ bool Cmd_SetClimateTraitNumeric_Execute(COMMAND_ARGS)
 	TESClimate* climate;
 	UInt32 traitID, val;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID, &val) && IS_TYPE(climate, TESClimate)) {
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &traitID, &val) && IS_TYPE(climate, TESClimate))
+	{
 		switch (traitID)
 		{
 		case 0:
@@ -761,7 +798,8 @@ bool Cmd_SetClimateSunTexture_Execute(COMMAND_ARGS)
 	TESClimate* climate;
 	char path[MAX_PATH];
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate)) {
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate))
+	{
 		climate->sunTexture.ddsPath.Set(path);
 		*result = 1;
 	}
@@ -773,7 +811,8 @@ bool Cmd_SetClimateSunGlareTexture_Execute(COMMAND_ARGS)
 	TESClimate* climate;
 	char path[MAX_PATH];
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate)) {
+	if (ExtractArgs(EXTRACT_ARGS, &climate, &path) && IS_TYPE(climate, TESClimate))
+	{
 		climate->sunGlareTexture.ddsPath.Set(path);
 		*result = 1;
 	}
@@ -783,7 +822,8 @@ bool Cmd_SetClimateSunGlareTexture_Execute(COMMAND_ARGS)
 bool Cmd_GetGameVolume_Execute(COMMAND_ARGS)
 {
 	UInt32 volType;
-	if (ExtractArgs(EXTRACT_ARGS, &volType) && (volType <= 5)) {
+	if (ExtractArgs(EXTRACT_ARGS, &volType) && (volType <= 5))
+	{
 		*result = BSAudioManager::Get()->volumes[volType] * 100;
 		if (IsConsoleMode()) Console_Print("GetGameVolume %d >> %.2f", volType, *result);
 	}
@@ -794,8 +834,11 @@ bool Cmd_SetGameVolume_Execute(COMMAND_ARGS)
 {
 	UInt32 volType;
 	int volLevel = -1;
-	if (ExtractArgs(EXTRACT_ARGS, &volType, &volLevel) && (volType <= 5) && (volLevel <= 100)) {
-		BSAudioManager::Get()->volumes[volType] = (volLevel < 0) ? *(float*)(0x117910C + volType * 0xC) : (volLevel * 0.01F);
+	if (ExtractArgs(EXTRACT_ARGS, &volType, &volLevel) && (volType <= 5) && (volLevel <= 100))
+	{
+		BSAudioManager::Get()->volumes[volType] = (volLevel < 0)
+			                                          ? *(float*)(0x117910C + volType * 0xC)
+			                                          : (volLevel * 0.01F);
 	}
 	return true;
 }
@@ -804,8 +847,9 @@ bool Cmd_MoveToCell_Execute(COMMAND_ARGS)
 {
 	TESObjectCELL* cell;
 	NiVector3 posVector;
-	if (s_tempPosMarker == nullptr) {
-		TESObjectREFR* ref = (TESObjectREFR*)GameHeapAlloc(sizeof(TESObjectREFR));
+	if (s_tempPosMarker == nullptr)
+	{
+		auto ref = static_cast<TESObjectREFR*>(GameHeapAlloc(sizeof(TESObjectREFR)));
 		s_tempPosMarker = ThisCall<TESObjectREFR*>(0x4F9970, ref);
 		ThisCall(0x4553B0, s_tempPosMarker);
 	}
@@ -823,10 +867,12 @@ bool Cmd_MoveToCell_Execute(COMMAND_ARGS)
 	return true;
 }
 
-void SwapSlash(char* str) {
+void SwapSlash(char* str)
+{
 	char* current_pos = strchr(str, '/');
 	for (char* p = current_pos; (current_pos = strchr(str, '/')) != nullptr; *current_pos = '\\');
 }
+
 bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 {
 	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
@@ -838,7 +884,7 @@ bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 	TileMenu* menu;
 	Tile* component = nullptr;
 	SwapSlash(s_strValBuffer);
-	char* slashPos = (char*)strchr(s_strValBuffer, '\\');
+	auto slashPos = strchr(s_strValBuffer, '\\');
 	if (slashPos)
 	{
 		*slashPos = 0;
@@ -869,33 +915,37 @@ bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 
 bool Hook_GetTeleportCell_Execute(COMMAND_ARGS)
 {
-	UInt32* refResult = (UInt32*)result;
+	auto refResult = (UInt32*)result;
 	*refResult = 0;
 
 	if (!thisObj)
 		return true;
 
-	ExtraTeleport* xTele = GetByTypeCast(thisObj->extraDataList, Teleport);
+	auto xTele = GetByTypeCast(thisObj->extraDataList, Teleport);
 	// parentCell will be null if linked door's cell is not currently loaded (e.g. most exterior cells)
-	if (xTele && xTele->data && xTele->data->linkedDoor && xTele->data->linkedDoor->parentCell) {
+	if (xTele && xTele->data && xTele->data->linkedDoor && xTele->data->linkedDoor->parentCell)
+	{
 		*refResult = xTele->data->linkedDoor->parentCell->refID;
 	}
 
 	return true;
 }
+
 bool Hook_GetRepairList_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	TESForm* pForm = 0;
+	TESForm* pForm = nullptr;
 
 	if (!ExtractArgs(EXTRACT_ARGS, &pForm)) return true;
 	pForm = pForm->TryGetREFRParent();
-	if (!pForm) {
+	if (!pForm)
+	{
 		if (!thisObj) return true;
 		pForm = thisObj->baseForm;
 	}
-	BGSRepairItemList* pRepairList = DYNAMIC_CAST(pForm, TESForm, BGSRepairItemList);
-	if (pRepairList && pRepairList->listForm) {
+	auto pRepairList = DYNAMIC_CAST(pForm, TESForm, BGSRepairItemList);
+	if (pRepairList && pRepairList->listForm)
+	{
 		*((UInt32*)result) = pRepairList->listForm->refID;
 	}
 	return true;
@@ -910,14 +960,17 @@ bool Cmd_SetUIFloatGradual_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &tilePath, &startVal, &endVal, &timer, &changeMode))
 	{
 		Tile::Value* tileVal = nullptr;
-		if (Tile* component = Tile::GetTargetComponent(tilePath, &tileVal)) {
+		if (Tile* component = Tile::GetTargetComponent(tilePath, &tileVal))
+		{
 			if (numArgs >= 4)
 			{
-				if (changeMode > 4) {
+				if (changeMode > 4)
+				{
 					changeMode = 0;
 				}
-				else {
-					UInt8 changeModeMatch[] = { 0, 4, 1, 5, 6 };
+				else
+				{
+					UInt8 changeModeMatch[] = {0, 4, 1, 5, 6};
 					changeMode = changeModeMatch[changeMode];
 				}
 				component->StartGradualSetFloat(tileVal->id, startVal, endVal, timer, changeMode);
@@ -936,9 +989,11 @@ bool Cmd_SetUIFloatGradual_Execute(COMMAND_ARGS)
 bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 {
 	TESIdleForm* idleAnim;
-	if (ExtractArgs(EXTRACT_ARGS, &idleAnim)) {
+	if (ExtractArgs(EXTRACT_ARGS, &idleAnim))
+	{
 		AnimData* animData = thisObj->GetAnimData();
-		if (animData && (animData->GetPlayedIdle() == idleAnim)) {
+		if (animData && (animData->GetPlayedIdle() == idleAnim))
+		{
 			*result = 1;
 		}
 	}
@@ -947,8 +1002,10 @@ bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 
 bool Cmd_GetPlayedIdle_Execute(COMMAND_ARGS)
 {
-	if (AnimData* animData = thisObj->GetAnimData()) {
-		if (TESIdleForm* idleAnim = animData->GetPlayedIdle()) {
+	if (AnimData* animData = thisObj->GetAnimData())
+	{
+		if (TESIdleForm* idleAnim = animData->GetPlayedIdle())
+		{
 			*(UInt32*)result = idleAnim->refID;
 		}
 	}
@@ -958,13 +1015,14 @@ bool Cmd_GetPlayedIdle_Execute(COMMAND_ARGS)
 bool Cmd_PlayIdleEx_Execute(COMMAND_ARGS)
 {
 	TESIdleForm* idleAnim = nullptr;
-	Actor* actor = (Actor*)thisObj;
+	auto actor = static_cast<Actor*>(thisObj);
 	if (actor->baseProcess && !actor->baseProcess->uiProcessLevel && ExtractArgs(EXTRACT_ARGS, &idleAnim))
 		if (AnimData* animData = thisObj->GetAnimData())
 		{
 			if (!idleAnim)
-				idleAnim = ThisCall<TESIdleForm*>(0x553D70, (UInt32*)0x10721B8, actor, ((HighProcess*)actor->baseProcess)->pTarget);
-			// todo from here
+				idleAnim = ThisCall<TESIdleForm*>(0x553D70, (UInt32*)0x10721B8, actor,
+				                                  static_cast<HighProcess*>(actor->baseProcess)->pTarget);
+				// todo from here
 			else if (idleAnim->children)
 				idleAnim = idleAnim->FindIdle(actor);
 			if (idleAnim && (animData->GetPlayedIdle() != idleAnim))
@@ -977,12 +1035,16 @@ bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 {
 	*result = -1;
 	TESCreature* creature = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &creature)) {
-		if (creature || (thisObj && thisObj->IsActor() && (creature = (TESCreature*)((Actor*)thisObj)->GetActorBase()))) {
+	if (ExtractArgs(EXTRACT_ARGS, &creature))
+	{
+		if (creature || (thisObj && thisObj->IsActor() && (creature = static_cast<TESCreature*>(((Actor*)thisObj)->
+			GetActorBase()))))
+		{
 			if IS_ID(creature, Creature)
 			{
 				*result = creature->type;
-				if (IsConsoleMode()) {
+				if (IsConsoleMode())
+				{
 					Console_Print("GetCreatureType >> %.f", *result);
 				}
 			}
@@ -994,7 +1056,8 @@ bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 bool Cmd_IsInWater_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if ((thisObj->IsActor()) && ((Actor*)thisObj)->inWater) {
+	if ((thisObj->IsActor()) && static_cast<Actor*>(thisObj)->inWater)
+	{
 		*result = 1;
 	}
 	return true;
@@ -1004,9 +1067,11 @@ bool Cmd_IsInWater_Execute(COMMAND_ARGS)
 bool Cmd_GetActorGravityMult_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+	{
 		*result = charCtrl->gravity;
-		if (IsConsoleMode()) {
+		if (IsConsoleMode())
+		{
 			Console_Print("GetActorGravityMult >> %f", *result);
 		}
 	}
@@ -1016,8 +1081,10 @@ bool Cmd_GetActorGravityMult_Execute(COMMAND_ARGS)
 bool Cmd_SetActorGravityMult_Execute(COMMAND_ARGS)
 {
 	float gravityMult;
-	if (ExtractArgs(EXTRACT_ARGS, &gravityMult)) {
-		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
+	if (ExtractArgs(EXTRACT_ARGS, &gravityMult))
+	{
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+		{
 			charCtrl->gravity = gravityMult;
 		}
 	}
@@ -1045,10 +1112,13 @@ bool Cmd_SetActorVelocity_Execute(COMMAND_ARGS)
 {
 	char axis;
 	float velocity;
-	if (ExtractArgs(EXTRACT_ARGS, &axis, &velocity)) {
-		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
-			if (charCtrl->phkObject) {
-				((hkpCharacterProxy*)charCtrl->phkObject)->velocity[axis - 'X'] = velocity;
+	if (ExtractArgs(EXTRACT_ARGS, &axis, &velocity))
+	{
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+		{
+			if (charCtrl->phkObject)
+			{
+				static_cast<hkpCharacterProxy*>(charCtrl->phkObject)->velocity[axis - 'X'] = velocity;
 			}
 		}
 	}
@@ -1060,7 +1130,8 @@ bool Cmd_GetLightFlag_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESObjectLIGH* light;
 	UInt32 flagID;
-	if (ExtractArgs(EXTRACT_ARGS, &light, &flagID) && (flagID <= 31) && (light->lightFlags & (1 << flagID))) {
+	if (ExtractArgs(EXTRACT_ARGS, &light, &flagID) && (flagID <= 31) && (light->lightFlags & (1 << flagID)))
+	{
 		*result = 1;
 	}
 	return true;
@@ -1084,11 +1155,12 @@ bool Cmd_GetLightTraitNumeric_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESObjectLIGH* light;
 	UInt32 traitID;
-	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID)) {
+	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID))
+	{
 		switch (traitID)
 		{
 		case 0:
-			*result = (int)light->radius;
+			*result = static_cast<int>(light->radius);
 			break;
 		case 1:
 			*result = light->red;
@@ -1122,7 +1194,7 @@ bool Cmd_SetLightTraitNumeric_Execute(COMMAND_ARGS)
 	float val;
 	if (ExtractArgs(EXTRACT_ARGS, &light, &traitID, &val))
 	{
-		UInt32 intVal = (int)val;
+		UInt32 intVal = static_cast<int>(val);
 		switch (traitID)
 		{
 		case 0:
@@ -1165,10 +1237,12 @@ bool Cmd_SetSystemColor_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_GetSystemColor_Execute(COMMAND_ARGS) {
+bool Cmd_GetSystemColor_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	UInt32 type;
-	if (ExtractArgs(EXTRACT_ARGS, &type) && type > 0 && type <= 5) {
+	if (ExtractArgs(EXTRACT_ARGS, &type) && type > 0 && type <= 5)
+	{
 		SystemColorManager* colorMgr = SystemColorManager::GetSingleton();
 		UInt32 color = (colorMgr->GetColor(type) >> 0x8);
 		*result = color;
@@ -1177,7 +1251,8 @@ bool Cmd_GetSystemColor_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-bool Cmd_GetPipBoyMode_Execute(COMMAND_ARGS) {
+bool Cmd_GetPipBoyMode_Execute(COMMAND_ARGS)
+{
 	*result = InterfaceManager::GetSingleton()->pipBoyMode;
 	if (IsConsoleMode()) Console_Print("GetPipBoyMode >> %.f", *result);
 	return true;
@@ -1224,7 +1299,6 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 }
 
 
-
 static bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREFR* sourceRef, float fadeOutTime)
 {
 	BSAudioManager* audioMngr = BSAudioManager::Get();
@@ -1241,35 +1315,46 @@ static bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREF
 		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
 		{
 			gameSound = sndIter.Get();
-			if (!gameSound || strcmp(soundPath, gameSound->filePath) != 0) {
+			if (!gameSound || strcmp(soundPath, gameSound->filePath) != 0)
+			{
 				continue;
 			}
 			soundObj = playingObjMap->Lookup(sndIter.Key());
-			if (!soundObj) {
+			if (!soundObj)
+			{
 				continue;
 			}
-			if (sourceRef->refID == 0x14) { // player
-				NiNode* node = IS_TYPE(soundObj, BSFadeNode) ? (BSFadeNode*)soundObj : (NiNode*)soundObj;
+			if (sourceRef->refID == 0x14)
+			{
+				// player
+				NiNode* node = IS_TYPE(soundObj, BSFadeNode)
+					               ? static_cast<BSFadeNode*>(soundObj)
+					               : static_cast<NiNode*>(soundObj);
 				NiAVObject* root = node->GetBip01();
-				if (!root || (root->m_flags & NiAVObject::kNiFlag_PlayerBone) == 0) {
+				if (!root || (root->m_flags & NiAVObject::kNiFlag_PlayerBone) == 0)
+				{
 					continue;
 				}
-
 			}
-			else {
+			else
+			{
 				TESObjectREFR* parentRef = soundObj->GetParentRef();
-				if (!parentRef || parentRef != sourceRef) {
+				if (!parentRef || parentRef != sourceRef)
+				{
 					continue;
 				}
 			}
 			if (!doStop) return true;
-			if (fadeOutTime == -1) {
+			if (fadeOutTime == -1)
+			{
 				gameSound->stateFlags &= 0xFFFFFF0F;
 				gameSound->stateFlags |= 0x10;
 			}
-			else {
+			else
+			{
 				int time = fadeOutTime * 1000.0;
-				ThisCall<void>(0xBD3020, BSAudioManager::Get(), gameSound->mapKey, time, 0x26); // BSAudioManager::StopSound_FadeOutTime
+				ThisCall<void>(0xBD3020, BSAudioManager::Get(), gameSound->mapKey, time, 0x26);
+				// BSAudioManager::StopSound_FadeOutTime
 			}
 		}
 	}
@@ -1292,10 +1377,12 @@ bool Cmd_IsSoundPlaying_Execute(COMMAND_ARGS)
 	TESSound* soundForm;
 	TESObjectREFR* sourceRef = nullptr;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &soundForm, &sourceRef) && PlayingSoundsIterator(soundForm, false, sourceRef, -1)) {
+	if (ExtractArgs(EXTRACT_ARGS, &soundForm, &sourceRef) && PlayingSoundsIterator(soundForm, false, sourceRef, -1))
+	{
 		*result = 1;
 	}
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("IsSoundPlaying >> %.f", *result);
 	}
 	return true;
@@ -1314,42 +1401,51 @@ bool Cmd_StopSoundAlt_Execute(COMMAND_ARGS)
 bool Cmd_StopSound_Execute(COMMAND_ARGS)
 {
 	TESSound* soundForm;
-	if (ExtractArgs(EXTRACT_ARGS, &soundForm)) {
+	if (ExtractArgs(EXTRACT_ARGS, &soundForm))
+	{
 		PlayingSoundsIterator(soundForm, true, nullptr, -1);
 	}
 	return true;
 }
 
-bool Cmd_RefreshIdle_Execute(COMMAND_ARGS) {
+bool Cmd_RefreshIdle_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	UInt32 stopAnim = 0;
-	Actor* actor = (Actor*)thisObj;
+	auto actor = static_cast<Actor*>(thisObj);
 	ExtractArgs(EXTRACT_ARGS, &stopAnim);
-	if (actor->baseProcess->GetForcedIdleForm()) {
+	if (actor->baseProcess->GetForcedIdleForm())
+	{
 		actor->baseProcess->ResetQueuedIdleFlags();
-		actor->baseProcess->SetForcedIdleForm(NULL);
+		actor->baseProcess->SetForcedIdleForm(nullptr);
 		if (stopAnim > 0) ThisCall<void>(0x460090, actor->GetAnimData(), 1, 1); // SpecialIdleFree
 		*result = 1;
 	}
 	return true;
 }
-bool Cmd_IsDLLLoaded_Execute(COMMAND_ARGS) {
+
+bool Cmd_IsDLLLoaded_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	int checkOutsideOfGameFolder = 0;
 	char dllName[MAX_PATH];
-	if (ExtractArgs(EXTRACT_ARGS, &dllName, &checkOutsideOfGameFolder)) {
+	if (ExtractArgs(EXTRACT_ARGS, &dllName, &checkOutsideOfGameFolder))
+	{
 		strncat(dllName, ".dll", 4);
 		HMODULE module = GetModuleHandle(dllName);
-		if (module) {
-			if (!checkOutsideOfGameFolder) {
+		if (module)
+		{
+			if (!checkOutsideOfGameFolder)
+			{
 				char dllPath[MAX_PATH];
 				char fnvPath[MAX_PATH];
 				GetModuleFileNameA(module, dllPath, MAX_PATH);
-				GetModuleFileNameA(NULL, fnvPath, MAX_PATH);
+				GetModuleFileNameA(nullptr, fnvPath, MAX_PATH);
 				fnvPath[strlen(fnvPath) - 13] = '\0';
-				if (strstr(dllPath, fnvPath) != NULL) *result = 1;
+				if (strstr(dllPath, fnvPath) != nullptr) *result = 1;
 			}
-			else {
+			else
+			{
 				*result = 1;
 			}
 		}
@@ -1362,19 +1458,24 @@ bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
 {
 	char axis = 0;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &axis)) {
-		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) {
-			if (axis) {
+	if (ExtractArgs(EXTRACT_ARGS, &axis))
+	{
+		if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
+		{
+			if (axis)
+			{
 				*result = charCtrl->velocity[axis - 'X'];
 			}
-			else {
+			else
+			{
 				__m128 vec = charCtrl->velocity.PS();
 				__m128 sq = _mm_mul_ps(vec, vec);
 				sq = _mm_hadd_ps(sq, sq);
 				sq = _mm_hadd_ps(sq, sq);
 				*result = sqrt(_mm_cvtss_f32(sq));
 			}
-			if (IsConsoleMode()) {
+			if (IsConsoleMode())
+			{
 				Console_Print("GetActorVelocity >> %.5f", *result);
 			}
 		}
@@ -1385,21 +1486,23 @@ bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
 bool Cmd_GetIsRagdolled_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (thisObj->IsActor() && (((Actor*)thisObj)->GetKnockedState() == 1))
+	if (thisObj->IsActor() && (static_cast<Actor*>(thisObj)->GetKnockedState() == 1))
 		*result = 1;
 	return true;
 }
 
 bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
 {
-	if (thisObj->IsActor()) {
+	if (thisObj->IsActor())
+	{
 		PlayerCharacter* player = PlayerCharacter::GetSingleton();
-		Actor* actor = (Actor*)thisObj;
+		auto actor = static_cast<Actor*>(thisObj);
 		int level = ThisCall<int>(0x6F4CD0, actor);
 		int typeReward = CdeclCall<int>(0x5A3A70, actor->baseForm->typeID != kFormType_Creature ? 1 : 0, level);
-		double difficultyMult = CdeclCall<double>(0x585650, (float)typeReward, player->gameDifficulty);
+		double difficultyMult = CdeclCall<double>(0x585650, static_cast<float>(typeReward), player->gameDifficulty);
 		*result = floor(difficultyMult);
-		if (IsConsoleMode()) {
+		if (IsConsoleMode())
+		{
 			Console_Print("GetKillXP >> %.f", *result);
 		}
 	}
@@ -1409,11 +1512,14 @@ bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
 bool Cmd_ResetFallTime_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (thisObj->IsActor()) {
-		BaseProcess* proc = ((Actor*)thisObj)->baseProcess;
-		if (proc->uiProcessLevel <= 1) {
+	if (thisObj->IsActor())
+	{
+		BaseProcess* proc = static_cast<Actor*>(thisObj)->baseProcess;
+		if (proc->uiProcessLevel <= 1)
+		{
 			bhkCharacterController* charCtrl = proc->GetCharacterController();
-			if (charCtrl) {
+			if (charCtrl)
+			{
 				charCtrl->fallStartHeight = thisObj->position.z;
 				charCtrl->fallTime = 0;
 				*result = 1;
@@ -1423,7 +1529,8 @@ bool Cmd_ResetFallTime_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_ClearMessageQueue_Execute(COMMAND_ARGS) {
+bool Cmd_ClearMessageQueue_Execute(COMMAND_ARGS)
+{
 	HUDMainMenu::GetSingleton()->ClearMessageQueue();
 	*result = 1;
 	return true;
@@ -1441,19 +1548,21 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 	if (--hotkeynum < 8)
 	{
 		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
-		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 		if (xChanges)
 		{
 			ExtraDataList* found = nullptr;
 			ExtraHotkey* xHotkey = nullptr;
 			// Remove the hotkey if it exists on another object.
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
+			     End(); ++itemIter)
 			{
 				if (itemIter->type->refID != itemform->refID)
 				{
-					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.
+					     End(); ++iter)
 					{
-						xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
+						xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
 						if (xHotkey && xHotkey->index == hotkeynum)
 						{
 							found = iter.Get();
@@ -1464,20 +1573,24 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 						break;
 				}
 			}
-			if (found) {
+			if (found)
+			{
 				found->RemoveByType(kExtraData_Hotkey);
 				found = nullptr;
 			}
 
 			xHotkey = nullptr;
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
+			     End(); ++itemIter)
 			{
 				if (itemIter->type && itemIter->type->refID == itemform->refID)
 				{
-					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.
+					     End(); ++iter)
 					{
-						xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
-						if (xHotkey) {
+						xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
+						if (xHotkey)
+						{
 							xHotkey->index = hotkeynum; // If the item already has a hotkey, just change the index.
 							break;
 						}
@@ -1516,16 +1629,18 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 	if (--hotkeynum < 8)
 	{
 		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
-		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 		if (xChanges)
 		{
 			ExtraDataList* found = nullptr;
 			ExtraHotkey* xHotkey = nullptr;
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
+			     End(); ++itemIter)
 			{
-				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
+				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End();
+				     ++iter)
 				{
-					xHotkey = (ExtraHotkey*)iter->GetByType(kExtraData_Hotkey);
+					xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
 					if (xHotkey && xHotkey->index == hotkeynum)
 					{
 						found = iter.Get();
@@ -1542,8 +1657,10 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS) {
-	if (!timePatched) {
+bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS)
+{
+	if (!timePatched)
+	{
 		timePatched = true;
 		SafeWrite16(0x6E48A6, 0x9090);
 	}
@@ -1551,36 +1668,45 @@ bool Cmd_PatchFreezeTime_Execute(COMMAND_ARGS) {
 }
 
 
-
-static void SetMapMarkerIcon(TESObjectREFR* marker, char* iconPath) {
+static void SetMapMarkerIcon(TESObjectREFR* marker, char* iconPath)
+{
 	auto pos = markerIconMap.find(marker->refID);
-	char* pathCopy = new char[strlen(iconPath) + 1];
+	auto pathCopy = new char[strlen(iconPath) + 1];
 	strcpy(pathCopy, iconPath);
 
-	if (pos != markerIconMap.end()) {
+	if (pos != markerIconMap.end())
+	{
 		delete[] pos->second;
 		pos->second = pathCopy;
 	}
-	else {
-		markerIconMap.insert({ marker->refID, pathCopy });
+	else
+	{
+		markerIconMap.insert({marker->refID, pathCopy});
 	}
 }
 
-bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS) {
+bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS)
+{
 	TESObjectREFR* form;
 	char iconPath[MAX_PATH];
-	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form->baseForm->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker)))) return true;
-	if (IS_TYPE(form, BGSListForm)) {
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form
+		->baseForm->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker))))
+		return true;
+	if (IS_TYPE(form, BGSListForm))
+	{
 		ListNode<TESForm>* iterator = ((BGSListForm*)form)->list.Head();
-		while (iterator) {
-			TESObjectREFR* ref = (TESObjectREFR*)(iterator->data);
-			if (ref->GetIsReference() && ref->baseForm->refID == 0x10 && GetExtraType(ref->extraDataList, MapMarker)) {
+		while (iterator)
+		{
+			auto ref = static_cast<TESObjectREFR*>(iterator->data);
+			if (ref->GetIsReference() && ref->baseForm->refID == 0x10 && GetExtraType(ref->extraDataList, MapMarker))
+			{
 				SetMapMarkerIcon(ref, iconPath);
 			}
 			iterator = iterator->next;
 		}
 	}
-	else {
+	else
+	{
 		SetMapMarkerIcon(form, iconPath);
 	}
 	if (IsConsoleMode()) Console_Print("SetCustomMapMarkerIcon >> %u, %s", form->refID, iconPath);
@@ -1588,14 +1714,17 @@ bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS) {
 }
 
 
-bool Cmd_SetBipedIconPathAlt_Execute(COMMAND_ARGS) {
+bool Cmd_SetBipedIconPathAlt_Execute(COMMAND_ARGS)
+{
 	UInt32 isFemale = 0;
-	TESForm* form = NULL;
+	TESForm* form = nullptr;
 	char newPath[MAX_PATH];
 	*result = 0;
-	if (ExtractArgsEx(EXTRACT_ARGS_EX, &newPath, &isFemale, &form)) {
-		TESBipedModelForm* bipedModel = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
-		if (bipedModel) {
+	if (ExtractArgsEx(EXTRACT_ARGS_EX, &newPath, &isFemale, &form))
+	{
+		auto bipedModel = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
+		if (bipedModel)
+		{
 			bipedModel->icon[isFemale].ddsPath.Set(newPath);
 			*result = 1;
 		}
@@ -1605,13 +1734,16 @@ bool Cmd_SetBipedIconPathAlt_Execute(COMMAND_ARGS) {
 }
 
 
-bool Cmd_SetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
+bool Cmd_SetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	UInt32 traitID = 0;
 	BGSLightingTemplate* tmpl = nullptr;
 	float value = 0.0;
-	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID, &value) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0) {
-		switch (traitID) {
+	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID, &value) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0)
+	{
+		switch (traitID)
+		{
 		case 1:
 		case 2:
 		case 3:
@@ -1655,12 +1787,15 @@ bool Cmd_SetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-bool Cmd_GetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
+bool Cmd_GetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	UInt32 traitID = 0;
 	BGSLightingTemplate* tmpl = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0) {
-		switch (traitID) {
+	if (ExtractArgs(EXTRACT_ARGS, &tmpl, &traitID) && IS_TYPE(tmpl, BGSLightingTemplate) && traitID > 0)
+	{
+		switch (traitID)
+		{
 		case 1:
 		case 2:
 		case 3:
@@ -1706,84 +1841,102 @@ bool Cmd_GetLightingTemplateTraitNumeric_Execute(COMMAND_ARGS) {
 }
 
 
-bool Cmd_IsLoadDoor_Execute(COMMAND_ARGS) {
+bool Cmd_IsLoadDoor_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 
-	if (GetByTypeCast(thisObj->extraDataList, Teleport) || GetByTypeCast(thisObj->extraDataList, RandomTeleportMarker)) {
+	if (GetByTypeCast(thisObj->extraDataList, Teleport) || GetByTypeCast(thisObj->extraDataList, RandomTeleportMarker))
+	{
 		*result = 1;
 	}
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("IsLoadDoor >> %.f", *result);
 	}
 	return true;
 }
 
-static bool IsUnlockedOrHacked(TESObjectREFR* obj) {
-	BGSTerminal* terminal = (BGSTerminal*)obj->baseForm;
+static bool IsUnlockedOrHacked(TESObjectREFR* obj)
+{
+	auto terminal = static_cast<BGSTerminal*>(obj->baseForm);
 	bool isUnlocked = (terminal->data.terminalFlags & 2) != 0;
-	ExtraTerminalState* xState = (ExtraTerminalState*)obj->extraDataList.GetByType(kExtraData_TerminalState);
-	if (xState) {
-		if ((xState->lockedOut & 0x80) != 0 || xState->lockLevel == -2 || xState->lockLevel == -1) {
+	auto xState = static_cast<ExtraTerminalState*>(obj->extraDataList.GetByType(kExtraData_TerminalState));
+	if (xState)
+	{
+		if ((xState->lockedOut & 0x80) != 0 || xState->lockLevel == -2 || xState->lockLevel == -1)
+		{
 			return true;
 		}
-		else {
-			return false;
-		}
+		return false;
 	}
 	return isUnlocked;
 }
-bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS) {
+
+bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS)
+{
 	*result = 0;
-	if (thisObj->baseForm->typeID == kFormType_Terminal) {
-		if (ThisCall<UInt32>(0x774660, PlayerCharacter::GetSingleton(), thisObj) == 2) {
+	if (thisObj->baseForm->typeID == kFormType_Terminal)
+	{
+		if (ThisCall<UInt32>(0x774660, PlayerCharacter::GetSingleton(), thisObj) == 2)
+		{
 			*result = 2;
 		}
-		else if (!IsUnlockedOrHacked(thisObj)) {
+		else if (!IsUnlockedOrHacked(thisObj))
+		{
 			*result = 1;
 		}
 	}
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("GetLockedAlt >> %.f", *result);
 	}
 	return true;
 }
 
 
-bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS) {
+bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	TESObjectREFR* ref = HUDMainMenu::GetSingleton()->crosshairRef;
-	if (ref) {
+	if (ref)
+	{
 		*(UInt32*)result = ref->refID;
 	}
-	else {
+	else
+	{
 		float fDistance = 0;
 		bool bResult = false;
 		PlayerCharacter* player = PlayerCharacter::GetSingleton();
 		NiNode* g_camera1st = *(NiNode**)0x107BA78;
 		NiPoint3 pos(player->kCamera1stPos);
-		if (!g_camera1st) {
+		if (!g_camera1st)
+		{
 			pos = player->GetPos();
 			double scaledHeight = ThisCall<double>(0x4E6D80, player);
 			pos.z = scaledHeight * player->eyeHeight + pos.z;
 		}
-		if (player->bThirdPerson) {
+		if (player->bThirdPerson)
+		{
 			pos += player->camera3rdPos;
 		}
-		NiMatrix33 zMatrix = NiMatrix33();
+		auto zMatrix = NiMatrix33();
 		zMatrix.MakeZRotation(player->AdjustRot(0));
-		NiMatrix33 xMatrix = NiMatrix33();
+		auto xMatrix = NiMatrix33();
 		xMatrix.MakeXRotation(player->rotation.x);
 
 		NiMatrix33 outMatrix = zMatrix.TransposeTimes(xMatrix);
 		NiPoint3 rot = outMatrix.GetCol(1);
 
 		InterfaceManager* g_interfaceManager = InterfaceManager::GetSingleton();
-		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->viewCaster, &pos, &rot, 0x46400000, &fDistance, &bResult);
-		if (ref) {
+		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->viewCaster, &pos, &rot, 0x46400000, &fDistance,
+		                               &bResult);
+		if (ref)
+		{
 			*(UInt32*)result = ref->refID;
 		}
 	}
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("GetCrosshairRefEx >> 0x%X", ref->refID);
 	}
 	return true;
@@ -1794,18 +1947,21 @@ bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
 	*result = 0;
 	char path[MAX_PATH];
 	TESForm* form = nullptr;
-	if (ExtractArgs(EXTRACT_ARGS, &path, &form)) {
-		if (IS_TYPE(form, TESObjectREFR)) {
-			form = ((TESObjectREFR*)form)->baseForm;
+	if (ExtractArgs(EXTRACT_ARGS, &path, &form))
+	{
+		if (IS_TYPE(form, TESObjectREFR))
+		{
+			form = static_cast<TESObjectREFR*>(form)->baseForm;
 		}
-		TESTexture* tex = DYNAMIC_CAST(form, TESForm, TESTexture);
-		if (tex) {
+		auto tex = DYNAMIC_CAST(form, TESForm, TESTexture);
+		if (tex)
+		{
 			tex->ddsPath.Set(path);
 			*result = 1;
-
 		}
-		else {
-			TESModelTextureSwap* texs = DYNAMIC_CAST(form, TESForm, TESModelTextureSwap);
+		else
+		{
+			auto texs = DYNAMIC_CAST(form, TESForm, TESModelTextureSwap);
 			if (texs)
 			{
 				texs->SetPath(path);
@@ -1816,14 +1972,18 @@ bool Cmd_SetTexturePath_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
-	Actor* actor = (Actor*)thisObj;
+bool Cmd_GetKiller_Execute(COMMAND_ARGS)
+{
+	auto actor = static_cast<Actor*>(thisObj);
 	*result = 0;
-	if (actor->IsActor() && (actor->lifeState == 1 || actor->lifeState == 2)) {
+	if (actor->IsActor() && (actor->lifeState == 1 || actor->lifeState == 2))
+	{
 		TESObjectREFR* killer = actor->killer;
-		if (killer != nullptr) {
+		if (killer != nullptr)
+		{
 			*(UInt32*)result = killer->refID;
-			if (IsConsoleMode()) {
+			if (IsConsoleMode())
+			{
 				Console_Print("GetKiller >> 0x%X", killer->refID);
 			}
 		}
@@ -1832,28 +1992,33 @@ bool Cmd_GetKiller_Execute(COMMAND_ARGS) {
 	return true;
 }
 
-bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS) {
+bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS)
+{
 	int keyCode;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &keyCode)) {
+	if (ExtractArgs(EXTRACT_ARGS, &keyCode))
+	{
 		if (keyCode < 255)
 		{
 			keyCode = ScancodeToVirtualKey(keyCode);
 			if (keyCode != NOKEY) *result = (GetAsyncKeyState(keyCode) & 0x8000) ? true : false;
 		}
-		else {
+		else
+		{
 			cmd_IsKeyPressed->eval(thisObj, (void*)keyCode, nullptr, result);
 		}
 	}
 	return true;
 }
-bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS) {
+
+bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
 		return true;
 
 	//extract the buttons
-	const char* b[10] = { nullptr };
+	const char* b[10] = {nullptr};
 	UInt32 btnIdx = 0;
 
 	for (char* ch = s_strValBuffer; *ch && btnIdx < 10; ch++)
@@ -1868,22 +2033,25 @@ bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS) {
 	if (!btnIdx)
 		b[0] = "Ok";
 
-	if (thisObj && !(thisObj->flags & TESForm::kFormFlags_DontSaveForm))		// if not temporary object and not quest script
+	if (thisObj && !(thisObj->flags & TESForm::kFormFlags_DontSaveForm)) // if not temporary object and not quest script
 		*(UInt32*)0x1071B80 = thisObj->refID;
 	else
 		*(UInt32*)0x1071B80 = scriptObj->refID;
 
-	*(UInt8*)0xF50B78 = 0xFF;	// overwrite any previously pressed button
-	CdeclCall<void>(0x619700, s_strValBuffer, 0, 0, 0x51E270, 0, 0x17, b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9], NULL);
+	*(UInt8*)0xF50B78 = 0xFF; // overwrite any previously pressed button
+	CdeclCall<void>(0x619700, s_strValBuffer, 0, 0, 0x51E270, 0, 0x17, b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+	                b[8], b[9], NULL);
 
 	return true;
 }
 
-bool Cmd_MessageExAlt_Execute(COMMAND_ARGS) {
+bool Cmd_MessageExAlt_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 
 	float displayTime;
-	if (!ExtractFormatStringArgs(1, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageExAlt.numParams, &displayTime)) return true;
+	if (!ExtractFormatStringArgs(1, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageExAlt.numParams, &displayTime))
+		return true;
 	const char* msgIcon = nullptr;
 	const char* msgSound = nullptr;
 	while (true)
@@ -1911,75 +2079,88 @@ static TESForm* GetOwner(BaseExtraList* xDataList)
 	return ThisCall<TESForm*>(0x40ABC0, xDataList);
 }
 
-static TESForm* GetCellOwner(TESObjectCELL* cell) {
+static TESForm* GetCellOwner(TESObjectCELL* cell)
+{
 	return ThisCall<TESForm*>(0x4DAAE0, cell);
 }
 
-static SInt32 GetRequiredRank(BaseExtraList* xDataList) {
+static SInt32 GetRequiredRank(BaseExtraList* xDataList)
+{
 	return ThisCall<SInt32>(0x40AC00, xDataList);
 }
 
-static SInt32 GetFactionRank(Actor* actor, TESFaction* faction) {
-	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction, actor == PlayerCharacter::GetSingleton());
+static SInt32 GetFactionRank(Actor* actor, TESFaction* faction)
+{
+	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction,
+	                        actor == PlayerCharacter::GetSingleton());
 }
 
-bool Cmd_IsOwned_Execute(COMMAND_ARGS) {
+bool Cmd_IsOwned_Execute(COMMAND_ARGS)
+{
 	*result = 0;
-	Actor* actor = NULL;
+	Actor* actor = nullptr;
 	if (!thisObj) return true;
 
-	if (ExtractArgs(EXTRACT_ARGS, &actor)) {
-
+	if (ExtractArgs(EXTRACT_ARGS, &actor))
+	{
 		if (!actor) return true;
 
 		SInt32 requiredRank = 0;
 
 		TESForm* owner = GetOwner(&thisObj->extraDataList);
 
-		if (owner) {
+		if (owner)
+		{
 			requiredRank = GetRequiredRank(&thisObj->extraDataList);
 			if (requiredRank == -1) requiredRank = 0;
-
 		}
-		else {
+		else
+		{
 			owner = GetCellOwner(thisObj->parentCell);
-			if (owner) {
+			if (owner)
+			{
 				requiredRank = GetRequiredRank(&thisObj->parentCell->extraDataList);
 				if (requiredRank == -1) requiredRank = 0;
 			}
 		}
 
-		if (owner) {
-			if (owner->refID == actor->baseForm->refID) {
+		if (owner)
+		{
+			if (owner->refID == actor->baseForm->refID)
+			{
 				*result = 1.0;
 			}
-			else {
-				TESFaction* faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
-				if (faction) {
+			else
+			{
+				auto faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
+				if (faction)
+				{
 					*result = (GetFactionRank(actor, faction) >= requiredRank) ? 1.0 : 0.0;
 				}
 			}
 		}
-
 	}
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("IsOwned >> %.f", *result);
 	}
 	return true;
 }
 
-bool Cmd_AddItemOwnership_Execute(COMMAND_ARGS) {
+bool Cmd_AddItemOwnership_Execute(COMMAND_ARGS)
+{
 	*result = 0;
 	TESForm* pItem = nullptr;
 	float NumItems = 1;
 	TESForm* pOwner = nullptr;
 	UInt32 Rank = 0;
 
-	if (ExtractArgs(EXTRACT_ARGS, &pItem, &NumItems, &pOwner, &Rank)) {
+	if (ExtractArgs(EXTRACT_ARGS, &pItem, &NumItems, &pOwner, &Rank))
+	{
 		if (!thisObj) return true;
 
-		TESScriptableForm* pScript = DYNAMIC_CAST(pItem, TESForm, TESScriptableForm);
-		if (pScript && !pScript->script) pScript = nullptr;  // Only existing scripts matter
+		auto pScript = DYNAMIC_CAST(pItem, TESForm, TESScriptableForm);
+		if (pScript && !pScript->script) pScript = nullptr; // Only existing scripts matter
 
 
 		ExtraOwnership* pXOwner = nullptr;
@@ -1987,19 +2168,23 @@ bool Cmd_AddItemOwnership_Execute(COMMAND_ARGS) {
 		ExtraDataList* pExtraDataList = nullptr;
 		ExtraScript* pXScript = nullptr;
 
-		if (pOwner || Rank || pScript) {
+		if (pOwner || Rank || pScript)
+		{
 			pExtraDataList = ExtraDataList::Create();
-			if (pOwner) {
+			if (pOwner)
+			{
 				pXOwner = ExtraOwnership::Create();
 				pExtraDataList->Add(pXOwner);
 				pXOwner->owner = pOwner;
 			}
-			if (Rank) {
+			if (Rank)
+			{
 				pXRank = ExtraRank::Create();
 				pExtraDataList->Add(pXRank);
 				pXRank->rank = Rank;
 			}
-			if (pScript) {
+			if (pScript)
+			{
 				pXScript = ExtraScript::Create(pItem, true);
 				pExtraDataList->Add(pXScript);
 			}
@@ -2016,7 +2201,8 @@ bool Cmd_GetWorldspaceFlag_Execute(COMMAND_ARGS)
 	UInt32 flagID;
 	if (ExtractArgs(EXTRACT_ARGS, &wspc, &flagID) && (flagID <= 7) && (wspc->flags & (1 << flagID)))
 		*result = 1;
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("GetWorldspaceFlag %d >> %.f", flagID, *result);
 	}
 	return true;
@@ -2038,11 +2224,13 @@ bool Cmd_SetWorldspaceFlag_Execute(COMMAND_ARGS)
 bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 {
 	// Credits to Jazz for the "silence QueueUIMessage" trick (see AddNoteNS).
-	SafeWrite8((UInt32)0x61B850, 0xC3);	// RETN
-	const auto canFastTravelAddr = GetRelJumpAddr(0x6680D3); // call the function indirectly for compatibility with Stewie tweaks, kudos to Stewie.
+	SafeWrite8(0x61B850, 0xC3); // RETN
+	const auto canFastTravelAddr = GetRelJumpAddr(0x6680D3);
+	// call the function indirectly for compatibility with Stewie tweaks, kudos to Stewie.
 	*result = ThisCall<bool>(canFastTravelAddr, PlayerCharacter::GetSingleton());
-	SafeWrite16((UInt32)0x61B850, 0xFF6A);	// PUSH 0FFFFFFFFh
-	if (IsConsoleMode()) {
+	SafeWrite16(0x61B850, 0xFF6A); // PUSH 0FFFFFFFFh
+	if (IsConsoleMode())
+	{
 		Console_Print("GetPCCanFastTravel >> %.f", *result);
 	}
 	return true;
@@ -2050,58 +2238,65 @@ bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 
 static float GetRadiationLevel(Actor* actor, bool scaleByResist)
 {
-	if (actor->IsActor()) {
-		if (HighProcess* hiProc = (HighProcess*)actor->baseProcess; hiProc && !hiProc->uiProcessLevel) {
-			if (actor == PlayerCharacter::GetSingleton()) {
+	if (actor->IsActor())
+	{
+		if (auto hiProc = static_cast<HighProcess*>(actor->baseProcess); hiProc && !hiProc->uiProcessLevel)
+		{
+			if (actor == PlayerCharacter::GetSingleton())
+			{
 				return hiProc->fWaterRadsSec + hiProc->rads238 + hiProc->GetRadsSec();
 			}
-			else {
-				return actor->GetRadiationLevel(scaleByResist);
-			}
+			return actor->GetRadiationLevel(scaleByResist);
 		}
 	}
 	return true;
 }
 
-bool Cmd_GetRadiationLevelAlt_Execute(COMMAND_ARGS) {
-	*result = GetRadiationLevel((Actor*)thisObj, true);
-	if (IsConsoleMode()) {
+bool Cmd_GetRadiationLevelAlt_Execute(COMMAND_ARGS)
+{
+	*result = GetRadiationLevel(static_cast<Actor*>(thisObj), true);
+	if (IsConsoleMode())
+	{
 		Console_Print("GetRadiationLevelAlt >> %.2f", *result);
 	}
 	return true;
 }
 
 
-bool Hook_GetRadiationLevel_Eval(COMMAND_ARGS_EVAL) {
-	if (thisObj->IsActor() && thisObj != PlayerCharacter::GetSingleton()) {
-		*result = GetRadiationLevel((Actor*)thisObj, false);
+bool Hook_GetRadiationLevel_Eval(COMMAND_ARGS_EVAL)
+{
+	if (thisObj->IsActor() && thisObj != PlayerCharacter::GetSingleton())
+	{
+		*result = GetRadiationLevel(static_cast<Actor*>(thisObj), false);
 		return true;
 	}
-	else {
-		CdeclCall<bool>(0x513C30, thisObj, 0, 0, result);
-		return true;
-	}
+	CdeclCall<bool>(0x513C30, thisObj, 0, 0, result);
+	return true;
 }
 
-bool Hook_GetRadiationLevel_Execute(COMMAND_ARGS) {
-	Hook_GetRadiationLevel_Eval(thisObj, 0, 0, result);
+bool Hook_GetRadiationLevel_Execute(COMMAND_ARGS)
+{
+	Hook_GetRadiationLevel_Eval(thisObj, nullptr, nullptr, result);
 	return true;
 }
 
 bool Hook_ListAddReference_Execute(COMMAND_ARGS)
 {
 	*result = eListInvalid;
-	BGSListForm* pListForm = NULL;
+	BGSListForm* pListForm = nullptr;
 	UInt32 n = eListEnd;
 
-	if (ExtractArgs(EXTRACT_ARGS, &pListForm, &n)) {
+	if (ExtractArgs(EXTRACT_ARGS, &pListForm, &n))
+	{
 		if (!pListForm || !thisObj) return true;
 
 		UInt32 index = pListForm->AddAt(thisObj, n);
-		if (index != eListInvalid) {
+		if (index != eListInvalid)
+		{
 			*result = index;
 		}
-		if (IsConsoleMode()) {
+		if (IsConsoleMode())
+		{
 			Console_Print("Index: %d", index);
 		}
 	}
@@ -2111,17 +2306,20 @@ bool Hook_ListAddReference_Execute(COMMAND_ARGS)
 bool Hook_ListAddForm_Execute(COMMAND_ARGS)
 {
 	*result = eListInvalid;
-	BGSListForm* pListForm = NULL;
-	TESForm* pForm = NULL;
+	BGSListForm* pListForm = nullptr;
+	TESForm* pForm = nullptr;
 	UInt32 n = eListEnd;
 
 	ExtractArgsEx(EXTRACT_ARGS_EX, &pListForm, &pForm, &n);
-	if (pListForm && pForm) {
+	if (pListForm && pForm)
+	{
 		UInt32 index = pListForm->AddAt(pForm, n);
-		if (index != eListInvalid) {
+		if (index != eListInvalid)
+		{
 			*result = index;
 		}
-		if (IsConsoleMode()) {
+		if (IsConsoleMode())
+		{
 			Console_Print("Index: %d", index);
 		}
 	}
@@ -2131,32 +2329,35 @@ bool Hook_ListAddForm_Execute(COMMAND_ARGS)
 
 bool Hook_GetHotkeyItem_Execute(COMMAND_ARGS)
 {
-	UInt32* refResult = (UInt32*)result;
+	auto refResult = (UInt32*)result;
 	*refResult = 0;
 
-	UInt32 hotkeyNum;	// passed as 1 - 8, stored by game as 0-7
+	UInt32 hotkeyNum; // passed as 1 - 8, stored by game as 0-7
 	if (ExtractArgs(EXTRACT_ARGS, &hotkeyNum) && --hotkeyNum < 8)
 	{
 		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
-		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)xData;
+		auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 		if (xChanges)
 		{
 			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin();
-				!itemIter.End();
-				++itemIter)
+			     !itemIter.End();
+			     ++itemIter)
 			{
-				if (itemIter.Get()) {
+				if (itemIter.Get())
+				{
 					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin();
-						!iter.End();
-						++iter)
+					     !iter.End();
+					     ++iter)
 					{
-						if (iter.Get()) {
-							ExtraHotkey* xHotKey = (ExtraHotkey*)iter.Get()->GetByType(kExtraData_Hotkey);
+						if (iter.Get())
+						{
+							auto xHotKey = static_cast<ExtraHotkey*>(iter.Get()->GetByType(kExtraData_Hotkey));
 							if (xHotKey && xHotKey->index == hotkeyNum)
 							{
 								*refResult = itemIter->type->refID;
 								if (IsConsoleMode())
-									Console_Print("GetHotkeyItem >> %08x (%s)", *refResult, GetFullName(itemIter->type));
+									Console_Print("GetHotkeyItem >> %08x (%s)", *refResult,
+									              GetFullName(itemIter->type));
 
 								return true;
 							}
@@ -2180,7 +2381,7 @@ bool Cmd_GetDestructionDataHealth_Execute(COMMAND_ARGS)
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object))
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data)
-			*result = (int)destructible->data->health;
+			*result = static_cast<int>(destructible->data->health);
 	return true;
 }
 
@@ -2199,7 +2400,8 @@ bool Cmd_GetDestructionDataTargetable_Execute(COMMAND_ARGS)
 	TESForm* object;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data && destructible->data->targetable)
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data
+			&& destructible->data->targetable)
 			*result = 1;
 	return true;
 }
@@ -2238,7 +2440,7 @@ bool Cmd_GetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 				*result = destructible->data->stages[idx]->healthPrc;
 				break;
 			case 1:
-				*result = (int)destructible->data->stages[idx]->selfDmgSec;
+				*result = static_cast<int>(destructible->data->stages[idx]->selfDmgSec);
 				break;
 			case 2:
 				*result = destructible->data->stages[idx]->dmgStage;
@@ -2247,7 +2449,7 @@ bool Cmd_GetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 				*result = destructible->data->stages[idx]->flags;
 				break;
 			case 4:
-				*result = (int)destructible->data->stages[idx]->debrisCount;
+				*result = static_cast<int>(destructible->data->stages[idx]->debrisCount);
 				break;
 			default:
 				break;
@@ -2291,8 +2493,10 @@ bool Cmd_GetNthDestructionStageExplosion_Execute(COMMAND_ARGS)
 	UInt32 idx;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
-			destructible->data->stages && (idx < destructible->data->stageCount) && destructible->data->stages[idx]->explosion)
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data
+			&&
+			destructible->data->stages && (idx < destructible->data->stageCount) && destructible->data->stages[idx]->
+			explosion)
 			*(UInt32*)result = destructible->data->stages[idx]->explosion->refID;
 	return true;
 }
@@ -2305,7 +2509,9 @@ bool Cmd_SetNthDestructionStageExplosion_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &explForm))
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
 			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
-			destructible->data->stages[idx]->explosion = (explForm && (explForm->typeID == kFormType_Explosion)) ? explForm : nullptr;
+			destructible->data->stages[idx]->explosion = (explForm && (explForm->typeID == kFormType_Explosion))
+				                                             ? explForm
+				                                             : nullptr;
 	return true;
 }
 
@@ -2329,19 +2535,24 @@ bool Cmd_SetNthDestructionStageDebris_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &dbrForm))
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
 			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
-			destructible->data->stages[idx]->debris = (dbrForm && (dbrForm->typeID == kFormType_Debris)) ? dbrForm : nullptr;
+			destructible->data->stages[idx]->debris = (dbrForm && (dbrForm->typeID == kFormType_Debris))
+				                                          ? dbrForm
+				                                          : nullptr;
 	return true;
 }
 
-bool Cmd_GetButcherPeteVersion_Execute(COMMAND_ARGS) {
+bool Cmd_GetButcherPeteVersion_Execute(COMMAND_ARGS)
+{
 	*result = g_version;
-	if (IsConsoleMode()) {
+	if (IsConsoleMode())
+	{
 		Console_Print("GetButcherPeteVersion >> %.f", *result);
 	}
 	return true;
 }
 
-bool Cmd_GetButcherPeteVersion_Eval(COMMAND_ARGS_EVAL) {
+bool Cmd_GetButcherPeteVersion_Eval(COMMAND_ARGS_EVAL)
+{
 	*result = g_version;
 	return true;
 }
@@ -2352,7 +2563,8 @@ bool Cmd_SetTextureSetTexture_Execute(COMMAND_ARGS)
 	BGSTextureSet* texSet = nullptr;
 	int mapID = -1;
 	char path[MAX_PATH];
-	if (ExtractArgs(EXTRACT_ARGS, &texSet, &mapID, &path) && (mapID >= 0 && mapID <= 5)) {
+	if (ExtractArgs(EXTRACT_ARGS, &texSet, &mapID, &path) && (mapID >= 0 && mapID <= 5))
+	{
 		texSet->textures[mapID].ddsPath.Set(path);
 		*result = 1;
 	}
@@ -2363,9 +2575,11 @@ bool Cmd_SetTextureSetTexture_Execute(COMMAND_ARGS)
 bool Cmd_GetMessageFlags_Execute(COMMAND_ARGS)
 {
 	BGSMessage* message;
-	if (ExtractArgs(EXTRACT_ARGS, &message)) {
+	if (ExtractArgs(EXTRACT_ARGS, &message))
+	{
 		*result = message->msgFlags;
-		if (IsConsoleMode()) {
+		if (IsConsoleMode())
+		{
 			Console_Print("GetMessageFlags >> %.f", *result);
 		}
 	}

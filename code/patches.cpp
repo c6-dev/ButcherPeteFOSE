@@ -7,7 +7,7 @@
 
 std::unordered_map<UInt32, char*> markerIconMap;
 
-char** defaultMarkerList = (char**)0xF6B13C;
+auto defaultMarkerList = (char**)0xF6B13C;
 
 TESClimate* s_forcedClimate = nullptr;
 
@@ -16,13 +16,17 @@ bool bCombatMusicDisabled = false;
 
 void __fastcall SetClimateHook(Sky* sky, void* edx, TESClimate* climate, bool a3)
 {
-	if (s_forcedClimate) {
+	if (s_forcedClimate)
+	{
 		climate = s_forcedClimate;
 	}
 	ThisCall<void>(0x57E3B0, sky, climate, a3);
 }
-const char* GetPackageTypeName(char type) {
-	switch (type) {
+
+const char* GetPackageTypeName(char type)
+{
+	switch (type)
+	{
 	case 0:
 		return "Explore";
 	case 1:
@@ -90,71 +94,86 @@ const char* GetPackageTypeName(char type) {
 	}
 	return "";
 }
-TESPackage* __fastcall GetAIPackageHook(Actor* actor) {
-	TESPackage* package = ThisCall<TESPackage*>(0x766020, actor);
-	if (IsConsoleMode()) {
-		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetEditorID(), package->type, GetPackageTypeName(package->type));
+
+TESPackage* __fastcall GetAIPackageHook(Actor* actor)
+{
+	auto package = ThisCall<TESPackage*>(0x766020, actor);
+	if (IsConsoleMode())
+	{
+		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetEditorID(),
+		              package->type, GetPackageTypeName(package->type));
 	}
 	return package;
 }
 
 
-char* __fastcall GetMapMarker(TESObjectREFR* thisObj, UInt16 mapMarkerType) {
+char* __fastcall GetMapMarker(TESObjectREFR* thisObj, UInt16 mapMarkerType)
+{
 	auto it = markerIconMap.find(thisObj->refID);
 	if (it != markerIconMap.end()) return it->second;
 	return defaultMarkerList[mapMarkerType];
 }
-__declspec (naked) void GetMapMarkerHook() {
+
+__declspec (naked) void GetMapMarkerHook()
+{
 	//UInt32 static const retAddr = 0x079D337;
 	__asm
-	{
+		{
 		mov edx, eax
 		mov ecx, edi
 		jmp GetMapMarker
-	}
+		}
 }
+
 void __fastcall SetTreeFullLODToINISetting(TESObjectCELL* cell)
 {
 	auto mgr = BSTreeManager::GetSingleton(true);
-	Setting* bForceFullLOD = (Setting*)0x1073C94;
+	auto bForceFullLOD = (Setting*)0x1073C94;
 	mgr->isForceFullLOD = bForceFullLOD->data.i;
 	ThisCall<void>(0x4D8120, cell);
 }
-void MarkNode(NiNode* node) {
-	if (node) {
+
+void MarkNode(NiNode* node)
+{
+	if (node)
+	{
 		node->m_flags |= NiAVObject::kNiFlag_PlayerBone;
-		if (node->IsNiNode()) {
-			for (int i = 0; i < node->m_children.Length(); i++) {
+		if (node->IsNiNode())
+		{
+			for (int i = 0; i < node->m_children.Length(); i++)
+			{
 				NiAVObject* node3 = node->m_children[i];
-				MarkNode((NiNode*)node3);
+				MarkNode(static_cast<NiNode*>(node3));
 			}
 		}
 	}
 }
 
-void __stdcall MarkPlayerBones() {
+void __stdcall MarkPlayerBones()
+{
 	StdCall<void>(0x619EB0);
 	PlayerCharacter* player = PlayerCharacter::GetSingleton();
 	NiNode* firstPerson = player->pBipedAnims1st->pRoot;
 	if (firstPerson) firstPerson->m_flags |= NiAVObject::kNiFlag_PlayerBone;
 	NiNode* thirdPerson = player->bipedAnim->pRoot;
 	if (thirdPerson) thirdPerson->m_flags |= NiAVObject::kNiFlag_PlayerBone;
-
 }
-void __fastcall SetCellImageSpaceHook(TESObjectCELL* cell, void* edx, TESImageSpace* imageSpace) {
+
+void __fastcall SetCellImageSpaceHook(TESObjectCELL* cell, void* edx, TESImageSpace* imageSpace)
+{
 	ThisCall<void>(0x4D36C0, cell, imageSpace);
 	PlayerCharacter* player = PlayerCharacter::GetSingleton();
-	if (player->parentCell != nullptr && player->parentCell == cell) {
+	if (player->parentCell != nullptr && player->parentCell == cell)
+	{
 		CdeclCall<void>(0xAD5900, imageSpace->fTraitValues);
 	}
-
 }
 
 _declspec(naked) void uGridsLoadingCrashHook()
 {
 	// add a null check after call to GridCellArray::GetCell before dereferencing it in SaveLoad::LoadGlobalBufferedCells
 	_asm
-	{
+		{
 		test eax, eax
 		jz done
 		mov esi, dword ptr ds : [eax]
@@ -162,12 +181,13 @@ _declspec(naked) void uGridsLoadingCrashHook()
 		lea edx, dword ptr ss : [esp + 0x1C]
 		mov eax, 0x43773C
 		jmp eax
-	}
+		}
 }
 
 void __fastcall MarkRefAsModifiedHook(TESObjectREFR* refr, int edx, UInt32 flag)
 {
-	if (flag != 4 || refr->parentCell == nullptr || (refr->parentCell->flags & 0x400000) == 0) {
+	if (flag != 4 || refr->parentCell == nullptr || (refr->parentCell->flags & 0x400000) == 0)
+	{
 		ThisCall(0x4542B0, refr, flag);
 	}
 }
@@ -181,7 +201,8 @@ char __fastcall QueueUIMessageHook(void* menu, void* edx, char* text, int type, 
 	return ThisCall<char>(0x648500, menu, text, type, path, soundName, time);
 }
 
-bool __fastcall CombatMusicHook(uint32_t* a1) {
+bool __fastcall CombatMusicHook(uint32_t* a1)
+{
 	if (bCombatMusicDisabled) return false;
 	return ThisCall<bool>(0x7A8580, a1);
 }
@@ -189,7 +210,7 @@ bool __fastcall CombatMusicHook(uint32_t* a1) {
 // Fixes conditions that got inverted when refactoring the function from Oblivion->FO3
 // The biggest issue was: when trespassing, player can open any door in existence, due to CanActorIgnoreDoorLock being ran last, if at all - IsTrespassing gets called before it, returning true.
 // The fix simply restores the original Oblivion order.
-bool TESObjectDOOR__CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectREFR* apDoorRef, bool abActivate, bool abMovement)
+bool CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectREFR* apDoorRef, bool abActivate, bool abMovement)
 {
 	if (!apActor || !apLock)
 		return false;
@@ -200,7 +221,8 @@ bool TESObjectDOOR__CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectRE
 	if (apActor == PlayerCharacter::GetSingleton())
 		return false;
 	// Actor::IsFollowing - TESObjectREFR::GetTeleport
-	if (ThisCall<bool>(0x6F57B0, apActor) && apActor->baseProcess->GetTarget() == PlayerCharacter::GetSingleton() && ThisCall<UInt32*>(0x4E74A0, apDoorRef))
+	if (ThisCall<bool>(0x6F57B0, apActor) && apActor->baseProcess->GetTarget() == PlayerCharacter::GetSingleton() &&
+		ThisCall<UInt32*>(0x4E74A0, apDoorRef))
 		return true;
 
 	if (apActor->IsTrespassing())
@@ -228,7 +250,8 @@ void __cdecl OnFreeRefRemoveFromSelectableList(TESObjectREFR* ref)
 	InterfaceManager::GetSingleton()->selectableRefs.Remove(ref);
 }
 
-double __fastcall Creature__GetTotalArmorDR(Creature* apThis) {
+double __fastcall CreatureGetTotalArmorDR(Creature* apThis)
+{
 	if (apThis->fTotalArmorDR >= 0.0)
 		return apThis->fTotalArmorDR;
 
@@ -239,7 +262,8 @@ double __fastcall Creature__GetTotalArmorDR(Creature* apThis) {
 	if (bFound)
 		fInternalValue = v6;
 
-	apThis->fTotalArmorDR = apThis->avOwner.GetActorValueDamage(eIndex) + apThis->avOwner.GetPermActorValue(eIndex) + fInternalValue;
+	apThis->fTotalArmorDR = apThis->avOwner.GetActorValueDamage(eIndex) + apThis->avOwner.GetPermActorValue(eIndex) +
+		fInternalValue;
 
 	return apThis->fTotalArmorDR;
 }
@@ -255,8 +279,8 @@ void __fastcall OnResetLoadedRefData(TESObjectREFR* ref, void* edx, NiNode* node
 }
 
 // Fixes DR not updating when armor is changed by non-player actors
-	// Works both for Creatures and Characters (same offsets)
-	// Thanks to IntoTheRough for identifying the issue
+// Works both for Creatures and Characters (same offsets)
+// Thanks to IntoTheRough for identifying the issue
 void __fastcall ResetArmorRating(Character* apCharacter)
 {
 	apCharacter->fTotalArmorDR = -1.f;
@@ -279,57 +303,65 @@ TESObjectREFR* GetHackingMenuRef(HackingMenu* pHackingMenu)
 
 void __fastcall SetTerminalModelHook(void* a1)
 {
-	char* newPath = (char*)g_terminalModelDefault;
-	if (!s_terminalAltModelsMap.empty()) {
+	auto newPath = (char*)g_terminalModelDefault;
+	if (!s_terminalAltModelsMap.empty())
+	{
 		TESObjectREFR* targetRef = nullptr;
-		
-		
+
+
 		ComputersMenu* pComputersMenu = ComputersMenu::GetInstance();
-		if (pComputersMenu)                 
+		if (pComputersMenu)
 		{
 			targetRef = pComputersMenu->pTargetRef;
 		}
 		else
 		{
-			HackingMenu* pHackingMenu = HackingMenu::GetInstance(); 
-			if (pHackingMenu) {
+			HackingMenu* pHackingMenu = HackingMenu::GetInstance();
+			if (pHackingMenu)
+			{
 				targetRef = GetHackingMenuRef(pHackingMenu);
 			}
 		}
 		if (targetRef)
 		{
 			auto it = s_terminalAltModelsMap.find(reinterpret_cast<BGSTerminal*>(targetRef->baseForm));
-			if (it != s_terminalAltModelsMap.end()) {
+			if (it != s_terminalAltModelsMap.end())
+			{
 				ThisCall(0x69D7D0, nullptr); // PurgeTerminalModel
 				newPath = it->second;
 			}
-			
 		}
-		
 	}
-	*(char**)0xF6B70C = newPath;  // pTerminalFile
+	*(char**)0xF6B70C = newPath; // pTerminalFile
 	ThisCall(0x69D980, a1);
 }
 
-bool __fastcall GetINISettingHook(IniSettingCollection* ini, void* edx, char* name, Setting** setting) {
-	if (ini && !ini->settings.Empty()) {
+bool __fastcall GetINISettingHook(IniSettingCollection* ini, void* edx, char* name, Setting** setting)
+{
+	if (ini && !ini->settings.Empty())
+	{
 		auto iter = ini->settings.Head();
-		while (iter && iter->data != nullptr) {
+		while (iter && iter->data != nullptr)
+		{
 			Setting* pSetting = iter->data;
 			iter = iter->Next();
-			if (_stricmp(pSetting->name, name) == 0) {
+			if (_stricmp(pSetting->name, name) == 0)
+			{
 				*setting = pSetting;
-				return true; 
+				return true;
 			}
 		}
 	}
 	RendererSettingCollection* rendererSettings = RendererSettingCollection::GetCollection();
-	if (rendererSettings && !rendererSettings->settings.Empty()) {
+	if (rendererSettings && !rendererSettings->settings.Empty())
+	{
 		auto iter = rendererSettings->settings.Head();
-		while (iter && iter->data != nullptr) {
+		while (iter && iter->data != nullptr)
+		{
 			Setting* pSetting = iter->data;
 			iter = iter->Next();
-			if (_stricmp(pSetting->name, name) == 0) {  
+			if (_stricmp(pSetting->name, name) == 0)
+			{
 				*setting = pSetting;
 				return true;
 			}
@@ -337,8 +369,11 @@ bool __fastcall GetINISettingHook(IniSettingCollection* ini, void* edx, char* na
 	}
 	return false;
 }
-void __stdcall HandleSettingType(Setting* setting, Setting::EType type) {
-	switch (type) {
+
+void __stdcall HandleSettingType(Setting* setting, Setting::EType type)
+{
+	switch (type)
+	{
 	case Setting::kSetting_Bool:
 		if (IsConsoleMode()) Console_Print("INISetting %s >> %i", setting->name, setting->data.b);
 		break;
@@ -355,10 +390,15 @@ void __stdcall HandleSettingType(Setting* setting, Setting::EType type) {
 		if (IsConsoleMode()) Console_Print("INISetting %s >> '%s'", setting->name, setting->data.str);
 		break;
 	case Setting::kSetting_r:
-		if (IsConsoleMode()) Console_Print("INISetting %s >> R: %d G: %d B: %d", setting->name, setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1]);
+		if (IsConsoleMode())
+			Console_Print("INISetting %s >> R: %d G: %d B: %d", setting->name, setting->data.rgb[3],
+			              setting->data.rgb[2], setting->data.rgb[1]);
 		break;
 	case Setting::kSetting_a:
-		if (IsConsoleMode()) Console_Print("INISetting %s >> R: %d G: %d B: %d alpha: %d", setting->name, setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1], setting->data.rgb[0]);
+		if (IsConsoleMode())
+			Console_Print("INISetting %s >> R: %d G: %d B: %d alpha: %d", setting->name,
+			              setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1],
+			              setting->data.rgb[0]);
 		break;
 	default:
 		if (IsConsoleMode()) Console_Print("INISetting %s >> UNKNOWN TYPE", setting->name);
@@ -366,7 +406,8 @@ void __stdcall HandleSettingType(Setting* setting, Setting::EType type) {
 	}
 }
 
-__declspec(naked) void GetINISettingTypeHook() {
+__declspec(naked) void GetINISettingTypeHook()
+{
 	__asm {
 		push eax
 		mov eax, esi
@@ -374,11 +415,11 @@ __declspec(naked) void GetINISettingTypeHook() {
 		call HandleSettingType
 		mov eax, 0x53E83C
 		jmp eax
-	}
+		}
 }
 
-bool __stdcall SaveINIHook() {
-	
+bool __stdcall SaveINIHook()
+{
 	RendererSettingCollection* rendererSettings = RendererSettingCollection::GetCollection();
 	ThisCall<bool>(0x539FA0, rendererSettings, rendererSettings->iniPath);
 	return StdCall<bool>(0x53E440);
@@ -391,7 +432,8 @@ void __fastcall DOFFOVHook(void* a1, void* edx, float a3, bool a4, NiCamera* a5,
 	ThisCall(0xAAEAF0, a1, a3, a4, a5, a6);
 }
 
-__declspec(naked) void FixNewGameMusic() {
+__declspec(naked) void FixNewGameMusic()
+{
 	__asm {
 		test esi, esi
 		jz SETDEFAULT
@@ -405,13 +447,13 @@ __declspec(naked) void FixNewGameMusic() {
 		NEXTCHECK:
 		mov eax, 0x6BDCE8
 		jmp eax
-	}
-
+		}
 }
 
-void WritePatches() {
-
-	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook)); // fix crash when loading a save with increased ugrids after lowering them
+void WritePatches()
+{
+	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook));
+	// fix crash when loading a save with increased ugrids after lowering them
 	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
 	WriteRelCall(0x5110A5, (UInt32)GetAIPackageHook);
 
@@ -420,7 +462,8 @@ void WritePatches() {
 	WriteRelCall(0x6654DD, (UInt32)GetMapMarkerHook); // call 5b
 	SafeWrite8(0x6654E2, 0x50); // push eax instead of edx
 
-	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting); // fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
+	WriteRelCall(0x4DBE16, (UInt32)SetTreeFullLODToINISetting);
+	// fixed bForceFullLOD resetting when opening pipboy (thanks Stewie)
 	WriteRelCall(0x76FA6A, (UInt32)MarkPlayerBones);
 	WriteRelCall(0x51F0B0, (UInt32)SetCellImageSpaceHook);
 	WriteRelCall(0x440ED6, (UInt32)SetClimateHook);
@@ -434,7 +477,7 @@ void WritePatches() {
 	WriteRelCall(0x6C047D, (UInt32)CombatMusicHook);
 	WriteRelCall(0x6C08DF, (UInt32)CombatMusicHook);
 
-	WriteRelJump(0x4B7C70, UInt32(TESObjectDOOR__CanActorIgnoreLock));
+	WriteRelJump(0x4B7C70, UInt32(CanActorIgnoreLock));
 
 	WriteRelCall(0x512599, UInt32(GetOffersServicesNow));
 
@@ -445,8 +488,8 @@ void WritePatches() {
 	PatchMemoryNop(0x76C9E4, 19);
 
 	// Fix for doubled DR on creatures
-	SafeWrite32(0xE14EAC, UInt32(Creature__GetTotalArmorDR));
-	 
+	SafeWrite32(0xE14EAC, UInt32(CreatureGetTotalArmorDR));
+
 	// ensures refs play their attached sounds when nodes are set
 	WriteRelCall(0x4FACB9, UInt32(OnResetLoadedRefData));
 	WriteRelCall(0x4FACD2, UInt32(OnResetLoadedRefData));
@@ -469,7 +512,6 @@ void WritePatches() {
 	WriteRelCall(0x6EAE4E, (UInt32)DOFFOVHook);
 
 	WriteRelJump(0x6BDCD5, UInt32(FixNewGameMusic));
-	
 }
 
 void WriteEditorPatches()
