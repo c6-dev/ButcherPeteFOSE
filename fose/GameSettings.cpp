@@ -64,6 +64,8 @@ bool Setting::GetNumeric(double& out)
 	case kSetting_Float:
 		out = data.f;
 		return true;
+	default:
+		return false;
 	}
 	
 }
