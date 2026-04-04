@@ -1037,7 +1037,8 @@ bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 	TESCreature* creature = nullptr;
 	if (ExtractArgs(EXTRACT_ARGS, &creature))
 	{
-		if (creature || (thisObj && thisObj->IsActor() && (creature = static_cast<TESCreature*>(((Actor*)thisObj)->
+		if (creature || (thisObj && thisObj->IsActor() && (creature = static_cast<TESCreature*>(static_cast<Actor*>(
+				thisObj)->
 			GetActorBase()))))
 		{
 			if IS_ID(creature, Creature)
