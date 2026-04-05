@@ -100,8 +100,8 @@ TESPackage* __fastcall GetAIPackageHook(Actor* actor)
 	auto package = ThisCall<TESPackage*>(0x766020, actor);
 	if (IsConsoleMode())
 	{
-		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetEditorID(),
-		              package->type, GetPackageTypeName(package->type));
+		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetEditorID(), package->type,
+		              GetPackageTypeName(package->type));
 	}
 	return package;
 }
@@ -212,21 +212,17 @@ bool __fastcall CombatMusicHook(uint32_t* a1)
 // The fix simply restores the original Oblivion order.
 bool CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectREFR* apDoorRef, bool abActivate, bool abMovement)
 {
-	if (!apActor || !apLock)
-		return false;
+	if (!apActor || !apLock) return false;
 
 	if (ThisCall<bool>(0x4AA0F0, apLock, apActor, abActivate, abMovement)) // DoorLock::CanActorIgnoreDoorLock
 		return true;
 
-	if (apActor == PlayerCharacter::GetSingleton())
-		return false;
+	if (apActor == PlayerCharacter::GetSingleton()) return false;
 	// Actor::IsFollowing - TESObjectREFR::GetTeleport
-	if (ThisCall<bool>(0x6F57B0, apActor) && apActor->baseProcess->GetTarget() == PlayerCharacter::GetSingleton() &&
-		ThisCall<UInt32*>(0x4E74A0, apDoorRef))
-		return true;
+	if (ThisCall<bool>(0x6F57B0, apActor) && apActor->baseProcess->GetTarget() == PlayerCharacter::GetSingleton() && ThisCall<
+		UInt32*>(0x4E74A0, apDoorRef)) return true;
 
-	if (apActor->IsTrespassing())
-		return true;
+	if (apActor->IsTrespassing()) return true;
 
 	return false;
 }
@@ -234,8 +230,7 @@ bool CanActorIgnoreLock(void* apLock, Actor* apActor, TESObjectREFR* apDoorRef, 
 // Fixes crash in GetOffersServices when an actor doesn't have a base process
 bool __fastcall GetOffersServicesNow(Actor* apThis)
 {
-	if (apThis->baseProcess)
-		return ThisCall<bool>(0x6F7980, apThis);
+	if (apThis->baseProcess) return ThisCall<bool>(0x6F7980, apThis);
 
 	return false;
 }
@@ -252,15 +247,13 @@ void __cdecl OnFreeRefRemoveFromSelectableList(TESObjectREFR* ref)
 
 double __fastcall CreatureGetTotalArmorDR(Creature* apThis)
 {
-	if (apThis->fTotalArmorDR >= 0.0)
-		return apThis->fTotalArmorDR;
+	if (apThis->fTotalArmorDR >= 0.0) return apThis->fTotalArmorDR;
 
 	UInt32 eIndex = 18; // Damage Resistance
 	float fInternalValue = 0.f;
 	bool bFound = false;
 	float v6 = apThis->InternalGetActorValue(eIndex, bFound);
-	if (bFound)
-		fInternalValue = v6;
+	if (bFound) fInternalValue = v6;
 
 	apThis->fTotalArmorDR = apThis->avOwner.GetActorValueDamage(eIndex) + apThis->avOwner.GetPermActorValue(eIndex) +
 		fInternalValue;
@@ -391,14 +384,17 @@ void __stdcall HandleSettingType(Setting* setting, Setting::EType type)
 		break;
 	case Setting::kSetting_r:
 		if (IsConsoleMode())
-			Console_Print("INISetting %s >> R: %d G: %d B: %d", setting->name, setting->data.rgb[3],
-			              setting->data.rgb[2], setting->data.rgb[1]);
+		{
+			Console_Print("INISetting %s >> R: %d G: %d B: %d", setting->name, setting->data.rgb[3], setting->data.rgb[2],
+			              setting->data.rgb[1]);
+		}
 		break;
 	case Setting::kSetting_a:
 		if (IsConsoleMode())
-			Console_Print("INISetting %s >> R: %d G: %d B: %d alpha: %d", setting->name,
-			              setting->data.rgb[3], setting->data.rgb[2], setting->data.rgb[1],
-			              setting->data.rgb[0]);
+		{
+			Console_Print("INISetting %s >> R: %d G: %d B: %d alpha: %d", setting->name, setting->data.rgb[3],
+			              setting->data.rgb[2], setting->data.rgb[1], setting->data.rgb[0]);
+		}
 		break;
 	default:
 		if (IsConsoleMode()) Console_Print("INISetting %s >> UNKNOWN TYPE", setting->name);

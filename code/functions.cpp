@@ -42,11 +42,9 @@ bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS)
 		Setting* setting;
 		if (GetIniSetting(settingName, &setting))
 		{
-			if (setting->SetNumeric(newVal))
-				*result = 1;
+			if (setting->SetNumeric(newVal)) *result = 1;
 		}
-		else if (IsConsoleMode())
-			Console_Print("SetNumericIniSetting >> NOT FOUND");
+		else if (IsConsoleMode()) Console_Print("SetNumericIniSetting >> NOT FOUND");
 	}
 
 	return true;
@@ -67,12 +65,10 @@ bool Hook_GetNumericIniSetting_Execute(COMMAND_ARGS)
 			if (setting->GetNumeric(val))
 			{
 				*result = val;
-				if (IsConsoleMode())
-					Console_Print("GetNumericIniSetting >> %g", *result);
+				if (IsConsoleMode()) Console_Print("GetNumericIniSetting >> %g", *result);
 			}
 		}
-		else if (IsConsoleMode())
-			Console_Print("GetNumericIniSetting >> SETTING NOT FOUND");
+		else if (IsConsoleMode()) Console_Print("GetNumericIniSetting >> SETTING NOT FOUND");
 	}
 
 	return true;
@@ -165,8 +161,7 @@ bool Cmd_SetRadioStatic_Execute(COMMAND_ARGS)
 
 bool Cmd_GetRadioPosRef_Execute(COMMAND_ARGS)
 {
-	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType && xRadio->
-		positionRef)
+	if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType && xRadio->positionRef)
 	{
 		*(UInt32*)result = xRadio->positionRef->refID;
 	}
@@ -178,10 +173,12 @@ bool Cmd_SetRadioPosRef_Execute(COMMAND_ARGS)
 {
 	TESObjectREFR* refr;
 	if (ExtractArgs(EXTRACT_ARGS, &refr))
+	{
 		if (auto xRadio = GetExtraType(thisObj->extraDataList, RadioData); xRadio && !xRadio->rangeType)
 		{
 			xRadio->positionRef = refr;
 		}
+	}
 	return true;
 }
 
@@ -219,8 +216,7 @@ bool Cmd_SetTerminalUIModel_Execute(COMMAND_ARGS)
 	bool bRemove = !modelPath[0];
 	tList<TESForm> tempList;
 	tempList.Init(form);
-	if IS_ID(form, ListForm)
-		tempList = static_cast<BGSListForm*>(form)->list;
+	if IS_ID(form, ListForm) tempList = static_cast<BGSListForm*>(form)->list;
 	auto lstIter = tempList.Head();
 	BGSTerminal* terminal;
 	do
@@ -258,14 +254,12 @@ bool Cmd_GetWeatherRGBColor_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	UInt32 type, time, channel = 0, layer = 0;
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >=
-		1 && channel <= 3)
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &channel, &layer) && (type <= 9) && (time <= 3) && channel >= 1 &&
+		channel <= 3)
 	{
 		UInt32 color = 0;
-		if (type != 2)
-			color = weather->uiColorData[type][time];
-		else if (layer <= 3)
-			color = weather->uiCloudColorData[layer][time];
+		if (type != 2) color = weather->uiColorData[type][time];
+		else if (layer <= 3) color = weather->uiCloudColorData[layer][time];
 
 		*result = (color >> ((channel - 1) * 8)) & 0xFF;
 	}
@@ -278,14 +272,12 @@ bool Cmd_SetWeatherRGBColor_Execute(COMMAND_ARGS)
 {
 	TESWeather* weather = nullptr;
 	UInt32 type, time, r = 0, g = 0, b = 0, layer = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <=
-		255) && (g <= 255) && (b <= 255))
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &type, &time, &r, &g, &b, &layer) && (type <= 9) && (time <= 3) && (r <= 255) && (g <=
+		255) && (b <= 255))
 	{
 		UInt32 rgb = r | (g << 8) | (b << 16);
-		if (type != 2)
-			weather->uiColorData[type][time] = rgb;
-		else if (layer <= 3)
-			weather->uiCloudColorData[layer][time] = rgb;
+		if (type != 2) weather->uiColorData[type][time] = rgb;
+		else if (layer <= 3) weather->uiCloudColorData[layer][time] = rgb;
 	}
 	return true;
 }
@@ -324,7 +316,9 @@ bool Cmd_SetWeatherImageSpaceMod_Execute(COMMAND_ARGS)
 	TESImageSpaceModifier* imgSpcMod = nullptr;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &time, &imgSpcMod) && weather && imgSpcMod && (time <= 3))
+	{
 		weather->pFormImageSpaceModifying[time] = imgSpcMod;
+	}
 	return true;
 }
 
@@ -333,7 +327,9 @@ bool Cmd_GetWeatherImageSpaceMod_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	UInt32 time;
 	if (ExtractArgs(EXTRACT_ARGS, &weather, &time) && (time <= 3) && weather->pFormImageSpaceModifying[time])
+	{
 		*(UInt32*)result = weather->pFormImageSpaceModifying[time]->refID;
+	}
 	if (IsConsoleMode()) Console_Print("GetWeatherImageSpaceMod >> 0x%08X", *result);
 	return true;
 }
@@ -343,8 +339,7 @@ bool Cmd_SetWeatherPrecipitationModel_Execute(COMMAND_ARGS)
 	TESWeather* weather = nullptr;
 	char path[0x80];
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &path) && weather)
-		weather->kModel.SetModelPath(path);
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &path) && weather) weather->kModel.SetModelPath(path);
 	return true;
 }
 
@@ -366,8 +361,7 @@ bool Cmd_SetWeatherTexture_Execute(COMMAND_ARGS)
 	UInt32 layer;
 	char path[0x80];
 	*result = 0;
-	if (ExtractArgs(EXTRACT_ARGS, &weather, &layer, &path) && (layer <= 3))
-		weather->kCloudTextures[layer].ddsPath.Set(path);
+	if (ExtractArgs(EXTRACT_ARGS, &weather, &layer, &path) && (layer <= 3)) weather->kCloudTextures[layer].ddsPath.Set(path);
 	return true;
 }
 
@@ -404,8 +398,7 @@ bool Cmd_SetWeatherTraitNumeric_Execute(COMMAND_ARGS)
 			weather->ucWeatherData[traitID - 2] = (value > 1) ? 255 : (value * 255);
 			break;
 		case 13:
-			if (UInt32 intVal = static_cast<int>(value); !(intVal & (intVal - 1)))
-				weather->ucWeatherData[11] = intVal;
+			if (UInt32 intVal = static_cast<int>(value); !(intVal & (intVal - 1))) weather->ucWeatherData[11] = intVal;
 			break;
 		case 14:
 		case 15:
@@ -473,8 +466,7 @@ bool Cmd_GetInventoryWeight_Execute(COMMAND_ARGS)
 	BSExtraData* xData = thisObj->extraDataList.GetByType(kExtraData_ContainerChanges);
 	auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 
-	if (xChanges && xChanges->data)
-		xChanges->data->totalWgCurrent = -1.0f;
+	if (xChanges && xChanges->data) xChanges->data->totalWgCurrent = -1.0f;
 	*result = ThisCall<double>(0x47EE00, xChanges->data);
 	if (IsConsoleMode()) Console_Print("GetInventoryWeight >> %.2f", *result);
 	return true;
@@ -489,29 +481,26 @@ bool Cmd_IsPlayable_Execute(COMMAND_ARGS)
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
-			if (thisObj)
-				form = thisObj->baseForm;
+		{
+			if (thisObj) form = thisObj->baseForm;
+		}
 	}
 	if (form)
 	{
 		auto biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
-		if (biped)
-			*result = biped->IsPlayable() ? 1 : 0;
+		if (biped) *result = biped->IsPlayable() ? 1 : 0;
 		else
 		{
 			auto weap = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
-			if (weap)
-				*result = weap->IsPlayable() ? 1 : 0;
+			if (weap) *result = weap->IsPlayable() ? 1 : 0;
 			else
 			{
 				auto ammo = DYNAMIC_CAST(form, TESForm, TESAmmo);
-				if (ammo)
-					*result = ammo->IsPlayable() ? 1 : 0;
+				if (ammo) *result = ammo->IsPlayable() ? 1 : 0;
 				else
 				{
 					auto race = DYNAMIC_CAST(form, TESForm, TESRace);
-					if (race)
-						*result = race->IsPlayable() ? 1 : 0;
+					if (race) *result = race->IsPlayable() ? 1 : 0;
 				}
 			}
 		}
@@ -532,14 +521,14 @@ bool Cmd_SetIsPlayable_Execute(COMMAND_ARGS)
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
-			if (thisObj)
-				form = thisObj->baseForm;
+		{
+			if (thisObj) form = thisObj->baseForm;
+		}
 	}
 	if (form)
 	{
 		auto biped = DYNAMIC_CAST(form, TESForm, TESBipedModelForm);
-		if (biped)
-			biped->SetNonPlayable(0.0 == doSet);
+		if (biped) biped->SetNonPlayable(0.0 == doSet);
 	}
 	return true;
 }
@@ -554,15 +543,14 @@ bool Cmd_SetScopeModelPath_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &pathStr, &form))
 	{
 		if (!form)
-			if (thisObj)
-				form = thisObj->baseForm;
+		{
+			if (thisObj) form = thisObj->baseForm;
+		}
 
 		auto weapon = DYNAMIC_CAST(form, TESForm, TESObjectWEAP);
-		if (weapon && weapon->HasScope())
-			model = &(weapon->targetNIF);
+		if (weapon && weapon->HasScope()) model = &(weapon->targetNIF);
 
-		if (model)
-			model->nifPath.Set(pathStr);
+		if (model) model->nifPath.Set(pathStr);
 	}
 
 	return true;
@@ -652,8 +640,8 @@ bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 		auto actor = static_cast<Actor*>(thisObj);
 		for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next)
 		{
-			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->
-				bActive && !activeEff->bTerminated)
+			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !
+				activeEff->bTerminated)
 			{
 				*result = 1;
 				break;
@@ -689,8 +677,7 @@ bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
 {
 	Sky* currentSky = Sky::Get();
 	TESClimate* climate = currentSky->currClimate;
-	if (climate)
-		*(UInt32*)result = climate->refID;
+	if (climate) *(UInt32*)result = climate->refID;
 	if (IsConsoleMode())
 	{
 		Console_Print("GetCurrentClimate >> 0x%X", climate->refID);
@@ -836,9 +823,7 @@ bool Cmd_SetGameVolume_Execute(COMMAND_ARGS)
 	int volLevel = -1;
 	if (ExtractArgs(EXTRACT_ARGS, &volType, &volLevel) && (volType <= 5) && (volLevel <= 100))
 	{
-		BSAudioManager::Get()->volumes[volType] = (volLevel < 0)
-			                                          ? *(float*)(0x117910C + volType * 0xC)
-			                                          : (volLevel * 0.01F);
+		BSAudioManager::Get()->volumes[volType] = (volLevel < 0) ? *(float*)(0x117910C + volType * 0xC) : (volLevel * 0.01F);
 	}
 	return true;
 }
@@ -857,8 +842,7 @@ bool Cmd_MoveToCell_Execute(COMMAND_ARGS)
 	{
 		if NOT_ID(cell, Cell)
 		{
-			if NOT_ID(cell, WorldSpace)
-				return true;
+			if NOT_ID(cell, WorldSpace) return true;
 			cell = ((TESWorldSpace*)cell)->cell;
 		}
 		thisObj->MoveToCell(cell, posVector);
@@ -875,8 +859,7 @@ void SwapSlash(char* str)
 
 bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 {
-	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
-		return true;
+	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams)) return true;
 
 	char* tempName = GetNextToken(s_strValBuffer, '|');
 	if (!*tempName) return true;
@@ -905,8 +888,7 @@ bool Cmd_AddTileFromTemplate_Execute(COMMAND_ARGS)
 		if (component)
 		{
 			*result = 1;
-			if (*altName)
-				component->name.Set(altName);
+			if (*altName) component->name.Set(altName);
 		}
 	}
 
@@ -918,8 +900,7 @@ bool Hook_GetTeleportCell_Execute(COMMAND_ARGS)
 	auto refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!thisObj)
-		return true;
+	if (!thisObj) return true;
 
 	auto xTele = GetByTypeCast(thisObj->extraDataList, Teleport);
 	// parentCell will be null if linked door's cell is not currently loaded (e.g. most exterior cells)
@@ -978,8 +959,7 @@ bool Cmd_SetUIFloatGradual_Execute(COMMAND_ARGS)
 			else
 			{
 				component->EndGradualSetFloat(tileVal->id);
-				if (numArgs >= 2)
-					tileVal->SetFloat(startVal);
+				if (numArgs >= 2) tileVal->SetFloat(startVal);
 			}
 		}
 	}
@@ -1017,17 +997,19 @@ bool Cmd_PlayIdleEx_Execute(COMMAND_ARGS)
 	TESIdleForm* idleAnim = nullptr;
 	auto actor = static_cast<Actor*>(thisObj);
 	if (actor->baseProcess && !actor->baseProcess->uiProcessLevel && ExtractArgs(EXTRACT_ARGS, &idleAnim))
+	{
 		if (AnimData* animData = thisObj->GetAnimData())
 		{
 			if (!idleAnim)
+			{
 				idleAnim = ThisCall<TESIdleForm*>(0x553D70, (UInt32*)0x10721B8, actor,
 				                                  static_cast<HighProcess*>(actor->baseProcess)->pTarget);
-				// todo from here
-			else if (idleAnim->children)
-				idleAnim = idleAnim->FindIdle(actor);
-			if (idleAnim && (animData->GetPlayedIdle() != idleAnim))
-				animData->PlayIdle(idleAnim);
+			}
+			// todo from here
+			else if (idleAnim->children) idleAnim = idleAnim->FindIdle(actor);
+			if (idleAnim && (animData->GetPlayedIdle() != idleAnim)) animData->PlayIdle(idleAnim);
 		}
+	}
 	return true;
 }
 
@@ -1037,8 +1019,7 @@ bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 	TESCreature* creature = nullptr;
 	if (ExtractArgs(EXTRACT_ARGS, &creature))
 	{
-		if (creature || (thisObj && thisObj->IsActor() && (creature = static_cast<TESCreature*>(static_cast<Actor*>(
-				thisObj)->
+		if (creature || (thisObj && thisObj->IsActor() && (creature = static_cast<TESCreature*>(static_cast<Actor*>(thisObj)->
 			GetActorBase()))))
 		{
 			if IS_ID(creature, Creature)
@@ -1096,16 +1077,14 @@ bool Cmd_SetActorGravityMult_Execute(COMMAND_ARGS)
 bool Cmd_GetFallTimeElapsed_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
-		*result = charCtrl->fallTime;
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) *result = charCtrl->fallTime;
 	return true;
 }
 
 bool Cmd_GetFallTimeRemaining_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController())
-		*result = charCtrl->calculatePitchTimer;
+	if (bhkCharacterController* charCtrl = thisObj->GetCharacterController()) *result = charCtrl->calculatePitchTimer;
 	return true;
 }
 
@@ -1230,11 +1209,13 @@ bool Cmd_SetSystemColor_Execute(COMMAND_ARGS)
 {
 	UInt32 type, red, green, blue;
 	if (ExtractArgs(EXTRACT_ARGS, &type, &red, &green, &blue) && type && (type <= 5))
+	{
 		if (auto sysColor = SystemColorManager::GetSingleton()->sysColors.Head()->Advance(type - 1)->data)
 		{
 			sysColor->SetColorRGB(red, green, blue);
 			ThisCall(0xBEF410, InterfaceManager::GetSingleton()->menuRoot, type, 0);
 		}
+	}
 	return true;
 }
 
@@ -1264,6 +1245,7 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 	char blockName[0x40];
 	UInt32 propID;
 	if (ExtractArgs(EXTRACT_ARGS, &blockName, &propID) && (propID <= 8))
+	{
 		if (hkpRigidBody* rigidBody = thisObj->GetRigidBody(blockName))
 		{
 			switch (propID)
@@ -1286,8 +1268,7 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 				*result = rigidBody->m_motion.m_inertiaAndMassInv[propID - 4];
 				break;
 			case 7:
-				if (rigidBody->m_motion.m_inertiaAndMassInv[3] > 0)
-					*result = 1.0 / rigidBody->m_motion.m_inertiaAndMassInv[3];
+				if (rigidBody->m_motion.m_inertiaAndMassInv[3] > 0) *result = 1.0 / rigidBody->m_motion.m_inertiaAndMassInv[3];
 				break;
 			case 8:
 				*result = rigidBody->m_motion.m_type;
@@ -1296,6 +1277,7 @@ bool Cmd_GetCollisionObjProperty_Execute(COMMAND_ARGS)
 				break;
 			}
 		}
+	}
 	return true;
 }
 
@@ -1309,8 +1291,7 @@ static bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREF
 
 	if (sourceRef)
 	{
-		if (!sourceRef->loadedData || !sourceRef->loadedData->rootNode)
-			return false;
+		if (!sourceRef->loadedData || !sourceRef->loadedData->rootNode) return false;
 		auto playingObjMap = &audioMngr->soundPlayingObjects;
 		NiAVObject* soundObj;
 		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
@@ -1363,8 +1344,7 @@ static bool PlayingSoundsIterator(TESSound* soundForm, bool doStop, TESObjectREF
 	{
 		for (auto sndIter = audioMngr->playingSounds.Begin(); !sndIter.Done(); sndIter.Next())
 		{
-			if (!(gameSound = sndIter.Get()) || strcmp(soundPath, gameSound->filePath) != 0)
-				continue;
+			if (!(gameSound = sndIter.Get()) || strcmp(soundPath, gameSound->filePath) != 0) continue;
 			if (!doStop) return true;
 			gameSound->stateFlags &= 0xFFFFFF0F;
 			gameSound->stateFlags |= 0x10;
@@ -1395,7 +1375,9 @@ bool Cmd_StopSoundAlt_Execute(COMMAND_ARGS)
 	TESObjectREFR* sourceRef = nullptr;
 	float fadeOutTime = -1;
 	if (ExtractArgs(EXTRACT_ARGS, &soundForm, &sourceRef, &fadeOutTime))
+	{
 		PlayingSoundsIterator(soundForm, true, sourceRef, fadeOutTime);
+	}
 	return true;
 }
 
@@ -1487,8 +1469,7 @@ bool Cmd_GetActorVelocity_Execute(COMMAND_ARGS)
 bool Cmd_GetIsRagdolled_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (thisObj->IsActor() && (static_cast<Actor*>(thisObj)->GetKnockedState() == 1))
-		*result = 1;
+	if (thisObj->IsActor() && (static_cast<Actor*>(thisObj)->GetKnockedState() == 1)) *result = 1;
 	return true;
 }
 
@@ -1544,8 +1525,7 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 	int hotkeynum;
 	TESForm* itemform = nullptr;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum, &itemform))
-		return true;
+	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum, &itemform)) return true;
 	if (--hotkeynum < 8)
 	{
 		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
@@ -1555,13 +1535,13 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 			ExtraDataList* found = nullptr;
 			ExtraHotkey* xHotkey = nullptr;
 			// Remove the hotkey if it exists on another object.
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
-			     End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++
+			     itemIter)
 			{
 				if (itemIter->type->refID != itemform->refID)
 				{
-					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.
-					     End(); ++iter)
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++
+					     iter)
 					{
 						xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
 						if (xHotkey && xHotkey->index == hotkeynum)
@@ -1570,8 +1550,7 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 							break;
 						}
 					}
-					if (found)
-						break;
+					if (found) break;
 				}
 			}
 			if (found)
@@ -1581,13 +1560,13 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 			}
 
 			xHotkey = nullptr;
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
-			     End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++
+			     itemIter)
 			{
 				if (itemIter->type && itemIter->type->refID == itemform->refID)
 				{
-					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.
-					     End(); ++iter)
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++
+					     iter)
 					{
 						xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
 						if (xHotkey)
@@ -1602,14 +1581,11 @@ bool Cmd_SetHotkeyItem_Execute(COMMAND_ARGS)
 						if (zHotkey)
 						{
 							zHotkey->index = hotkeynum;
-							if (!itemIter->extendData)
-								itemIter.Get()->Add(ExtraDataList::Create());
+							if (!itemIter->extendData) itemIter.Get()->Add(ExtraDataList::Create());
 							if (itemIter->extendData)
 							{
-								if (!itemIter->extendData->Count())
-									itemIter->extendData->AddAt(ExtraDataList::Create(), 0);
-								if (itemIter->extendData->Count())
-									itemIter->extendData->GetNthItem(0)->Add(zHotkey);
+								if (!itemIter->extendData->Count()) itemIter->extendData->AddAt(ExtraDataList::Create(), 0);
+								if (itemIter->extendData->Count()) itemIter->extendData->GetNthItem(0)->Add(zHotkey);
 							}
 						}
 					}
@@ -1625,8 +1601,7 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	int hotkeynum;
-	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum))
-		return true;
+	if (!ExtractArgs(EXTRACT_ARGS, &hotkeynum)) return true;
 	if (--hotkeynum < 8)
 	{
 		BSExtraData* xData = PlayerCharacter::GetSingleton()->extraDataList.GetByType(kExtraData_ContainerChanges);
@@ -1635,11 +1610,10 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 		{
 			ExtraDataList* found = nullptr;
 			ExtraHotkey* xHotkey = nullptr;
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.
-			     End(); ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++
+			     itemIter)
 			{
-				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End();
-				     ++iter)
+				for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++iter)
 				{
 					xHotkey = static_cast<ExtraHotkey*>(iter->GetByType(kExtraData_Hotkey));
 					if (xHotkey && xHotkey->index == hotkeynum)
@@ -1648,11 +1622,9 @@ bool Cmd_ClearHotkey_Execute(COMMAND_ARGS)
 						break;
 					}
 				}
-				if (found)
-					break;
+				if (found) break;
 			}
-			if (found)
-				found->RemoveByType(kExtraData_Hotkey);
+			if (found) found->RemoveByType(kExtraData_Hotkey);
 		}
 	}
 	return true;
@@ -1690,9 +1662,8 @@ bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS)
 {
 	TESObjectREFR* form;
 	char iconPath[MAX_PATH];
-	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form
-		->baseForm->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker))))
-		return true;
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form->baseForm
+		->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker)))) return true;
 	if (IS_TYPE(form, BGSListForm))
 	{
 		ListNode<TESForm>* iterator = ((BGSListForm*)form)->list.Head();
@@ -1929,8 +1900,7 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS)
 		NiPoint3 rot = outMatrix.GetCol(1);
 
 		InterfaceManager* g_interfaceManager = InterfaceManager::GetSingleton();
-		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->viewCaster, &pos, &rot, 0x46400000, &fDistance,
-		                               &bResult);
+		ref = ThisCall<TESObjectREFR*>(0x574540, g_interfaceManager->viewCaster, &pos, &rot, 0x46400000, &fDistance, &bResult);
 		if (ref)
 		{
 			*(UInt32*)result = ref->refID;
@@ -2015,8 +1985,7 @@ bool Cmd_IsKeyPressedAlt_Execute(COMMAND_ARGS)
 bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS)
 {
 	*result = 0;
-	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams))
-		return true;
+	if (!ExtractFormatStringArgs(0, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageBoxEx.numParams)) return true;
 
 	//extract the buttons
 	const char* b[10] = {nullptr};
@@ -2031,17 +2000,15 @@ bool Cmd_MessageBoxEx_Execute(COMMAND_ARGS)
 		}
 	}
 
-	if (!btnIdx)
-		b[0] = "Ok";
+	if (!btnIdx) b[0] = "Ok";
 
 	if (thisObj && !(thisObj->flags & TESForm::kFormFlags_DontSaveForm)) // if not temporary object and not quest script
 		*(UInt32*)0x1071B80 = thisObj->refID;
-	else
-		*(UInt32*)0x1071B80 = scriptObj->refID;
+	else *(UInt32*)0x1071B80 = scriptObj->refID;
 
 	*(UInt8*)0xF50B78 = 0xFF; // overwrite any previously pressed button
-	CdeclCall<void>(0x619700, s_strValBuffer, 0, 0, 0x51E270, 0, 0x17, b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-	                b[8], b[9], NULL);
+	CdeclCall<void>(0x619700, s_strValBuffer, 0, 0, 0x51E270, 0, 0x17, b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7], b[8], b[9],
+	                NULL);
 
 	return true;
 }
@@ -2052,20 +2019,20 @@ bool Cmd_MessageExAlt_Execute(COMMAND_ARGS)
 
 	float displayTime;
 	if (!ExtractFormatStringArgs(1, s_strValBuffer, EXTRACT_ARGS_EX, kCommandInfo_MessageExAlt.numParams, &displayTime))
+	{
 		return true;
+	}
 	const char* msgIcon = nullptr;
 	const char* msgSound = nullptr;
 	while (true)
 	{
 		char* barPtr = GetNextToken(s_strValBuffer, '|');
 		if (!*barPtr) break;
-		if (*s_strValBuffer == '$')
-			msgSound = s_strValBuffer + 1;
+		if (*s_strValBuffer == '$') msgSound = s_strValBuffer + 1;
 		else if (*s_strValBuffer == '#')
 		{
 			char iconIdx = s_strValBuffer[1] - '0';
-			if ((iconIdx >= 0) && (iconIdx <= 6))
-				msgIcon = (const char*)kMsgIconsPathAddr[iconIdx];
+			if ((iconIdx >= 0) && (iconIdx <= 6)) msgIcon = (const char*)kMsgIconsPathAddr[iconIdx];
 		}
 		else msgIcon = s_strValBuffer;
 		s_strValBuffer = barPtr;
@@ -2092,8 +2059,7 @@ static SInt32 GetRequiredRank(BaseExtraList* xDataList)
 
 static SInt32 GetFactionRank(Actor* actor, TESFaction* faction)
 {
-	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction,
-	                        actor == PlayerCharacter::GetSingleton());
+	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction, actor == PlayerCharacter::GetSingleton());
 }
 
 bool Cmd_IsOwned_Execute(COMMAND_ARGS)
@@ -2200,8 +2166,7 @@ bool Cmd_GetWorldspaceFlag_Execute(COMMAND_ARGS)
 {
 	TESWorldSpace* wspc;
 	UInt32 flagID;
-	if (ExtractArgs(EXTRACT_ARGS, &wspc, &flagID) && (flagID <= 7) && (wspc->flags & (1 << flagID)))
-		*result = 1;
+	if (ExtractArgs(EXTRACT_ARGS, &wspc, &flagID) && (flagID <= 7) && (wspc->flags & (1 << flagID))) *result = 1;
 	if (IsConsoleMode())
 	{
 		Console_Print("GetWorldspaceFlag %d >> %.f", flagID, *result);
@@ -2340,15 +2305,13 @@ bool Hook_GetHotkeyItem_Execute(COMMAND_ARGS)
 		auto xChanges = static_cast<ExtraContainerChanges*>(xData);
 		if (xChanges)
 		{
-			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin();
-			     !itemIter.End();
-			     ++itemIter)
+			for (ExtraContainerChanges::EntryDataList::Iterator itemIter = xChanges->data->objList->Begin(); !itemIter.End(); ++
+			     itemIter)
 			{
 				if (itemIter.Get())
 				{
-					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin();
-					     !iter.End();
-					     ++iter)
+					for (ExtraContainerChanges::ExtendDataList::Iterator iter = itemIter->extendData->Begin(); !iter.End(); ++
+					     iter)
 					{
 						if (iter.Get())
 						{
@@ -2357,8 +2320,9 @@ bool Hook_GetHotkeyItem_Execute(COMMAND_ARGS)
 							{
 								*refResult = itemIter->type->refID;
 								if (IsConsoleMode())
-									Console_Print("GetHotkeyItem >> %08x (%s)", *refResult,
-									              GetFullName(itemIter->type));
+								{
+									Console_Print("GetHotkeyItem >> %08x (%s)", *refResult, GetFullName(itemIter->type));
+								}
 
 								return true;
 							}
@@ -2370,8 +2334,7 @@ bool Hook_GetHotkeyItem_Execute(COMMAND_ARGS)
 	}
 
 	// not found
-	if (IsConsoleMode())
-		Console_Print("GetHotkeyItem >> Hotkey not assigned");
+	if (IsConsoleMode()) Console_Print("GetHotkeyItem >> Hotkey not assigned");
 
 	return true;
 }
@@ -2381,8 +2344,12 @@ bool Cmd_GetDestructionDataHealth_Execute(COMMAND_ARGS)
 	TESForm* object;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object))
+	{
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data)
+		{
 			*result = static_cast<int>(destructible->data->health);
+		}
+	}
 	return true;
 }
 
@@ -2391,8 +2358,10 @@ bool Cmd_SetDestructionDataHealth_Execute(COMMAND_ARGS)
 	TESForm* object;
 	UInt32 value;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &value))
+	{
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data)
 			destructible->data->health = value;
+	}
 	return true;
 }
 
@@ -2401,9 +2370,10 @@ bool Cmd_GetDestructionDataTargetable_Execute(COMMAND_ARGS)
 	TESForm* object;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data
-			&& destructible->data->targetable)
-			*result = 1;
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->targetable) *result = 1;
+	}
 	return true;
 }
 
@@ -2412,8 +2382,10 @@ bool Cmd_SetDestructionDataTargetable_Execute(COMMAND_ARGS)
 	TESForm* object;
 	UInt32 value;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &value))
+	{
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data)
 			destructible->data->targetable = value != 0;
+	}
 	return true;
 }
 
@@ -2422,8 +2394,12 @@ bool Cmd_GetDestructionDataNumStages_Execute(COMMAND_ARGS)
 	TESForm* object;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object))
+	{
 		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data)
+		{
 			*result = destructible->data->stageCount;
+		}
+	}
 	return true;
 }
 
@@ -2433,8 +2409,10 @@ bool Cmd_GetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 	UInt32 idx, traitID;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &traitID))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
-			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->stages && (idx < destructible->data->stageCount))
+		{
 			switch (traitID)
 			{
 			case 0:
@@ -2455,6 +2433,8 @@ bool Cmd_GetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 			default:
 				break;
 			}
+		}
+	}
 	return true;
 }
 
@@ -2463,8 +2443,10 @@ bool Cmd_SetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 	TESForm* object;
 	UInt32 idx, traitID, value;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &traitID, &value))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
-			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->stages && (idx < destructible->data->stageCount))
+		{
 			switch (traitID)
 			{
 			case 0:
@@ -2485,6 +2467,8 @@ bool Cmd_SetNthDestructionStageTrait_Execute(COMMAND_ARGS)
 			default:
 				break;
 			}
+		}
+	}
 	return true;
 }
 
@@ -2494,11 +2478,13 @@ bool Cmd_GetNthDestructionStageExplosion_Execute(COMMAND_ARGS)
 	UInt32 idx;
 	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data
-			&&
-			destructible->data->stages && (idx < destructible->data->stageCount) && destructible->data->stages[idx]->
-			explosion)
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->stages && (idx < destructible->data->stageCount) && destructible->data->stages[idx]->explosion)
+		{
 			*(UInt32*)result = destructible->data->stages[idx]->explosion->refID;
+		}
+	}
 	return true;
 }
 
@@ -2508,11 +2494,15 @@ bool Cmd_SetNthDestructionStageExplosion_Execute(COMMAND_ARGS)
 	UInt32 idx;
 	BGSExplosion* explForm = nullptr;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &explForm))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
-			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->stages && (idx < destructible->data->stageCount))
+		{
 			destructible->data->stages[idx]->explosion = (explForm && (explForm->typeID == kFormType_Explosion))
 				                                             ? explForm
 				                                             : nullptr;
+		}
+	}
 	return true;
 }
 
@@ -2520,11 +2510,12 @@ bool Cmd_GetNthDestructionStageDebris_Execute(COMMAND_ARGS)
 {
 	TESForm* object;
 	UInt32 idx;
-	if (ExtractArgs(EXTRACT_ARGS, &object, &idx))
-		*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &object, &idx)) *result = 0;
 	if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
 		destructible->data->stages && (idx < destructible->data->stageCount) && destructible->data->stages[idx]->debris)
+	{
 		*(UInt32*)result = destructible->data->stages[idx]->debris->refID;
+	}
 	return true;
 }
 
@@ -2534,11 +2525,13 @@ bool Cmd_SetNthDestructionStageDebris_Execute(COMMAND_ARGS)
 	UInt32 idx;
 	BGSDebris* dbrForm = nullptr;
 	if (ExtractArgs(EXTRACT_ARGS, &object, &idx, &dbrForm))
-		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible &&
-			destructible->data && destructible->data->stages && (idx < destructible->data->stageCount))
-			destructible->data->stages[idx]->debris = (dbrForm && (dbrForm->typeID == kFormType_Debris))
-				                                          ? dbrForm
-				                                          : nullptr;
+	{
+		if (BGSDestructibleObjectForm* destructible = object->GetDestructibleForm(); destructible && destructible->data &&
+			destructible->data->stages && (idx < destructible->data->stageCount))
+		{
+			destructible->data->stages[idx]->debris = (dbrForm && (dbrForm->typeID == kFormType_Debris)) ? dbrForm : nullptr;
+		}
+	}
 	return true;
 }
 
@@ -2592,8 +2585,7 @@ bool Cmd_SetMessageFlags_Execute(COMMAND_ARGS)
 {
 	BGSMessage* message;
 	UInt32 flags;
-	if (ExtractArgs(EXTRACT_ARGS, &message, &flags) && (flags <= 3))
-		message->msgFlags = flags;
+	if (ExtractArgs(EXTRACT_ARGS, &message, &flags) && (flags <= 3)) message->msgFlags = flags;
 	return true;
 }
 
@@ -2601,7 +2593,6 @@ bool Cmd_SetMessageDisplayTime_Execute(COMMAND_ARGS)
 {
 	BGSMessage* message;
 	UInt32 displayTime;
-	if (ExtractArgs(EXTRACT_ARGS, &message, &displayTime))
-		message->displayTime = displayTime;
+	if (ExtractArgs(EXTRACT_ARGS, &message, &displayTime)) message->displayTime = displayTime;
 	return true;
 }
