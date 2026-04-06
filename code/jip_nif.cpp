@@ -369,7 +369,6 @@ static NiAVObject* GetNifBlock(TESObjectREFR* thisObj, UInt32 pcNode, const char
 	if (pcNode && thisObj->refID == 0x14)
 	{
 		auto* pc = PlayerCharacter::GetSingleton();
-		static_cast<PlayerCharacter*>(thisObj);
 		if (pcNode & 1)
 		{
 			// 3rd-person root
