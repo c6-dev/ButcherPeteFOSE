@@ -68,6 +68,7 @@
     <ClCompile Include="code\functions.cpp" />
     <ClCompile Include="code\patches.cpp" />
     <ClCompile Include="code\custom_terminal_models.cpp" />
+    <ClCompile Include="code\jip_nif.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -149,6 +150,7 @@
     <ClInclude Include="code\functions.h" />
     <ClInclude Include="code\patches.h" />
     <ClInclude Include="code\custom_terminal_models.h" />
+    <ClInclude Include="code\jip_nif.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />

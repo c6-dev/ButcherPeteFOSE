@@ -1,7 +1,9 @@
 #include "netimmerse.h"
 #include "GameForms.h"
 #include "havok.h"
-void NiAVObject::SetLocalTranslate(const NiPoint3& pos) {
+
+void NiAVObject::SetLocalTranslate(const NiPoint3& pos)
+{
 	m_kLocal.translate.x = pos.x;
 	m_kLocal.translate.y = pos.y;
 	m_kLocal.translate.z = pos.z;
@@ -9,32 +11,28 @@ void NiAVObject::SetLocalTranslate(const NiPoint3& pos) {
 
 TESObjectREFR* NiAVObject::GetParentRef() const
 {
-	if (IS_TYPE(this, BSFadeNode)) {
+	if (IS_TYPE(this, BSFadeNode))
+	{
 		TESObjectREFR* obj = ((BSFadeNode*)this)->linkedObj;
 		if (obj) return obj;
 	}
-	if (this->m_parent) {
+	if (this->m_parent)
+	{
 		return this->m_parent->GetParentRef();
 	}
 	return nullptr;
 }
 
-bool NiMatrix3::operator==(const NiMatrix3& mat) const {
-	return
-		(m_pEntry[0][0] == mat.m_pEntry[0][0]) &&
-		(m_pEntry[0][1] == mat.m_pEntry[0][1]) &&
-		(m_pEntry[0][2] == mat.m_pEntry[0][2]) &&
-		(m_pEntry[1][0] == mat.m_pEntry[1][0]) &&
-		(m_pEntry[1][1] == mat.m_pEntry[1][1]) &&
-		(m_pEntry[1][2] == mat.m_pEntry[1][2]) &&
-		(m_pEntry[2][0] == mat.m_pEntry[2][0]) &&
-		(m_pEntry[2][1] == mat.m_pEntry[2][1]) &&
-		(m_pEntry[2][2] == mat.m_pEntry[2][2]);
-
+bool NiMatrix3::operator==(const NiMatrix3& mat) const
+{
+	return (m_pEntry[0][0] == mat.m_pEntry[0][0]) && (m_pEntry[0][1] == mat.m_pEntry[0][1]) && (m_pEntry[0][2] == mat.m_pEntry[0][
+		2]) && (m_pEntry[1][0] == mat.m_pEntry[1][0]) && (m_pEntry[1][1] == mat.m_pEntry[1][1]) && (m_pEntry[1][2] == mat.m_pEntry
+		[1][2]) && (m_pEntry[2][0] == mat.m_pEntry[2][0]) && (m_pEntry[2][1] == mat.m_pEntry[2][1]) && (m_pEntry[2][2] == mat.
+		m_pEntry[2][2]);
 }
 
-NiMatrix3 NiMatrix3::operator+ (const NiMatrix3& mat) const {
-
+NiMatrix3 NiMatrix3::operator+(const NiMatrix3& mat) const
+{
 	NiMatrix3 result = *this;
 	result.m_pEntry[0][0] += mat.m_pEntry[0][0];
 	result.m_pEntry[0][1] += mat.m_pEntry[0][1];
@@ -49,7 +47,8 @@ NiMatrix3 NiMatrix3::operator+ (const NiMatrix3& mat) const {
 	return result;
 }
 
-NiMatrix3 NiMatrix3::operator- (const NiMatrix3& mat) const {
+NiMatrix3 NiMatrix3::operator-(const NiMatrix3& mat) const
+{
 	NiMatrix3 result = *this;
 
 	result.m_pEntry[0][0] -= mat.m_pEntry[0][0];
@@ -65,50 +64,34 @@ NiMatrix3 NiMatrix3::operator- (const NiMatrix3& mat) const {
 	return result;
 }
 
-NiMatrix3 NiMatrix3::operator* (const NiMatrix3& mat) const {
+NiMatrix3 NiMatrix3::operator*(const NiMatrix3& mat) const
+{
 	NiMatrix3 result;
 
-	result.m_pEntry[0][0] =
-		m_pEntry[0][0] * mat.m_pEntry[0][0] +
-		m_pEntry[0][1] * mat.m_pEntry[1][0] +
-		m_pEntry[0][2] * mat.m_pEntry[2][0];
-	result.m_pEntry[1][0] =
-		m_pEntry[1][0] * mat.m_pEntry[0][0] +
-		m_pEntry[1][1] * mat.m_pEntry[1][0] +
-		m_pEntry[1][2] * mat.m_pEntry[2][0];
-	result.m_pEntry[2][0] =
-		m_pEntry[2][0] * mat.m_pEntry[0][0] +
-		m_pEntry[2][1] * mat.m_pEntry[1][0] +
-		m_pEntry[2][2] * mat.m_pEntry[2][0];
-	result.m_pEntry[0][1] =
-		m_pEntry[0][0] * mat.m_pEntry[0][1] +
-		m_pEntry[0][1] * mat.m_pEntry[1][1] +
-		m_pEntry[0][2] * mat.m_pEntry[2][1];
-	result.m_pEntry[1][1] =
-		m_pEntry[1][0] * mat.m_pEntry[0][1] +
-		m_pEntry[1][1] * mat.m_pEntry[1][1] +
-		m_pEntry[1][2] * mat.m_pEntry[2][1];
-	result.m_pEntry[2][1] =
-		m_pEntry[2][0] * mat.m_pEntry[0][1] +
-		m_pEntry[2][1] * mat.m_pEntry[1][1] +
-		m_pEntry[2][2] * mat.m_pEntry[2][1];
-	result.m_pEntry[0][2] =
-		m_pEntry[0][0] * mat.m_pEntry[0][2] +
-		m_pEntry[0][1] * mat.m_pEntry[1][2] +
-		m_pEntry[0][2] * mat.m_pEntry[2][2];
-	result.m_pEntry[1][2] =
-		m_pEntry[1][0] * mat.m_pEntry[0][2] +
-		m_pEntry[1][1] * mat.m_pEntry[1][2] +
-		m_pEntry[1][2] * mat.m_pEntry[2][2];
-	result.m_pEntry[2][2] =
-		m_pEntry[2][0] * mat.m_pEntry[0][2] +
-		m_pEntry[2][1] * mat.m_pEntry[1][2] +
-		m_pEntry[2][2] * mat.m_pEntry[2][2];
+	result.m_pEntry[0][0] = m_pEntry[0][0] * mat.m_pEntry[0][0] + m_pEntry[0][1] * mat.m_pEntry[1][0] + m_pEntry[0][2] * mat.
+		m_pEntry[2][0];
+	result.m_pEntry[1][0] = m_pEntry[1][0] * mat.m_pEntry[0][0] + m_pEntry[1][1] * mat.m_pEntry[1][0] + m_pEntry[1][2] * mat.
+		m_pEntry[2][0];
+	result.m_pEntry[2][0] = m_pEntry[2][0] * mat.m_pEntry[0][0] + m_pEntry[2][1] * mat.m_pEntry[1][0] + m_pEntry[2][2] * mat.
+		m_pEntry[2][0];
+	result.m_pEntry[0][1] = m_pEntry[0][0] * mat.m_pEntry[0][1] + m_pEntry[0][1] * mat.m_pEntry[1][1] + m_pEntry[0][2] * mat.
+		m_pEntry[2][1];
+	result.m_pEntry[1][1] = m_pEntry[1][0] * mat.m_pEntry[0][1] + m_pEntry[1][1] * mat.m_pEntry[1][1] + m_pEntry[1][2] * mat.
+		m_pEntry[2][1];
+	result.m_pEntry[2][1] = m_pEntry[2][0] * mat.m_pEntry[0][1] + m_pEntry[2][1] * mat.m_pEntry[1][1] + m_pEntry[2][2] * mat.
+		m_pEntry[2][1];
+	result.m_pEntry[0][2] = m_pEntry[0][0] * mat.m_pEntry[0][2] + m_pEntry[0][1] * mat.m_pEntry[1][2] + m_pEntry[0][2] * mat.
+		m_pEntry[2][2];
+	result.m_pEntry[1][2] = m_pEntry[1][0] * mat.m_pEntry[0][2] + m_pEntry[1][1] * mat.m_pEntry[1][2] + m_pEntry[1][2] * mat.
+		m_pEntry[2][2];
+	result.m_pEntry[2][2] = m_pEntry[2][0] * mat.m_pEntry[0][2] + m_pEntry[2][1] * mat.m_pEntry[1][2] + m_pEntry[2][2] * mat.
+		m_pEntry[2][2];
 
 	return result;
 }
 
-NiMatrix3 NiMatrix3::operator* (float fScalar) const {
+NiMatrix3 NiMatrix3::operator*(float fScalar) const
+{
 	NiMatrix3 result = *this;
 	result.m_pEntry[0][0] *= fScalar;
 	result.m_pEntry[0][1] *= fScalar;
@@ -123,25 +106,22 @@ NiMatrix3 NiMatrix3::operator* (float fScalar) const {
 	return result;
 }
 
-NiPoint3 NiMatrix3::operator*(const NiPoint3& pt) const {
-
-	return NiPoint3(
-		m_pEntry[0][0] * pt.x + m_pEntry[0][1] * pt.y + m_pEntry[0][2] * pt.z,
-		m_pEntry[1][0] * pt.x + m_pEntry[1][1] * pt.y + m_pEntry[1][2] * pt.z,
-		m_pEntry[2][0] * pt.x + m_pEntry[2][1] * pt.y + m_pEntry[2][2] * pt.z);
-
+NiPoint3 NiMatrix3::operator*(const NiPoint3& pt) const
+{
+	return NiPoint3(m_pEntry[0][0] * pt.x + m_pEntry[0][1] * pt.y + m_pEntry[0][2] * pt.z,
+	                m_pEntry[1][0] * pt.x + m_pEntry[1][1] * pt.y + m_pEntry[1][2] * pt.z,
+	                m_pEntry[2][0] * pt.x + m_pEntry[2][1] * pt.y + m_pEntry[2][2] * pt.z);
 }
 
-NiPoint3 operator*(const NiPoint3& pt, const NiMatrix3& mat) {
-
-	return NiPoint3(
-		mat.m_pEntry[0][0] * pt.x + mat.m_pEntry[1][0] * pt.y + mat.m_pEntry[2][0] * pt.z,
-		mat.m_pEntry[0][1] * pt.x + mat.m_pEntry[1][1] * pt.y + mat.m_pEntry[2][1] * pt.z,
-		mat.m_pEntry[0][2] * pt.x + mat.m_pEntry[1][2] * pt.y + mat.m_pEntry[2][2] * pt.z);
-
+NiPoint3 operator*(const NiPoint3& pt, const NiMatrix3& mat)
+{
+	return NiPoint3(mat.m_pEntry[0][0] * pt.x + mat.m_pEntry[1][0] * pt.y + mat.m_pEntry[2][0] * pt.z,
+	                mat.m_pEntry[0][1] * pt.x + mat.m_pEntry[1][1] * pt.y + mat.m_pEntry[2][1] * pt.z,
+	                mat.m_pEntry[0][2] * pt.x + mat.m_pEntry[1][2] * pt.y + mat.m_pEntry[2][2] * pt.z);
 }
 
-NiMatrix3 NiMatrix3::operator/ (float fScalar) const {
+NiMatrix3 NiMatrix3::operator/(float fScalar) const
+{
 	NiMatrix3 result = *this;
 	result.m_pEntry[0][0] /= fScalar;
 	result.m_pEntry[0][1] /= fScalar;
@@ -156,8 +136,8 @@ NiMatrix3 NiMatrix3::operator/ (float fScalar) const {
 	return result;
 }
 
-void NiMatrix3::MakeXRotation(float fAngle) {
-
+void NiMatrix3::MakeXRotation(float fAngle)
+{
 	float sn = std::sin(fAngle);
 	float cs = std::cos(fAngle);
 
@@ -170,11 +150,10 @@ void NiMatrix3::MakeXRotation(float fAngle) {
 	m_pEntry[2][0] = 0.0f;
 	m_pEntry[2][1] = -sn;
 	m_pEntry[2][2] = cs;
-
 }
 
-void NiMatrix3::MakeYRotation(float fAngle) {
-
+void NiMatrix3::MakeYRotation(float fAngle)
+{
 	float sn = std::sin(fAngle);
 	float cs = std::cos(fAngle);
 
@@ -187,11 +166,10 @@ void NiMatrix3::MakeYRotation(float fAngle) {
 	m_pEntry[2][0] = sn;
 	m_pEntry[2][1] = 0.0f;
 	m_pEntry[2][2] = cs;
-
 }
 
-void NiMatrix3::MakeZRotation(float fAngle) {
-
+void NiMatrix3::MakeZRotation(float fAngle)
+{
 	float sn = std::sin(fAngle);
 	float cs = std::cos(fAngle);
 
@@ -204,11 +182,10 @@ void NiMatrix3::MakeZRotation(float fAngle) {
 	m_pEntry[2][0] = 0.0f;
 	m_pEntry[2][1] = 0.0f;
 	m_pEntry[2][2] = 1.0f;
-
 }
 
-void NiMatrix3::MakeRotation(float fAngle, float x, float y, float z) {
-
+void NiMatrix3::MakeRotation(float fAngle, float x, float y, float z)
+{
 	float sn = std::sin(fAngle);
 	float cs = std::cos(fAngle);
 
@@ -232,16 +209,15 @@ void NiMatrix3::MakeRotation(float fAngle, float x, float y, float z) {
 	m_pEntry[2][0] = xzm + ysin;
 	m_pEntry[2][1] = yzm - xsin;
 	m_pEntry[2][2] = z2 * omcs + cs;
-
 }
 
-void NiMatrix3::MakeRotation(float angle, const NiPoint3& axis) {
-
+void NiMatrix3::MakeRotation(float angle, const NiPoint3& axis)
+{
 	MakeRotation(angle, axis.x, axis.y, axis.z);
+}
 
-} 
-
-void NiMatrix3::FromEulerAnglesXYZ(float fXAngle, float fYAngle, float fZAngle) {
+void NiMatrix3::FromEulerAnglesXYZ(float fXAngle, float fYAngle, float fZAngle)
+{
 	NiMatrix3 kXRot, kYRot, kZRot;
 	kXRot.MakeXRotation(fXAngle);
 	kYRot.MakeYRotation(fYAngle);
@@ -249,53 +225,62 @@ void NiMatrix3::FromEulerAnglesXYZ(float fXAngle, float fYAngle, float fZAngle) 
 	*this = kXRot * (kYRot * kZRot);
 }
 
-const float NI_INFINITY = FLT_MAX;
-const float NI_PI = 3.1415927410125732f;
-const float NI_HALF_PI = 0.5f * NI_PI;
-const float NI_TWO_PI = 2.0f * NI_PI;
+constexpr float NI_INFINITY = FLT_MAX;
+constexpr float NI_PI = 3.1415927410125732f;
+constexpr float NI_HALF_PI = 0.5f * NI_PI;
+constexpr float NI_TWO_PI = 2.0f * NI_PI;
 
-bool NiMatrix3::ToEulerAnglesXYZ(float& arfXAngle, float& arfYAngle, float& arfZAngle) const {
+bool NiMatrix3::ToEulerAnglesXYZ(float& arfXAngle, float& arfYAngle, float& arfZAngle) const
+{
 	arfYAngle = -asin(m_pEntry[0][2]);
-	if (arfYAngle < NI_HALF_PI) {
-		if (arfYAngle > -NI_HALF_PI) {
+	if (arfYAngle < NI_HALF_PI)
+	{
+		if (arfYAngle > -NI_HALF_PI)
+		{
 			arfXAngle = -atan2(-m_pEntry[1][2], m_pEntry[2][2]);
 			arfZAngle = -atan2(-m_pEntry[0][1], m_pEntry[0][0]);
 			return true;
 		}
-		else {
-			// WARNING.  Not a unique solution.
-			float fRmY = atan2(m_pEntry[1][0], m_pEntry[1][1]);
-			arfZAngle = 0.0f;  // any angle works
-			arfXAngle = fRmY - arfZAngle;
-			return false;
-		}
-	}
-	else {
 		// WARNING.  Not a unique solution.
-		float fRpY = atan2(m_pEntry[1][0], m_pEntry[1][1]);
-		arfZAngle = 0.0f;  // any angle works
-		arfXAngle = arfZAngle - fRpY;
+		float fRmY = atan2(m_pEntry[1][0], m_pEntry[1][1]);
+		arfZAngle = 0.0f; // any angle works
+		arfXAngle = fRmY - arfZAngle;
 		return false;
 	}
+	// WARNING.  Not a unique solution.
+	float fRpY = atan2(m_pEntry[1][0], m_pEntry[1][1]);
+	arfZAngle = 0.0f; // any angle works
+	arfXAngle = arfZAngle - fRpY;
+	return false;
 }
 
-NiMatrix3 NiMatrix3::TransposeTimes(const NiMatrix3& mat) const {
+NiMatrix3 NiMatrix3::TransposeTimes(const NiMatrix3& mat) const
+{
 	NiMatrix3 prd;
-	prd.m_pEntry[0][0] = m_pEntry[0][0] * mat.m_pEntry[0][0] + m_pEntry[0][1] * mat.m_pEntry[1][0] + m_pEntry[0][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[1][0] = m_pEntry[1][0] * mat.m_pEntry[0][0] + m_pEntry[1][1] * mat.m_pEntry[1][0] + m_pEntry[1][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[2][0] = m_pEntry[2][0] * mat.m_pEntry[0][0] + m_pEntry[2][1] * mat.m_pEntry[1][0] + m_pEntry[2][2] * mat.m_pEntry[2][0];
-	prd.m_pEntry[0][1] = m_pEntry[0][0] * mat.m_pEntry[0][1] + m_pEntry[0][1] * mat.m_pEntry[1][1] + m_pEntry[0][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[1][1] = m_pEntry[1][0] * mat.m_pEntry[0][1] + m_pEntry[1][1] * mat.m_pEntry[1][1] + m_pEntry[1][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[2][1] = m_pEntry[2][0] * mat.m_pEntry[0][1] + m_pEntry[2][1] * mat.m_pEntry[1][1] + m_pEntry[2][2] * mat.m_pEntry[2][1];
-	prd.m_pEntry[0][2] = m_pEntry[0][0] * mat.m_pEntry[0][2] + m_pEntry[0][1] * mat.m_pEntry[1][2] + m_pEntry[0][2] * mat.m_pEntry[2][2];
-	prd.m_pEntry[1][2] = m_pEntry[1][0] * mat.m_pEntry[0][2] + m_pEntry[1][1] * mat.m_pEntry[1][2] + m_pEntry[1][2] * mat.m_pEntry[2][2];
-	prd.m_pEntry[2][2] = m_pEntry[2][0] * mat.m_pEntry[0][2] + m_pEntry[2][1] * mat.m_pEntry[1][2] + m_pEntry[2][2] * mat.m_pEntry[2][2];
+	prd.m_pEntry[0][0] = m_pEntry[0][0] * mat.m_pEntry[0][0] + m_pEntry[0][1] * mat.m_pEntry[1][0] + m_pEntry[0][2] * mat.m_pEntry
+		[2][0];
+	prd.m_pEntry[1][0] = m_pEntry[1][0] * mat.m_pEntry[0][0] + m_pEntry[1][1] * mat.m_pEntry[1][0] + m_pEntry[1][2] * mat.m_pEntry
+		[2][0];
+	prd.m_pEntry[2][0] = m_pEntry[2][0] * mat.m_pEntry[0][0] + m_pEntry[2][1] * mat.m_pEntry[1][0] + m_pEntry[2][2] * mat.m_pEntry
+		[2][0];
+	prd.m_pEntry[0][1] = m_pEntry[0][0] * mat.m_pEntry[0][1] + m_pEntry[0][1] * mat.m_pEntry[1][1] + m_pEntry[0][2] * mat.m_pEntry
+		[2][1];
+	prd.m_pEntry[1][1] = m_pEntry[1][0] * mat.m_pEntry[0][1] + m_pEntry[1][1] * mat.m_pEntry[1][1] + m_pEntry[1][2] * mat.m_pEntry
+		[2][1];
+	prd.m_pEntry[2][1] = m_pEntry[2][0] * mat.m_pEntry[0][1] + m_pEntry[2][1] * mat.m_pEntry[1][1] + m_pEntry[2][2] * mat.m_pEntry
+		[2][1];
+	prd.m_pEntry[0][2] = m_pEntry[0][0] * mat.m_pEntry[0][2] + m_pEntry[0][1] * mat.m_pEntry[1][2] + m_pEntry[0][2] * mat.m_pEntry
+		[2][2];
+	prd.m_pEntry[1][2] = m_pEntry[1][0] * mat.m_pEntry[0][2] + m_pEntry[1][1] * mat.m_pEntry[1][2] + m_pEntry[1][2] * mat.m_pEntry
+		[2][2];
+	prd.m_pEntry[2][2] = m_pEntry[2][0] * mat.m_pEntry[0][2] + m_pEntry[2][1] * mat.m_pEntry[1][2] + m_pEntry[2][2] * mat.m_pEntry
+		[2][2];
 
 	return prd;
 }
 
-bool NiMatrix3::Inverse(NiMatrix3& inv) const {
-
+bool NiMatrix3::Inverse(NiMatrix3& inv) const
+{
 	inv.m_pEntry[0][0] = m_pEntry[1][1] * m_pEntry[2][2] - m_pEntry[1][2] * m_pEntry[2][1];
 	inv.m_pEntry[0][1] = m_pEntry[0][2] * m_pEntry[2][1] - m_pEntry[0][1] * m_pEntry[2][2];
 	inv.m_pEntry[0][2] = m_pEntry[0][1] * m_pEntry[1][2] - m_pEntry[0][2] * m_pEntry[1][1];
@@ -306,112 +291,186 @@ bool NiMatrix3::Inverse(NiMatrix3& inv) const {
 	inv.m_pEntry[2][1] = m_pEntry[0][1] * m_pEntry[2][0] - m_pEntry[0][0] * m_pEntry[2][1];
 	inv.m_pEntry[2][2] = m_pEntry[0][0] * m_pEntry[1][1] - m_pEntry[0][1] * m_pEntry[1][0];
 
-	float fDet = m_pEntry[0][0] * inv.m_pEntry[0][0] +
-		m_pEntry[0][1] * inv.m_pEntry[1][0] +
-		m_pEntry[0][2] * inv.m_pEntry[2][0];
+	float fDet = m_pEntry[0][0] * inv.m_pEntry[0][0] + m_pEntry[0][1] * inv.m_pEntry[1][0] + m_pEntry[0][2] * inv.m_pEntry[2][0];
 
-	if (std::abs(fDet) <= 1e-06f)
-		return false;
+	if (std::abs(fDet) <= 1e-06f) return false;
 
 	float fInvdet = 1.0f / fDet;
-	for (int row = 0; row < 3; row++) {
-		for (int col = 0; col < 3; col++) {
+	for (int row = 0; row < 3; row++)
+	{
+		for (int col = 0; col < 3; col++)
+		{
 			inv.m_pEntry[row][col] *= fInvdet;
 		}
 	}
 
 	return true;
-
 }
 
- NiAVObject* NiNode::GetBlock(const char* blockName)
+NiAVObject* NiNode::GetBlock(const char* blockName)
 {
-	 NiFixedString str(blockName);
-	 return this->GetObjectByName(str);
-
+	NiFixedString str(blockName);
+	return this->GetObjectByName(str);
 }
 
- NiAVObject* NiNode::GetBip01()
- {
-	 if (this->m_children.Length() > 0) {
-		 for (int i = 0; i < this->m_children.Length(); i++) {
-			 NiAVObject* obj = this->m_children[i];
-			 if (obj && obj->m_blockName != nullptr && strcmp(obj->m_blockName, "Bip01") == 0) {
-				 return obj;
-			 }
-		 }
-	 }
-	 return nullptr;
- }
+NiAVObject* NiNode::GetBip01()
+{
+	if (this->m_children.Length() > 0)
+	{
+		for (int i = 0; i < this->m_children.Length(); i++)
+		{
+			NiAVObject* obj = this->m_children[i];
+			if (obj && obj->m_blockName != nullptr && strcmp(obj->m_blockName, "Bip01") == 0)
+			{
+				return obj;
+			}
+		}
+	}
+	return nullptr;
+}
 
- void NiNode::ResetCollision()
- {
-	 // If this node has a collision object, set the Reset flag
-	 // so the engine re-syncs the collision transform on next update
-	 if (m_collisionObject)
-		 m_collisionObject->flags |= bhkNiCollisionObject::kFlag_Reset;
+void NiNode::ResetCollision()
+{
+	// If this node has a collision object, set the Reset flag
+	// so the engine re-syncs the collision transform on next update
+	if (m_collisionObject) m_collisionObject->flags |= bhkNiCollisionObject::kFlag_Reset;
 
-	 // Recurse into all child NiNodes
-	 for (UInt16 i = m_children.firstFreeEntry; i > 0;)
-	 {
-		 NiAVObject* child = m_children.data[--i];
-		 if (child && child->IsNiNode())
-			 ((NiNode*)child)->ResetCollision();
-	 }
- }
+	// Recurse into all child NiNodes
+	for (UInt16 i = m_children.firstFreeEntry; i > 0;)
+	{
+		NiAVObject* child = m_children.data[--i];
+		if (child && child->IsNiNode()) static_cast<NiNode*>(child)->ResetCollision();
+	}
+}
 
- char* NiGlobalStringTable::AddString(const char* string) {
-	 return CdeclCall<char*>(0x8242A0, string);
- }
+char* NiGlobalStringTable::AddString(const char* string)
+{
+	return CdeclCall<char*>(0x8242A0, string);
+}
 
- void NiGlobalStringTable::IncRefCount(char* string) {
-	 if (*string) InterlockedIncrement((LPLONG)(*string - 8));
- }
+void NiGlobalStringTable::IncRefCount(GlobalStringHandle& arHandle)
+{
+	if (!arHandle) return;
 
- void NiGlobalStringTable::DecRefCount(char* string) {
-	 if (*string) InterlockedDecrement((LPLONG)(*string - 8));
- }
+	InterlockedIncrement((size_t*)GetRealBufferStart(arHandle));
+}
 
- NiFixedString::NiFixedString(const char* string) {
-	 if (string)
-		 m_kHandle = NiGlobalStringTable::AddString(string);
-	 else
-		 m_kHandle = nullptr;
- }
+void NiGlobalStringTable::DecRefCount(GlobalStringHandle& arHandle)
+{
+	if (!arHandle) return;
 
- NiFixedString::~NiFixedString() {
-	 NiGlobalStringTable::DecRefCount(m_kHandle);
- }
+	InterlockedDecrement((size_t*)GetRealBufferStart(arHandle));
+}
 
- NiFixedString& NiFixedString::operator=(const char* string) {
-	 if (m_kHandle != string) {
-		 char* handle = m_kHandle;
-		 m_kHandle = NiGlobalStringTable::AddString(string);
-		 NiGlobalStringTable::DecRefCount(handle);
-	 }
-	 return *this;
- }
+uint32_t NiGlobalStringTable::GetLength(const GlobalStringHandle& arHandle)
+{
+	if (!arHandle) return 0;
 
- NiFixedString& NiFixedString::operator=(NiFixedString& string) {
-	 if (m_kHandle != string.m_kHandle) {
-		 char* handle = string.m_kHandle;
-		 NiGlobalStringTable::IncRefCount(handle);
-		 NiGlobalStringTable::DecRefCount(m_kHandle);
-		 m_kHandle = handle;
-	 }
-	 return *this;
- }
+	auto pBuffer = reinterpret_cast<size_t*>(GetRealBufferStart(arHandle));
+	return pBuffer[1];
+}
 
- bool NiFixedString::operator==(const NiFixedString& string) {
-	 if (m_kHandle == string.m_kHandle)
-		 return true;
+char* NiGlobalStringTable::GetRealBufferStart(const GlobalStringHandle& arHandle)
+{
+	return (static_cast<char*>(arHandle) - 2 * sizeof(size_t));
+}
 
-	 return !strcmp(m_kHandle, string.m_kHandle);
- }
+NiFixedString::NiFixedString()
+{
+	m_kHandle = nullptr;
+}
 
- bool NiFixedString::operator==(const char* string) {
-	 if (m_kHandle == string)
-		 return true;
+NiFixedString::NiFixedString(const char* apcString)
+{
+	if (apcString) m_kHandle = NiGlobalStringTable::AddString(apcString);
+	else m_kHandle = nullptr;
+}
 
-	 return !strcmp(m_kHandle, string);
- }
+NiFixedString::NiFixedString(const NiFixedString& arString)
+{
+	NiGlobalStringTable::IncRefCount(const_cast<NiGlobalStringTable::GlobalStringHandle&>(arString.m_kHandle));
+	m_kHandle = arString.m_kHandle;
+}
+
+NiFixedString::~NiFixedString()
+{
+	NiGlobalStringTable::DecRefCount(m_kHandle);
+}
+
+NiFixedString& NiFixedString::operator=(const char* apcString)
+{
+	if (m_kHandle != apcString)
+	{
+		NiGlobalStringTable::GlobalStringHandle kHandle = m_kHandle;
+		m_kHandle = NiGlobalStringTable::AddString(apcString);
+		NiGlobalStringTable::DecRefCount(kHandle);
+	}
+	return *this;
+}
+
+NiFixedString& NiFixedString::operator=(const NiFixedString& arString)
+{
+	if (m_kHandle != arString.m_kHandle)
+	{
+		NiGlobalStringTable::GlobalStringHandle kHandle = arString.m_kHandle;
+		NiGlobalStringTable::IncRefCount(kHandle);
+		NiGlobalStringTable::DecRefCount(m_kHandle);
+		m_kHandle = kHandle;
+	}
+	return *this;
+}
+
+NiFixedString::operator const char*() const
+{
+	return m_kHandle;
+}
+
+NiFixedString::operator bool() const
+{
+	return m_kHandle != nullptr;
+}
+
+const char* NiFixedString::c_str() const
+{
+	return m_kHandle;
+}
+
+NiFixedString::operator std::basic_string_view<char>() const noexcept
+{
+	return {m_kHandle, GetLength()};
+}
+
+uint32_t NiFixedString::GetLength() const
+{
+	return NiGlobalStringTable::GetLength(m_kHandle);
+}
+
+bool NiFixedString::Includes(const char* apToFind) const
+{
+	if (!m_kHandle || !apToFind) return false;
+
+	return strstr(m_kHandle, apToFind) != nullptr;
+}
+
+bool operator==(const NiFixedString& arString1, const NiFixedString& arString2)
+{
+	return arString1.m_kHandle == arString2.m_kHandle;
+}
+
+bool operator==(const NiFixedString& arString, const char* apcString)
+{
+	if (arString.m_kHandle == apcString) return true;
+
+	if (!arString.m_kHandle || !apcString) return false;
+
+	return !strcmp(arString.m_kHandle, apcString);
+}
+
+bool operator==(const char* apcString, const NiFixedString& arString)
+{
+	if (arString.m_kHandle == apcString) return true;
+
+	if (!arString.m_kHandle || !apcString) return false;
+
+	return !strcmp(arString.m_kHandle, apcString);
+}

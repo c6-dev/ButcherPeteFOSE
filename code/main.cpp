@@ -4,6 +4,7 @@
 #include "functions.h"
 #include "patches.h"
 #include "fose_version.h"
+#include "jip_nif.h"
 
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name)
 
@@ -166,6 +167,12 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(SetRadioStatic);
 	REG_CMD(GetRadioPosRef);
 	REG_CMD(SetRadioPosRef);
+	REG_CMD(SetNifBlockRotation);
+	REG_CMD(SetNifBlockTranslation);
+	REG_CMD(GetNifBlockScale);
+	REG_CMD(SetNifBlockScale);
+	REG_CMD(GetNifBlockFlag);
+	REG_CMD(SetNifBlockFlag);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

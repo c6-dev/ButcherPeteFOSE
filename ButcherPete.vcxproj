@@ -118,6 +118,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="code\custom_terminal_models.cpp" />
+    <ClCompile Include="code\jip_nif.cpp" />
     <ClCompile Include="code\main.cpp" />
     <ClCompile Include="common\IDebugLog.cpp" />
     <ClCompile Include="common\IErrors.cpp" />
@@ -148,6 +149,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\custom_terminal_models.h" />
+    <ClInclude Include="code\jip_nif.h" />
     <ClInclude Include="code\main.h" />
     <ClInclude Include="common\IDebugLog.h" />
     <ClInclude Include="common\IErrors.h" />
