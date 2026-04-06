@@ -538,11 +538,9 @@ bool Cmd_SetNifBlockTranslation_Execute(COMMAND_ARGS)
 	{
 		if (NiAVObject* niBlock = GetNifBlock(thisObj, pcNode, blockName))
 		{
-			// Alias the real NiVector3 storage as PortableVec3 (binary compatible).
 			auto& localPos = niBlock->m_localTranslate;
 			auto& worldRot = niBlock->m_worldRotate;
 
-			// User translation as PortableVec3.
 			NiVector3 trans = {transltn.x, transltn.y, transltn.z};
 
 			SetNifBlockTranslation(localPos, worldRot, trans, transform);
