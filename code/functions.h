@@ -118,6 +118,7 @@ DEFINE_COMMAND_PLUGIN(SetRadioPosRef, 1, kParams_OneObjectRef);
 DEFINE_COMMAND_PLUGIN(Clamp, 0, kParams_ThreeFloats);
 DEFINE_COMMAND_PLUGIN(Remap, 0, kParams_FiveFloats);
 DEFINE_COMMAND_PLUGIN(Lerp, 0, kParams_ThreeFloats);
+DEFINE_COMMAND_PLUGIN(fAcos, 0, kParams_OneFloat);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

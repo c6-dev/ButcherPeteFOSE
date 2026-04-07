@@ -11,6 +11,7 @@
 #include "SafeWrite.h"
 #include "GameMenus.h"
 #include <GameSettings.h>
+#include <cmath>
 
 extern int g_version;
 
@@ -30,6 +31,19 @@ const UInt32 kMsgIconsPathAddr[] = {0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD
 TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
+
+inline float arccos(float x) noexcept
+{
+	x = std::fmax(-1.0f, std::fmin(1.0f, x));
+	return std::acos(x);
+}
+
+bool Cmd_fAcos_Execute(COMMAND_ARGS)
+{
+	float value;
+	if (ExtractArgs(EXTRACT_ARGS, &value)) *result = arccos(value);
+	return true;
+}
 
 
 bool Cmd_Lerp_Execute(COMMAND_ARGS)

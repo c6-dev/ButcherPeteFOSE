@@ -178,6 +178,7 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(Clamp);
 	REG_CMD(Remap);
 	REG_CMD(Lerp);
+	REG_CMD(fAcos);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));
