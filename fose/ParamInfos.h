@@ -35,6 +35,13 @@ static ParamInfo kParams_OneString_TwoInts_OneOptionalInt[4] = {
 	{"integer", kParamType_Integer, 0},
 	{"Integer", kParamType_Integer, 1},
 };
+
+static ParamInfo kParams_OneString_OneAxis_TwoOptionalInts[4] = {
+	{"string", kParamType_String, 0},
+	{"axis", kParamType_Axis, 0},
+	{"integer", kParamType_Integer, 1},
+	{"Integer", kParamType_Integer, 1},
+};
 static ParamInfo kParams_OneString_OneInt[2] = {{"string", kParamType_String, 0}, {"Integer", kParamType_Integer, 0},};
 
 static ParamInfo kParams_OneInt_OneOptionalInt[2] = {{"int", kParamType_Integer, 0}, {"int", kParamType_Integer, 1},};
@@ -162,6 +169,14 @@ static ParamInfo kParams_OneInt_OneOptionalObject[2] = {{"int", kParamType_Integ
 static ParamInfo kParams_SetEquippedFloat[2] = {{"val", kParamType_Float, 0}, {"slot", kParamType_Integer, 0},};
 
 static ParamInfo kParams_ThreeFloats[3] = {
+	{"float", kParamType_Float, 0},
+	{"float", kParamType_Float, 0},
+	{"float", kParamType_Float, 0},
+};
+
+static ParamInfo kParams_FiveFloats[5] = {
+	{"float", kParamType_Float, 0},
+	{"float", kParamType_Float, 0},
 	{"float", kParamType_Float, 0},
 	{"float", kParamType_Float, 0},
 	{"float", kParamType_Float, 0},

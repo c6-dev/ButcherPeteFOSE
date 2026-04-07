@@ -31,6 +31,44 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_Lerp_Execute(COMMAND_ARGS)
+{
+	float v0 = 0, v1 = 0, t = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &v0, &v1, &t))
+	{
+		*result = (1 - t) * v0 + t * v1;
+	}
+	return true;
+}
+
+bool Cmd_Remap_Execute(COMMAND_ARGS)
+{
+	float v1current = 0, v1min = 0, v1max = 0, v2min = 0, v2max = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &v1current, &v1min, &v1max, &v2min, &v2max))
+	{
+		*result = (v1current - v1min) / (v1max - v1min) * (v2max - v2min) + v2min;
+	}
+	return true;
+}
+
+bool Cmd_Clamp_Execute(COMMAND_ARGS)
+{
+	float value = 0, min = 0, max = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &value, &min, &max))
+	{
+		*result = value;
+		if (value < min)
+		{
+			*result = min;
+		}
+		else if (value > max)
+		{
+			*result = max;
+		}
+	}
+	return true;
+}
+
 bool Hook_SetNumericIniSetting_Execute(COMMAND_ARGS)
 {
 	char settingName[512] = {0};

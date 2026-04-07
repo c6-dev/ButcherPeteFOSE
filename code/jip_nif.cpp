@@ -557,3 +557,73 @@ bool Cmd_SetNifBlockTranslation_Execute(COMMAND_ARGS)
 	}
 	return true;
 }
+
+bool Cmd_GetNifBlockRotation_Execute(COMMAND_ARGS)
+{
+	char blockName[0x40];
+	UInt32 getMode = 0, pcNode = 0;
+	char axis = '0';
+	*result = 0;
+	if (!ExtractArgs(EXTRACT_ARGS, &blockName, &axis, &getMode, &pcNode)) return true;
+
+	NiAVObject* niBlock = GetNifBlock(thisObj, pcNode, blockName);
+	if (!niBlock) return true;
+
+	// Select local or world rotation matrix.
+	const auto& rotMat = (getMode & 1) ? niBlock->m_worldRotate : niBlock->m_localRotate;
+
+	// Extract Euler angles (radians).
+	float pitch, roll, yaw;
+	if (getMode & 2) ToEulerPRYInv(rotMat, pitch, roll, yaw);
+	else ToEulerPRY(rotMat, pitch, roll, yaw);
+
+	// Convert radians → degrees.
+	switch (axis)
+	{
+	case 'X':
+		*result = pitch * kRadToDeg;
+		break;
+	case 'Y':
+		*result = roll * kRadToDeg;
+		break;
+	case 'Z':
+		*result = yaw * kRadToDeg;
+		break;
+	default:
+		break;
+	}
+	if (IsConsoleMode()) Console_Print("GetNifBlockRotation >> %.3f", *result);
+
+	return true;
+}
+
+bool Cmd_GetNifBlockTranslation_Execute(COMMAND_ARGS)
+{
+	char blockName[0x40];
+	UInt32 getWorld = 0, pcNode = 0;
+	char axis = '0';
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &blockName, &axis, &getWorld, &pcNode))
+	{
+		if (NiAVObject* niBlock = GetNifBlock(thisObj, pcNode, blockName))
+		{
+			NiVector3& transltn = getWorld ? niBlock->m_worldTranslate : niBlock->m_localTranslate;
+			switch (axis)
+			{
+			case 'X':
+				*result = transltn.x;
+				break;
+			case 'Y':
+				*result = transltn.y;
+				break;
+			case 'Z':
+				*result = transltn.z;
+				break;
+			default:
+				break;
+			}
+			if (IsConsoleMode()) Console_Print("GetNifBlockTranslation >> %.3f", *result);
+		}
+	}
+	return true;
+}

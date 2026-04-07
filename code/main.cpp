@@ -173,6 +173,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(SetNifBlockScale);
 	REG_CMD(GetNifBlockFlag);
 	REG_CMD(SetNifBlockFlag);
+	REG_CMD(GetNifBlockRotation);
+	REG_CMD(GetNifBlockTranslation);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

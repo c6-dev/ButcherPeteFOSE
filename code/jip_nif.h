@@ -8,3 +8,5 @@ DEFINE_COMMAND_PLUGIN(GetNifBlockScale, 1, kParams_OneString_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(SetNifBlockScale, 1, kParams_OneString_OneFloat_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(GetNifBlockFlag, 1, kParams_OneString_OneInt_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(SetNifBlockFlag, 1, kParams_OneString_TwoInts_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(GetNifBlockRotation, 1, kParams_OneString_OneAxis_TwoOptionalInts);
+DEFINE_COMMAND_PLUGIN(GetNifBlockTranslation, 1, kParams_OneString_OneAxis_TwoOptionalInts);
