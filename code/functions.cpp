@@ -31,6 +31,7 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+
 bool Cmd_Lerp_Execute(COMMAND_ARGS)
 {
 	float v0 = 0, v1 = 0, t = 0;
