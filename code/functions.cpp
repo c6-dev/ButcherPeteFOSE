@@ -13,6 +13,9 @@
 #include <GameSettings.h>
 #include <cmath>
 
+
+#define Dbl180dPI	57.29577951308232
+
 extern int g_version;
 
 extern char* s_strArgBuffer;
@@ -32,6 +35,13 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+bool Cmd_fAtan2_Execute(COMMAND_ARGS)
+{
+	float y, x;
+	if (ExtractArgs(EXTRACT_ARGS, &y, &x)) *result = std::atan2(y, x) * Dbl180dPI;
+	return true;
+}
+
 inline float arccos(float x) noexcept
 {
 	x = std::fmax(-1.0f, std::fmin(1.0f, x));
@@ -41,7 +51,7 @@ inline float arccos(float x) noexcept
 bool Cmd_fAcos_Execute(COMMAND_ARGS)
 {
 	float value;
-	if (ExtractArgs(EXTRACT_ARGS, &value)) *result = arccos(value);
+	if (ExtractArgs(EXTRACT_ARGS, &value)) *result = arccos(value) * Dbl180dPI;
 	return true;
 }
 
