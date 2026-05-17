@@ -12,7 +12,7 @@ IDebugLog g_log("butcher_pete.log");
 
 PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 310;
+int g_version = 320;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -180,6 +180,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(Lerp);
 	REG_CMD(fAcos);
 	REG_CMD(fAtan2);
+	REG_CMD(DecompileScript);
+	REG_CMD(FailQuest);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

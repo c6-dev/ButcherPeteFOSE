@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -97,7 +97,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <MinimalRebuild />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
@@ -120,6 +120,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="code\custom_terminal_models.cpp" />
     <ClCompile Include="code\jip_nif.cpp" />
     <ClCompile Include="code\main.cpp" />
+    <ClCompile Include="code\ScriptAnalyzer.cpp" />
     <ClCompile Include="common\IDebugLog.cpp" />
     <ClCompile Include="common\IErrors.cpp" />
     <ClCompile Include="fose\GameAPI.cpp" />
@@ -131,6 +132,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="fose\GameObjects.cpp" />
     <ClCompile Include="fose\GameOSDepend.cpp" />
     <ClCompile Include="fose\GameRTTI.cpp" />
+    <ClCompile Include="fose\GameScript.cpp" />
     <ClCompile Include="fose\GameSettings.cpp" />
     <ClCompile Include="fose\GameTiles.cpp" />
     <ClCompile Include="fose\GameTypes.cpp" />
@@ -151,6 +153,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="code\custom_terminal_models.h" />
     <ClInclude Include="code\jip_nif.h" />
     <ClInclude Include="code\main.h" />
+    <ClInclude Include="code\ScriptAnalyzer.h" />
     <ClInclude Include="common\IDebugLog.h" />
     <ClInclude Include="common\IErrors.h" />
     <ClInclude Include="common\IPrefix.h" />
@@ -167,6 +170,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\GameObjects.h" />
     <ClInclude Include="fose\GameOSDepend.h" />
     <ClInclude Include="fose\GameRTTI.h" />
+    <ClInclude Include="fose\GameScript.h" />
     <ClInclude Include="fose\GameSettings.h" />
     <ClInclude Include="fose\GameTiles.h" />
     <ClInclude Include="fose\GameTypes.h" />
@@ -180,6 +184,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="code\patches.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".github\copilot-instructions.md" />
     <None Include="exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

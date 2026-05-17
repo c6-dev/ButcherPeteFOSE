@@ -1,6 +1,7 @@
 #include "Utilities.h"
 #include "GameBSExtraData.h"
 #include "GameForms.h"
+#include "GameScript.h"
 
 enum {
 	kExtraData_Havok                    	= 0x01,
@@ -872,7 +873,8 @@ class ExtraEditorRefMovedData : public BSExtraData
 	UInt32	unk028;		// 028
 	UInt32	unk02C;		// 02C
 };
-STATIC_ASSERT(sizeof(ExtraEditorRefMovedData) == 0x30);
+
+static_assert(sizeof(ExtraEditorRefMovedData) == 0x30);
 
 // 010
 class ExtraInfoGeneralTopic : public BSExtraData
@@ -1055,7 +1057,8 @@ class ExtraDismemberedLimbs : public BSExtraData
 	UInt32	unk028;		// 028
 	UInt32	unk02C;		// 02C
 };
-STATIC_ASSERT(sizeof(ExtraDismemberedLimbs) == 0x30);
+
+static_assert(sizeof(ExtraDismemberedLimbs) == 0x30);
 
 // 010
 class ExtraMultiBound : public BSExtraData
@@ -1129,7 +1132,8 @@ public:
 	float staticPerc;
 	TESObjectREFR* positionRef;
 };
-STATIC_ASSERT(sizeof(ExtraRadioData) == 0x1C);
+
+static_assert(sizeof(ExtraRadioData) == 0x1C);
 
 // 010
 class ExtraCombatStyle : public BSExtraData
@@ -1337,7 +1341,8 @@ class ExtraWaterZoneMap : public BSExtraData
 	UInt32	unk018;		// 018
 	UInt32	unk01C;		// 01C
 };
-STATIC_ASSERT(sizeof(ExtraWaterZoneMap) == 0x20);
+
+static_assert(sizeof(ExtraWaterZoneMap) == 0x20);
 
 // 00C
 class ExtraIgnoredBySandbox : public BSExtraData
@@ -1466,7 +1471,7 @@ class ExtraFollowerSwimBreadcrumbs : public BSExtraData
 	UInt32	unk024;		// 024
 };
 
-STATIC_ASSERT(sizeof(ExtraDismemberedLimbs) == 0x30);
+static_assert(sizeof(ExtraDismemberedLimbs) == 0x30);
 
 
 class ExtraTerminalState : public BSExtraData
@@ -1480,5 +1485,5 @@ public:
 	UInt16 pad;
 };
 
-STATIC_ASSERT(sizeof(ExtraTerminalState) == 0x10);
+static_assert(sizeof(ExtraTerminalState) == 0x10);
 

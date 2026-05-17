@@ -1,7 +1,11 @@
 #include <string>
 #include "Utilities.h"
 #include <map>
+
+#include "GameForms.h"
 #include "SafeWrite.h"
+#include "GameAPI.h"
+#include "GameData.h"
 
 void DumpClass(void * theClassPtr, UInt32 nIntsToDump)
 {
@@ -290,3 +294,30 @@ __declspec(naked) char* __fastcall GetNextToken(char* str, char delim)
 		retn
 	}
 }
+
+std::string FormatString(const char* fmt, ...)
+{
+	va_list args;
+	va_start(args, fmt);
+
+	char msg[0x800];
+	vsprintf_s(msg, 0x800, fmt, args);
+	return msg;
+}
+
+#if RUNTIME
+
+const char* GetModName(TESForm* form, bool useOverridingIndex)
+{
+	if (!form) return "Unknown or deleted script";
+	const char* modName = IS_ID(form, Script) ? "In-game console" : "Dynamic form";
+	if (form->mods.Head() && form->mods.Head()->data) return form->mods.Head()->Data()->name;
+	UInt8 modIndex = useOverridingIndex ? form->GetOverridingModIdx() : form->GetModIndex();
+	if (modIndex != 0xFF)
+	{
+		modName = DataHandler::Get()->GetNthModName(modIndex);
+		if (!modName || !modName[0]) modName = "Unknown";
+	}
+	return modName;
+}
+#endif

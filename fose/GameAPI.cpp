@@ -3,6 +3,7 @@
 #include "GameForms.h"
 #include "GameObjects.h"
 #include "GameData.h"
+#include "GameScript.h"
 
 #ifdef RUNTIME
 
@@ -632,6 +633,72 @@ TESForm* ResolveForm(UInt8* &scriptData, Script* scriptObj, ScriptEventList* eve
 	return outForm;
 }
 
+// Corresponds to ParamType
+const UInt8 kClassifyParamExtract[62] = {
+	0,
+	1,
+	4,
+	6,
+	6,
+	2,
+	6,
+	6,
+	3,
+	6,
+	2,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	2,
+	6,
+	6,
+	6,
+	8,
+	1,
+	6,
+	6,
+	6,
+	6,
+	2,
+	6,
+	6,
+	6,
+	3,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	2,
+	6,
+	6,
+	6,
+	2,
+	2,
+	6,
+	6,
+	2,
+	6,
+	6,
+	6,
+	6,
+	6,
+	6,
+};
+
 static bool v_ExtractArgsEx(UInt32 numArgs, ParamInfo * paramInfo, UInt8* &scriptData, Script * scriptObj, ScriptEventList * eventList, va_list args)
 {
 	for(UInt32 i = 0; i < numArgs; i++)
@@ -839,7 +906,7 @@ bool ExtractFormatStringArgs(UInt32 fmtStringPos, char* buffer, ParamInfo * para
 // g_baseActorValueNames is only filled in after oblivion's global initializers run
 const char* GetActorValueString(UInt32 actorValue)
 {
-	char* name = 0;
+	const char* name = nullptr;
 	if (actorValue <= eActorVal_FalloutMax)
 		name = GetActorValueName(actorValue);
 	if (!name)
@@ -875,8 +942,8 @@ struct TLSData
 	UInt32			unk298[(0x2A4 - 0x298) >> 2];	// 298
 };
 
-STATIC_ASSERT(sizeof(TLSData) == 0x2A4);
-STATIC_ASSERT(offsetof(TLSData, bConsoleMode) == 0x250);	// 1.1.35 patch changed offset from 0x24C
+static_assert(sizeof(TLSData) == 0x2A4);
+static_assert(offsetof(TLSData, bConsoleMode) == 0x250); // 1.1.35 patch changed offset from 0x24C
 
 
 

@@ -15,6 +15,16 @@ class InteriorCellNewReferencesMap;
 class ExteriorCellNewReferencesMap;
 class NumericIDBufferMap;
 
+enum ExtractParamType
+{
+	kExtractParam_StringLiteral = 0,
+	kExtractParam_Int = 1,
+	kExtractParam_Short = 2,
+	kExtractParam_Byte = 3,
+	kExtractParam_Float = 4,
+	kExtractParam_Form = 6
+};
+
 // only records individual objects if there's a block that matches it
 // ### how can it tell?
 struct ScriptEventList
@@ -55,6 +65,8 @@ struct ScriptEventList
 
 
 const UInt32 _ConsoleManager_Print = 0x0062B190;
+extern const UInt8 kClassifyParamExtract[62];
+
 
 #else
 
@@ -153,7 +165,7 @@ public:
 	UInt32				unk0B0[(0x1C8-0x0B0) >> 2];	// 0B0
 };
 
-STATIC_ASSERT(sizeof(TESSaveLoadGame) == 0x1C8);
+static_assert(sizeof(TESSaveLoadGame) == 0x1C8);
 
 UInt32 AddFormToCreatedBaseObjectsList(TESForm * form);
 //extern TESSaveLoadGame ** g_saveLoadGame;
@@ -404,7 +416,8 @@ public:
 	static BGSSaveLoadGame* GetSingleton() { return *(BGSSaveLoadGame**)0x1079858; };
 	bool IsLoading() { return (iGlobalFlags & 2) != 0; };
 };
-STATIC_ASSERT(sizeof(BGSSaveLoadGame) == 0x24C);
+
+static_assert(sizeof(BGSSaveLoadGame) == 0x24C);
 
 struct ProcessManager
 {
@@ -432,4 +445,5 @@ struct ProcessManager
 	UInt8 gap15E[2];							// 15E
 	static ProcessManager* GetSingleton() { return (ProcessManager*)0x107C0A0; };
 };
-STATIC_ASSERT(sizeof(ProcessManager) == 0x160);
+
+static_assert(sizeof(ProcessManager) == 0x160);

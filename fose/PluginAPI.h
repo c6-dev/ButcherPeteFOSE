@@ -252,6 +252,7 @@ struct FOSECommandTableInterface
 	const PluginInfo*	(* GetParentPlugin)(const CommandInfo* cmd);	// returns a pointer to the PluginInfo of the FOSE plugin that adds the command, if any. returns NULL otherwise
 };
 
+extern FOSECommandTableInterface* cmdTableInterface;
 
 struct PluginInfo
 {

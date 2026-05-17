@@ -22,7 +22,7 @@ public:
 	UInt16	m_capacityAndFlags;
 };
 
-STATIC_ASSERT(sizeof(hkSmallArray<void>) == 0x8);
+static_assert(sizeof(hkSmallArray<void>) == 0x8);
 
 // 30
 struct alignas(16) hkMatrix3x4
@@ -108,7 +108,8 @@ struct alignas(16) hkQuaternion
 	}
 
 };
-STATIC_ASSERT(sizeof(hkQuaternion) == 0x10);
+
+static_assert(sizeof(hkQuaternion) == 0x10);
 // 0C
 template <typename T_Data> class hkArray
 {
@@ -151,7 +152,8 @@ public:
 
 	Iterator Begin() { return Iterator(*this); }
 };
-STATIC_ASSERT(sizeof(hkArray<void*>) == 0xC);
+
+static_assert(sizeof(hkArray<void*>) == 0xC);
 
 // 04
 class hkBaseObject
@@ -248,7 +250,7 @@ public:
 	UInt32	m_collisionFilterInfo;
 };
 static_assert(sizeof(hkpTypedBroadPhaseHandle) == 0xC);
-STATIC_ASSERT(offsetof(hkpTypedBroadPhaseHandle, m_type) == 0x4);
+static_assert(offsetof(hkpTypedBroadPhaseHandle, m_type) == 0x4);
 
 class hkpCollidable : public hkpCdBody {
 public:
@@ -271,8 +273,9 @@ public:
 	BoundingVolumeData			m_boundingVolumeData;
 	float						m_allowedPenetrationDepth;
 };
-STATIC_ASSERT(offsetof(hkpCollidable, m_broadPhaseHandle) == 0x14);
-STATIC_ASSERT(sizeof(hkpCollidable) == 0x4C);
+
+static_assert(offsetof(hkpCollidable, m_broadPhaseHandle) == 0x14);
+static_assert(sizeof(hkpCollidable) == 0x4C);
 
 class hkpLinkedCollidable : public hkpCollidable {
 
@@ -284,7 +287,7 @@ class hkpLinkedCollidable : public hkpCollidable {
 	hkArray<CollisionEntry> m_collisionEntries;
 };
 
-STATIC_ASSERT(sizeof(hkpLinkedCollidable) == 0x58);
+static_assert(sizeof(hkpLinkedCollidable) == 0x58);
 
 class hkMultiThreadCheck
 {
@@ -293,14 +296,16 @@ public:
 	UInt16 m_markCount;
 	UInt16 m_markBitStack;
 };
-STATIC_ASSERT(sizeof(hkMultiThreadCheck) == 0x8);
+
+static_assert(sizeof(hkMultiThreadCheck) == 0x8);
 
 class hkpPropertyValue
 {
 public:
 	UInt64 m_data;
 };
-STATIC_ASSERT(sizeof(hkpPropertyValue) == 0x8);
+
+static_assert(sizeof(hkpPropertyValue) == 0x8);
 
 class hkpProperty
 {
@@ -309,7 +314,8 @@ public:
 	UInt32 m_alignmentPadding;
 	hkpPropertyValue m_value;
 };
-STATIC_ASSERT(sizeof(hkpProperty) == 0x10);
+
+static_assert(sizeof(hkpProperty) == 0x10);
 
 struct hkStepInfo {
 	float m_startTime;
@@ -346,7 +352,7 @@ public:
 	UInt32		m_previousStepResult;
 };
 
-STATIC_ASSERT(sizeof(hkpSimulation) == 0x2C);
+static_assert(sizeof(hkpSimulation) == 0x2C);
 
 
 class alignas(16) hkpSolverInfo
@@ -385,7 +391,8 @@ public:
 	UInt8 m_deactivationNumInactiveFramesSelectFlag[2];
 	UInt8 m_deactivationIntegrateCounter;
 };
-STATIC_ASSERT(sizeof(hkpSolverInfo) == 0x130);
+
+static_assert(sizeof(hkpSolverInfo) == 0x130);
 
 class hkpWorldDynamicsStepInfo
 {
@@ -394,7 +401,7 @@ public:
 	hkpSolverInfo m_solverInfo;
 };
 
-STATIC_ASSERT(sizeof(hkpWorldDynamicsStepInfo) == 0x140);
+static_assert(sizeof(hkpWorldDynamicsStepInfo) == 0x140);
 
 class alignas(16) hkpWorld : hkReferencedObject
 {
@@ -468,7 +475,8 @@ class alignas(16) hkpWorld : hkReferencedObject
 	int m_broadPhaseUpdateSize;
 	SInt8 m_contactPointGeneration;
 };
-STATIC_ASSERT(sizeof(hkpWorld) == 0x310);
+
+static_assert(sizeof(hkpWorld) == 0x310);
 
 // 80
 class hkpWorldObject : public hkReferencedObject
@@ -553,13 +561,13 @@ public:
 class hkpConstraintData : hkReferencedObject
 {
 public:
-	struct hkpConstraintData::RuntimeInfo
+	struct RuntimeInfo
 	{
 		int m_sizeOfExternalRuntime;
 		int m_numSolverResults;
 	};
 
-	class hkpConstraintData::ConstraintInfo : hkpConstraintInfo
+	class ConstraintInfo : hkpConstraintInfo
 	{
 	public:
 		hkpConstraintAtom* m_atoms;
@@ -619,7 +627,8 @@ public:
 	float m_friction;
 	float m_restitution;
 };
-STATIC_ASSERT(sizeof(hkpMaterial) == 0xC);
+
+static_assert(sizeof(hkpMaterial) == 0xC);
 
 // 120
 class hkpMotion : public hkReferencedObject
@@ -714,9 +723,10 @@ public:
 	TESObjectREFR* GetParentRef();
 
 };
-STATIC_ASSERT(sizeof(hkpEntity::ExtendedListeners) == 0x10);
-STATIC_ASSERT(sizeof(hkpEntity::SpuCollisionCallback) == 0x8);
-STATIC_ASSERT(sizeof(hkpEntity) == 0x200);
+
+static_assert(sizeof(hkpEntity::ExtendedListeners) == 0x10);
+static_assert(sizeof(hkpEntity::SpuCollisionCallback) == 0x8);
+static_assert(sizeof(hkpEntity) == 0x200);
 
 
 // 220
@@ -725,8 +735,9 @@ class hkpRigidBody : public hkpEntity
 public:
 	virtual hkpRigidBody* clone();
 };
-STATIC_ASSERT(offsetof(hkpRigidBody, m_collidable.m_broadPhaseHandle.m_type) == 0x28);
-STATIC_ASSERT(sizeof(hkpRigidBody) == 0x200);
+
+static_assert(offsetof(hkpRigidBody, m_collidable.m_broadPhaseHandle.m_type) == 0x28);
+static_assert(sizeof(hkpRigidBody) == 0x200);
 
 
 // 04
@@ -796,7 +807,7 @@ public:
 	float m_earlyOutDistance;
 };
 
-STATIC_ASSERT(sizeof(hkpCdPointCollector) == 0x8);
+static_assert(sizeof(hkpCdPointCollector) == 0x8);
 
 // 10
 struct hkCdBody
@@ -841,8 +852,8 @@ public:
 };
 
 
-STATIC_ASSERT(sizeof(hkpAllCdPointCollector) == 0x220);
-STATIC_ASSERT(sizeof(hkpAllCdPointCollector::hkpRootCdPoint) == 0x40);
+static_assert(sizeof(hkpAllCdPointCollector) == 0x220);
+static_assert(sizeof(hkpAllCdPointCollector::hkpRootCdPoint) == 0x40);
 
 
 class hkpPhantom : public hkpWorldObject {
@@ -863,7 +874,7 @@ public:
 	hkArray<hkpPhantomListener*>			m_phantomListeners;
 };
 
-STATIC_ASSERT(sizeof(hkpPhantom) == 0x98);
+static_assert(sizeof(hkpPhantom) == 0x98);
 
 class hkpShapePhantom : public hkpPhantom {
 public:
@@ -877,7 +888,7 @@ public:
 	hkMotionState m_motionState;
 };
 
-STATIC_ASSERT(sizeof(hkpShapePhantom) == 0x150);
+static_assert(sizeof(hkpShapePhantom) == 0x150);
 
 
 
@@ -918,7 +929,8 @@ public:
 	};
 	hkArray<CollisionDetail>		m_collisionDetails;	// 160
 };
-STATIC_ASSERT(sizeof(hkpSimpleShapePhantom) == 0x160);
+
+static_assert(sizeof(hkpSimpleShapePhantom) == 0x160);
 
 // bhk
 
@@ -932,7 +944,8 @@ public:
 
 	hkReferencedObject* phkObject;		// 08
 };
-STATIC_ASSERT(sizeof(bhkRefObject) == 0xC);
+
+static_assert(sizeof(bhkRefObject) == 0xC);
 
 // 10
 class bhkSerializable : public bhkRefObject
@@ -955,7 +968,7 @@ public:
 	void* pInfo;	// 0C - stores hkConstraintData (descriptor used to build hkObj)
 };
 
-STATIC_ASSERT(sizeof(bhkSerializable) == 0x10);
+static_assert(sizeof(bhkSerializable) == 0x10);
 
 
 // 14
@@ -972,7 +985,8 @@ public:
 	UInt32				bodyFlags;		// 10
 
 };
-STATIC_ASSERT(sizeof(bhkWorldObject) == 0x14);
+
+static_assert(sizeof(bhkWorldObject) == 0x14);
 
 class bhkPhantom : public bhkWorldObject {
 public:
@@ -989,7 +1003,7 @@ class bhkCachingShapePhantom : public bhkShapePhantom
 	
 };
 
-STATIC_ASSERT(sizeof(bhkPhantom) == 0x18);
+static_assert(sizeof(bhkPhantom) == 0x18);
 // 14
 class bhkShape : public bhkSerializable
 {
@@ -1004,7 +1018,8 @@ public:
 
 	UInt32			materialType;	// 10
 };
-STATIC_ASSERT(sizeof(bhkShape) == 0x14);
+
+static_assert(sizeof(bhkShape) == 0x14);
 
 // 14
 class bhkNiCollisionObject : public NiCollisionObject
@@ -1041,7 +1056,7 @@ public:
 
 };
 
-STATIC_ASSERT(sizeof(bhkNiCollisionObject) == 0x14);
+static_assert(sizeof(bhkNiCollisionObject) == 0x14);
 // 14
 class bhkCollisionObject : public bhkNiCollisionObject
 {
@@ -1070,7 +1085,8 @@ public:
 	hkArray<UInt32>				arr3B0;			// 3B0
 	hkArray<float>				arr3BC;			// 3BC
 };
-STATIC_ASSERT(sizeof(bhkCharacterPointCollector) == 0x248);
+
+static_assert(sizeof(bhkCharacterPointCollector) == 0x248);
 
 // 3E0
 class bhkCharacterProxy : public bhkSerializable
@@ -1079,7 +1095,8 @@ public:
 	bhkCharacterPointCollector	pointCollector;		// 10
 	UInt32						unk3D8[2];
 };
-STATIC_ASSERT(sizeof(bhkCharacterProxy) == 0x260);
+
+static_assert(sizeof(bhkCharacterProxy) == 0x260);
 
 // 30 TODO
 class hkpCharacterContext : public hkReferencedObject
@@ -1134,4 +1151,4 @@ static_assert(offsetof(bhkCharacterController, velocity) == 0x390);
 static_assert(offsetof(bhkCharacterController, spShapePhantom) == 0x424);
 static_assert(offsetof(bhkCharacterController, calculatePitchTimer) == 0x3BC);
 static_assert(offsetof(bhkCharacterController, kRotCenter) == 0x400);
-//STATIC_ASSERT(offsetof(bhkCharacterController, wantState) == 0x350);
+//static_assert(offsetof(bhkCharacterController, wantState) == 0x350);

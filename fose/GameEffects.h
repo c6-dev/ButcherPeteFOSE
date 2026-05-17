@@ -54,7 +54,7 @@ public:
 
 };
 
-STATIC_ASSERT(sizeof(ActiveEffect) == 0x48);
+static_assert(sizeof(ActiveEffect) == 0x48);
 
 class ValueModifierEffect : public ActiveEffect
 {

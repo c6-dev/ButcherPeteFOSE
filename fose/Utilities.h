@@ -329,3 +329,8 @@ public:
 	const char* operator*() const { return fndData.cFileName; }
 	void operator++() { if (!FindNextFile(handle, &fndData)) Close(); }
 };
+
+std::string FormatString(const char* fmt, ...);
+#if RUNTIME
+const char* GetModName(TESForm* form, bool useOverridingIndex = false);
+#endif

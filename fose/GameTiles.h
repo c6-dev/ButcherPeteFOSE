@@ -396,7 +396,7 @@ public:
 		ThisCall(0x625C30, this);
 	}
 };
-STATIC_ASSERT(sizeof(TileImage) == 0x48);
+static_assert(sizeof(TileImage) == 0x48);
 class TileText : public Tile
 {
 public:

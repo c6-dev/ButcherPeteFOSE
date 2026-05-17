@@ -2,6 +2,7 @@
 #include "GameRTTI.h"
 #include "GameObjects.h"
 #include "GameExtraData.h"
+#include "GameData.h"
 
 TESForm * TESForm::TryGetREFRParent(void)
 {
@@ -71,49 +72,6 @@ TESForm* TESForm::CloneForm(bool bPersist) const
 }
 
 
-class ScriptVarFinder
-{
-public:
-	const char* m_varName;
-	ScriptVarFinder(const char* varName) : m_varName(varName)
-		{	}
-	bool Accept(Script::VariableInfo* varInfo)
-	{
-		//_MESSAGE("  cur var: %s to match: %s", varInfo->name.m_data, m_varName);
-		if (!_stricmp(m_varName, varInfo->name.m_data))
-			return true;
-		else
-			return false;
-	}
-};
-
-Script::VariableInfo* Script::GetVariableByName(const char* varName)
-{
-	VariableInfo* pVariableInfo = vars.Find(ScriptVarFinder(varName));
-	return pVariableInfo;
-}
-
-Script::RefVariable	* Script::GetVariable(UInt32 reqIdx)
-{
-	if (reqIdx > 0) reqIdx--;
-	RefVariable* pRefVar = refs.GetNthItem(reqIdx);
-	return pRefVar;
-}
-
-void Script::RefVariable::Resolve(ScriptEventList * eventList)
-{
-	if(varIdx && eventList)
-	{
-		ScriptEventList::Var	* var = eventList->GetVariable(varIdx);
-		if(var)
-		{
-			UInt32	refID = *((UInt32 *)&var->data);
-			form = LookupFormByID(refID);
-		}
-	}
-}
-
-
 EffectItem* EffectItemList::ItemAt(UInt32 whichItem)
 {
 	return list.GetNthItem(whichItem);
@@ -137,6 +95,11 @@ const char* EffectItemList::GetNthEIName(UInt32 whichEffect) const
 	return "<no name>";
 }
 
+UInt8 TESForm::GetOverridingModIdx() const
+{
+	ModInfo* info = mods.GetLastItem();
+	return info ? info->modIndex : 0xFF;
+}
 class FindByForm {
 	TESForm* m_pForm;
 public:

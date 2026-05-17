@@ -99,7 +99,7 @@ public:
 	UInt32				unk16C;			// 16C uninitialized
 };
 
-STATIC_ASSERT(sizeof(FOPipboyManager) == 0x170);
+static_assert(sizeof(FOPipboyManager) == 0x170);
 
 // 484
 class InterfaceManager
@@ -193,6 +193,6 @@ public:
 	UInt32					unk4C0[(0x554 - 0x4C0) >> 2];			// 4C0
 };
 
-STATIC_ASSERT(sizeof(InterfaceManager) == 0x554);
-STATIC_ASSERT(offsetof(InterfaceManager, pipboyManager) == 0x174);
-STATIC_ASSERT(offsetof(InterfaceManager, pipBoyMode) == 0x4BC);
+static_assert(sizeof(InterfaceManager) == 0x554);
+static_assert(offsetof(InterfaceManager, pipboyManager) == 0x174);
+static_assert(offsetof(InterfaceManager, pipBoyMode) == 0x4BC);

@@ -4,8 +4,6 @@
 #include "Utilities.h"
 
 
-
-
 // 8
 class BSString
 {
@@ -94,7 +92,7 @@ private:
 	Node	m_listHead;
 
 	template <class Op>
-	UInt32 FreeNodes(Node* node, Op& compareOp) const
+	UInt32 FreeNodes(Node* node, Op compareOp) const
 	{
 		static UInt32 nodeCount = 0, numFreed = 0, lastNumFreed = 0;
 		if (node->next)
@@ -202,7 +200,11 @@ public:
 
 	const Iterator Begin() const { return Iterator(Head()); }
 	const Iterator begin() const { return Iterator(Head()); }
-	const Iterator end() const { return Iterator(nullptr); }
+
+	const Iterator end() const
+	{
+		return Iterator(static_cast<Node*>(nullptr));
+	}
 
 	UInt32 Count() const
 	{
@@ -316,7 +318,7 @@ public:
 	}
 
 	template <class Op>
-	void Visit(Op& op, Node* prev = NULL) const
+	void Visit(Op op, Node* prev = nullptr) const
 	{
 		Node* curr = prev ? prev->next : Head();
 		while (curr)
@@ -327,7 +329,7 @@ public:
 	}
 
 	template <class Op>
-	Item* Find(Op& op) const
+	Item* Find(Op op) const
 	{
 		Node* curr = Head();
 		Item* pItem;
@@ -341,7 +343,7 @@ public:
 	}
 
 	template <class Op>
-	Iterator Find(Op& op, Iterator& prev) const
+	Iterator Find(Op op, Iterator& prev) const
 	{
 		Iterator curIt = prev.End() ? Begin() : ++prev;
 		while (!curIt.End())
@@ -355,7 +357,7 @@ public:
 
 
 	template <class Op>
-	UInt32 CountIf(Op& op) const
+	UInt32 CountIf(Op op) const
 	{
 		UInt32 count = 0;
 		Node* curr = Head();
@@ -370,7 +372,10 @@ public:
 	class AcceptAll
 	{
 	public:
-		bool Accept(Item* item) { return true; }
+		bool Accept(Item* item) const
+		{
+			return true;
+		}
 	};
 
 	void RemoveAll() const
@@ -510,7 +515,7 @@ public:
 	}
 
 	template <class Op>
-	UInt32 RemoveIf(Op& op)
+	UInt32 RemoveIf(Op op)
 	{
 		return FreeNodes(Head(), op);
 	}
@@ -529,7 +534,7 @@ public:
 	}
 
 	template <class Op>
-	SInt32 GetIndexOf(Op& op)
+	SInt32 GetIndexOf(Op op)
 	{
 		SInt32 idx = 0;
 		Node* curr = Head();
@@ -543,17 +548,19 @@ public:
 	}
 
 	template <typename F>
-	void ForEach(const F* f)
+	void ForEach(const F& f)
 	{
 		auto* node = Head();
 		if (!node) return;
 		do
 		{
 			f(node->data);
-		} while (node = node->next)
+		}
+		while (node = node->next);
 	}
 };
-STATIC_ASSERT(sizeof(tList<void*>) == 0x8);
+
+static_assert(sizeof(tList<void*>) == 0x8);
 
 template <typename T_Data> struct DListNode
 {
@@ -745,7 +752,8 @@ public:
 	void**		_vtbl;
 	tList<T>	list;
 };
-STATIC_ASSERT(sizeof(BSSimpleList<void *>) == 0xC);
+
+static_assert(sizeof(BSSimpleList<void*>) == 0xC);
 
 #if RUNTIME
 
@@ -1018,22 +1026,7 @@ public:
 		return nullptr;
 	}
 
-	void Dump()
-	{
-		for (int i = 0; i < m_numBuckets; ++i)
-		{
-			Entry* iter = m_buckets[i];
-			int count = 0;
-			if (iter)
-			{
-				do
-				{
-					++count;
-				} while (iter = iter->next);
-			}
-			Console_Print("Bucket %d: %d", i, count);
-		}
-	}
+	
 
 	class Iterator
 	{

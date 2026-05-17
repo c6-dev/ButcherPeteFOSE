@@ -512,5 +512,9 @@ void WritePatches()
 
 void WriteEditorPatches()
 {
-	SafeWriteBuf(0xD4A838, "GetButcherPeteVersion\0", 22);
+	{
+		// SafeWriteBuf expects a non-const void*; copy the string into a mutable buffer
+		char buf[] = "GetButcherPeteVersion\0";
+		SafeWriteBuf(0xD4A838, buf, sizeof(buf));
+	}
 }

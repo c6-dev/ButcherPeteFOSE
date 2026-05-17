@@ -59,9 +59,9 @@ static const UInt32 s_ExtraRankVtbl = 0xDB5868;
 static const UInt32 s_ExtraScriptVtbl = 0xDB58BC;
 static const UInt32 s_ExtraHotkeyVtbl = 0xDB58D4;
 
-STATIC_ASSERT(sizeof(ExtraHealth) == 0x10);
-STATIC_ASSERT(sizeof(ExtraLock) == 0x10);
-STATIC_ASSERT(sizeof(ExtraCount) == 0x10);
+static_assert(sizeof(ExtraHealth) == 0x10);
+static_assert(sizeof(ExtraLock) == 0x10);
+static_assert(sizeof(ExtraCount) == 0x10);
 
 ExtraContainerChanges::ExtendDataList* ExtraContainerChangesExtendDataListCreate(ExtraDataList* pExtraDataList)
 {

@@ -58,8 +58,8 @@ public:
 };
 
 
-STATIC_ASSERT(sizeof(OSInputGlobals) == 0x1C04);
-STATIC_ASSERT(offsetof(OSInputGlobals, mouseBinds) == 0x1BB0);
+static_assert(sizeof(OSInputGlobals) == 0x1C04);
+static_assert(offsetof(OSInputGlobals, mouseBinds) == 0x1BB0);
 
 
 

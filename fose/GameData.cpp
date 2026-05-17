@@ -15,12 +15,35 @@ class LoadedModFinder
 public:
 	LoadedModFinder(const char * str) : m_stringToFind(str) { }
 
-	bool Accept(ModInfo* modInfo)
+	bool Accept(ModInfo* modInfo) const
 	{
 		return _stricmp(modInfo->name, m_stringToFind) == 0;
 	}
 };
 
+const ModInfo** DataHandler::GetActiveModList()
+{
+	static const ModInfo* activeModList[0x100] = {nullptr};
+
+	if (!(*activeModList))
+	{
+		UInt16 index = 0;
+		for (index = 0; index < Get()->modList.modInfoList.Count(); index++)
+		{
+			ModInfo* entry = Get()->modList.modInfoList.GetNthItem(index);
+			if (entry->IsLoaded()) activeModList[index] = entry;
+		}
+	}
+
+	return activeModList;
+}
+
+const char* DataHandler::GetNthModName(UInt32 modIndex)
+{
+	const ModInfo** activeModList = GetActiveModList();
+	if (modIndex < GetActiveModCount() && activeModList[modIndex]) return activeModList[modIndex]->name;
+	return "";
+}
 
 const ModInfo * DataHandler::LookupModByName(const char * modName)
 {

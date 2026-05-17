@@ -12,6 +12,10 @@
 #include "GameMenus.h"
 #include <GameSettings.h>
 #include <cmath>
+#include <filesystem>
+
+#include "ScriptAnalyzer.h"
+#include <fstream>
 
 
 #define Dbl180dPI	57.29577951308232
@@ -34,6 +38,106 @@ const UInt32 kMsgIconsPathAddr[] = {0xDC0C38, 0xDC0C78, 0xDC5544, 0xDCE658, 0xDD
 TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
+
+bool Cmd_FailQuest_Execute(COMMAND_ARGS)
+{
+	TESQuest* quest;
+	if (ExtractArgs(EXTRACT_ARGS, &quest)) ThisCall(0x55C710, quest, 1);
+	return true;
+}
+
+void DecompileScriptToFolder(const std::string& scriptName, Script* script, const std::string& fileExtension,
+                             const std::string_view& modName)
+{
+	ScriptParsing::ScriptAnalyzer analyzer(script);
+	if (analyzer.error)
+	{
+		if (IsConsoleMode()) Console_Print("Script %s is not compiled", scriptName.c_str());
+		return;
+	}
+	const auto* dirName = "DecompiledScripts";
+	if (!std::filesystem::exists(dirName)) std::filesystem::create_directory(dirName);
+	const auto modDirName = FormatString("%s/%s", dirName, modName.data());
+	if (!std::filesystem::exists(modDirName)) std::filesystem::create_directory(modDirName);
+	const auto filePath = modDirName + '/' + scriptName + '.' + fileExtension;
+	std::ofstream os(filePath);
+	os << analyzer.DecompileScript();
+	if (IsConsoleMode()) Console_Print("Decompiled script to '%s'", filePath.c_str());
+}
+
+bool Cmd_DecompileScript_Execute(COMMAND_ARGS)
+{
+	TESForm* form;
+	*result = 0;
+	char fileExtensionArg[0x100]{};
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &fileExtensionArg)) return true;
+	std::string fileExtension;
+	if (fileExtensionArg[0]) fileExtension = std::string(fileExtensionArg);
+	else fileExtension = "gek";
+
+	std::string formName = form->GetEditorID();
+	if (formName.empty()) formName = FormatString("%08X", form->refID & 0x00FFFFFF);
+
+	if (IS_ID(form, Script))
+	{
+		auto script = static_cast<Script*>(form);
+		DecompileScriptToFolder(formName, script, fileExtension, GetModName(script));
+	}
+	else if (IS_ID(form, Quest))
+	{
+		auto quest = static_cast<TESQuest*>(form);
+		for (auto stageIter = quest->stages.Begin(); !stageIter.End(); ++stageIter)
+			if (*stageIter)
+			{
+				if (auto logEntry = stageIter->logEntries.GetFirstItem(); logEntry && logEntry->kScript.info.dataLength)
+				{
+					DecompileScriptToFolder(FormatString("%s #%d", formName.c_str(), stageIter->stage), &logEntry->kScript,
+					                        fileExtension, GetModName(quest));
+				}
+			}
+	}
+	else if (IS_ID(form, Package))
+	{
+		auto package = static_cast<TESPackage*>(form);
+		for (auto& packageEvent : {
+			     std::make_pair(" OnBegin", &package->onBegin),
+			     std::make_pair(" OnEnd", &package->onEnd),
+			     std::make_pair(" OnChange", &package->onChange)
+		     })
+		{
+			auto& [evntName, action] = packageEvent;
+			if (action->resScript) DecompileScriptToFolder(formName + evntName, action->resScript, fileExtension,
+			                                               GetModName(package));
+		}
+	}
+	else if (IS_ID(form, INFO))
+	{
+		auto topicInfo = static_cast<TESTopicInfo*>(form);
+		if (auto bgnScript = topicInfo->GetResultScript(0)) DecompileScriptToFolder(
+			formName + " Begin", bgnScript, fileExtension, GetModName(topicInfo));
+		if (auto endScript = topicInfo->GetResultScript(1)) DecompileScriptToFolder(
+			formName + " End", endScript, fileExtension, GetModName(topicInfo));
+	}
+	else if (IS_ID(form, Terminal))
+	{
+		auto terminal = static_cast<BGSTerminal*>(form);
+		int entryIdx = 0;
+		for (auto entryIter = terminal->menuEntries.Begin(); !entryIter.End(); ++entryIter)
+			if (*entryIter)
+			{
+				entryIdx++;
+				if (entryIter->resultScript.info.dataLength)
+				{
+					DecompileScriptToFolder(FormatString("%s #%d", formName.c_str(), entryIdx), &entryIter->resultScript,
+					                        fileExtension,
+					                        GetModName(terminal));
+				}
+			}
+	}
+	else return true;
+	*result = 1;
+	return true;
+}
 
 bool Cmd_fAtan2_Execute(COMMAND_ARGS)
 {

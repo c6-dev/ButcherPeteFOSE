@@ -42,6 +42,6 @@ struct ExtraDataList : public BaseExtraList
 	static ExtraDataList* __stdcall Create(BSExtraData* xBSData = NULL);
 };
 
-STATIC_ASSERT(sizeof(ExtraDataList) == 0x01C);
+static_assert(sizeof(ExtraDataList) == 0x01C);
 
 

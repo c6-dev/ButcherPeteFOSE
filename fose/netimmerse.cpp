@@ -1,4 +1,7 @@
 #include "netimmerse.h"
+
+#include <span>
+
 #include "GameForms.h"
 #include "havok.h"
 
@@ -473,4 +476,15 @@ bool operator==(const char* apcString, const NiFixedString& arString)
 	if (!arString.m_kHandle || !apcString) return false;
 
 	return !strcmp(arString.m_kHandle, apcString);
+}
+
+std::span<TESAnimGroup::AnimGroupInfo> g_animGroups = {
+	reinterpret_cast<TESAnimGroup::AnimGroupInfo*>(0xF5ACA0),
+	TESAnimGroup::kAnimGroup_Max
+};
+
+
+const char* TESAnimGroup::StringForAnimGroupCode(UInt32 groupCode)
+{
+	return (groupCode < kAnimGroup_Max) ? g_animGroups[groupCode].name : nullptr;
 }

@@ -694,7 +694,7 @@ public:
 	CachedValues* cachedValues; // 2C
 };
 
-STATIC_ASSERT(sizeof(BaseProcess) == 0x30);
+static_assert(sizeof(BaseProcess) == 0x30);
 
 struct ActorValueModifier
 {
@@ -791,7 +791,7 @@ public:
 	UInt8 gapB3;
 };
 
-STATIC_ASSERT(sizeof(LowProcess) == 0xB4);
+static_assert(sizeof(LowProcess) == 0xB4);
 
 class MiddleLowProcess : public LowProcess
 {
@@ -804,7 +804,7 @@ public:
 	ActorValueModifiers tempModifiers;
 };
 
-STATIC_ASSERT(sizeof(MiddleLowProcess) == 0xC8);
+static_assert(sizeof(MiddleLowProcess) == 0xC8);
 
 enum KnockState : UInt8
 {
@@ -958,7 +958,7 @@ public:
 	void* unk250;
 };
 
-STATIC_ASSERT(sizeof(MiddleHighProcess) == 0x254);
+static_assert(sizeof(MiddleHighProcess) == 0x254);
 
 struct DialogueItem;
 
@@ -1117,9 +1117,9 @@ public:
 	void* spPathingMessageQueue1;
 };
 
-STATIC_ASSERT(sizeof(HighProcess) == 0x45C);
-STATIC_ASSERT(offsetof(HighProcess, forcedIdleForm) == 0x348);
-STATIC_ASSERT(offsetof(HighProcess, queuedIdleFlags) == 0x414);
+static_assert(sizeof(HighProcess) == 0x45C);
+static_assert(offsetof(HighProcess, forcedIdleForm) == 0x348);
+static_assert(offsetof(HighProcess, queuedIdleFlags) == 0x414);
 class bhkRagdollController;
 class bhkRagdollPenetrationUtil;
 class PlayerMover;
@@ -1272,8 +1272,8 @@ public:
 	__m128 __vectorcall GetTranslatedPos(const NiVector3& posMods) const;
 };
 
-STATIC_ASSERT(offsetof(TESObjectREFR, baseForm) == 0x01C);
-STATIC_ASSERT(sizeof(TESObjectREFR) == 0x60);
+static_assert(offsetof(TESObjectREFR, baseForm) == 0x01C);
+static_assert(sizeof(TESObjectREFR) == 0x60);
 extern TESObjectREFR* s_tempPosMarker;
 
 // 080
@@ -1337,7 +1337,7 @@ public:
 	// 080
 };
 
-STATIC_ASSERT(sizeof(MobileObject) == 0x080);
+static_assert(sizeof(MobileObject) == 0x080);
 
 // 00C
 class MagicCaster
@@ -1350,7 +1350,7 @@ public:
 	UInt32 unk004[2]; // 004
 };
 
-STATIC_ASSERT(sizeof(MagicCaster) == 0x00C);
+static_assert(sizeof(MagicCaster) == 0x00C);
 
 
 class Actor : public MobileObject
@@ -1515,8 +1515,8 @@ public:
 	}
 };
 
-STATIC_ASSERT(offsetof(Actor, cvOwner) == 0x0A0);
-STATIC_ASSERT(sizeof(Actor) == 0x1A0);
+static_assert(offsetof(Actor, cvOwner) == 0x0A0);
+static_assert(sizeof(Actor) == 0x1A0);
 
 class BipedAnim
 {
@@ -1561,7 +1561,7 @@ public:
 	Actor* pActor;
 };
 
-STATIC_ASSERT(sizeof(BipedAnim) == 0x2B4);
+static_assert(sizeof(BipedAnim) == 0x2B4);
 
 class Character : public Actor
 {
@@ -1577,7 +1577,7 @@ public:
 	float fFlyInventoryWeight;
 };
 
-STATIC_ASSERT(sizeof(Character) == 0x1B0);
+static_assert(sizeof(Character) == 0x1B0);
 
 class Creature : public Actor
 {
@@ -1588,7 +1588,7 @@ public:
 	float fTotalArmorDR;
 };
 
-STATIC_ASSERT(sizeof(Creature) == 0x1A8);
+static_assert(sizeof(Creature) == 0x1A8);
 
 
 // 9BC
@@ -1600,7 +1600,7 @@ struct CompassTarget
 	UInt8 isUndetected;
 };
 
-STATIC_ASSERT(sizeof(CompassTarget) == 8);
+static_assert(sizeof(CompassTarget) == 8);
 
 
 class PlayerCharacter : public Character
@@ -1689,11 +1689,11 @@ public:
 	static PlayerCharacter* GetSingleton();
 };
 
-STATIC_ASSERT(sizeof(PlayerCharacter) == 0x9BC);
-STATIC_ASSERT(offsetof(PlayerCharacter, fCombatYieldRetryTimer) == 0x924);
-STATIC_ASSERT(offsetof(PlayerCharacter, bThirdPerson) == 0x5A9);
-STATIC_ASSERT(offsetof(PlayerCharacter, disabledControlFlags) == 0x5DC);
-STATIC_ASSERT(offsetof(PlayerCharacter, camera3rdPos) == 0x90C);
+static_assert(sizeof(PlayerCharacter) == 0x9BC);
+static_assert(offsetof(PlayerCharacter, fCombatYieldRetryTimer) == 0x924);
+static_assert(offsetof(PlayerCharacter, bThirdPerson) == 0x5A9);
+static_assert(offsetof(PlayerCharacter, disabledControlFlags) == 0x5DC);
+static_assert(offsetof(PlayerCharacter, camera3rdPos) == 0x90C);
 
 struct VATSCameraData
 {
@@ -1726,7 +1726,7 @@ struct VATSCameraData
 	};
 };
 
-STATIC_ASSERT(sizeof(VATSCameraData) == 0x48);
+static_assert(sizeof(VATSCameraData) == 0x48);
 
 // 18
 class LoadedReferenceMap : public NiTPointerMap<TESObjectREFR>
@@ -1900,7 +1900,7 @@ public:
 	UInt32 unk18C[3]; // 18C
 };
 
-STATIC_ASSERT(sizeof(BSGameSound) == 0x198);
+static_assert(sizeof(BSGameSound) == 0x198);
 
 class BSAudioManager
 {

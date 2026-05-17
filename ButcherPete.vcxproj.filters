@@ -69,6 +69,10 @@
     <ClCompile Include="code\patches.cpp" />
     <ClCompile Include="code\custom_terminal_models.cpp" />
     <ClCompile Include="code\jip_nif.cpp" />
+    <ClCompile Include="code\ScriptAnalyzer.cpp" />
+    <ClCompile Include="fose\GameScript.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -151,8 +155,13 @@
     <ClInclude Include="code\patches.h" />
     <ClInclude Include="code\custom_terminal_models.h" />
     <ClInclude Include="code\jip_nif.h" />
+    <ClInclude Include="code\ScriptAnalyzer.h" />
+    <ClInclude Include="fose\GameScript.h">
+      <Filter>fose</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="exports.def" />
+    <None Include=".github\copilot-instructions.md" />
   </ItemGroup>
 </Project>

@@ -67,7 +67,7 @@ struct Sound
 		return *this;
 	}
 };
-STATIC_ASSERT(sizeof(Sound) == 0xC);
+static_assert(sizeof(Sound) == 0xC);
 
 enum MenuSpecialKeyboardInputCode
 {
@@ -227,7 +227,7 @@ public:
 	UInt16			pad2E;
 };
 
-STATIC_ASSERT(sizeof(ListBox<UInt32>) == 0x30);
+static_assert(sizeof(ListBox<UInt32>) == 0x30);
 
 
 enum {
@@ -306,7 +306,7 @@ struct DialogueItem
 
 
 };
-STATIC_ASSERT(sizeof(DialogueItem) == 0x1C);
+static_assert(sizeof(DialogueItem) == 0x1C);
 
 
 class HUDMainMenu : Menu
@@ -454,7 +454,7 @@ public:
 		}
 	}
 };
-STATIC_ASSERT(sizeof(HUDMainMenu) == 0x244);
+static_assert(sizeof(HUDMainMenu) == 0x244);
 
 class HackingMenu : Menu
 {

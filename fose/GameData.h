@@ -196,10 +196,10 @@ struct ModInfo		// referred to by game as TESFile
 	DEFINE_MEMBER_FN(HasMoreSubrecords, bool, _ModInfo_HasMoreSubrecords);
 };
 
-STATIC_ASSERT(sizeof(WIN32_FIND_DATA) == 0x140);
-STATIC_ASSERT(offsetof(ModInfo, name) == 0x20);
-STATIC_ASSERT(offsetof(ModInfo, subRecord) == 0x258);
-STATIC_ASSERT(sizeof(ModInfo) == 0x42C);
+static_assert(sizeof(WIN32_FIND_DATA) == 0x140);
+static_assert(offsetof(ModInfo, name) == 0x20);
+static_assert(offsetof(ModInfo, subRecord) == 0x258);
+static_assert(sizeof(ModInfo) == 0x42C);
 
 struct ModList
 {
@@ -207,7 +207,8 @@ struct ModList
 	UInt32				loadedModCount;
 	ModInfo*			loadedMods[0xFF];
 };
-STATIC_ASSERT(sizeof(ModList) == 0x408);
+
+static_assert(sizeof(ModList) == 0x408);
 
 #if RUNTIME
 
@@ -290,12 +291,15 @@ public:
 	DEFINE_MEMBER_FN(DoAddForm, UInt32, _DataHandler_AddForm, TESForm * pForm);	// stupid name is because AddForm is redefined in windows header files
 
 	TESQuest* GetQuestByName(const char* questName);
+	const char* GetNthModName(UInt32 modIndex);
+	const ModInfo** GetActiveModList(); // returns array of modEntry* corresponding to loaded mods sorted by mod index
+
 };
 
-STATIC_ASSERT((0x5A8-0x19C) == 0x40C);
-STATIC_ASSERT(sizeof(NiTArray<TESObjectCELL*>) == 0x10);
-STATIC_ASSERT(offsetof(DataHandler, listFormList) == 0x134);
-STATIC_ASSERT(offsetof(DataHandler, regionList) == 0x164);
-STATIC_ASSERT(offsetof(DataHandler, modList) == 0x19C);
-STATIC_ASSERT(offsetof(DataHandler, regionManager) == 0x5B0);
-STATIC_ASSERT(sizeof(DataHandler) == 0x5B8);
+static_assert((0x5A8 - 0x19C) == 0x40C);
+static_assert(sizeof(NiTArray<TESObjectCELL*>) == 0x10);
+static_assert(offsetof(DataHandler, listFormList) == 0x134);
+static_assert(offsetof(DataHandler, regionList) == 0x164);
+static_assert(offsetof(DataHandler, modList) == 0x19C);
+static_assert(offsetof(DataHandler, regionManager) == 0x5B0);
+static_assert(sizeof(DataHandler) == 0x5B8);
