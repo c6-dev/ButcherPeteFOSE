@@ -452,12 +452,12 @@ std::string StringForNumericParam(ParamType typeID, int value)
 		}
 	case kParamType_MiscellaneousStat:
 		{
-			if (value < 43) return FormatString("\"%s\"", ((const char**)0x1189280)[value]);
+			if (value < 43) return FormatString("\"%s\"", ((const char**)0xF4CA80)[value]);
 			break;
 		}
 	case kParamType_CriticalStage:
 		{
-			if (value < 5) return ((const char**)0x119BBB0)[value];
+			if (value < 5) return ((const char**)0xF66428)[value];
 			break;
 		}
 	default:
