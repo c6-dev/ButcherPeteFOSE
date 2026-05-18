@@ -557,7 +557,7 @@ static bool ExtractFloat(double& out, UInt8* &scriptData, Script* scriptObj, Scr
 		TESGlobal* global = ResolveGlobalVar(eventList, scriptObj, scriptData);
 		if (global)
 		{
-			out = global->data;
+			out = global->GetValue();
 			ret = true;
 		}
 		break;

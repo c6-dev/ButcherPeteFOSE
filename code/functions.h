@@ -122,6 +122,7 @@ DEFINE_COMMAND_PLUGIN(fAcos, 0, kParams_OneFloat);
 DEFINE_COMMAND_PLUGIN(fAtan2, 0, kParams_TwoFloats);
 DEFINE_COMMAND_PLUGIN(DecompileScript, 0, kParams_OneForm_OneOptionalString);
 DEFINE_COMMAND_PLUGIN(FailQuest, 0, kParams_OneForm);
+DEFINE_COMMAND_PLUGIN(GetGameDaysPassed, 0, kParams_ThreeOptionalInts);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

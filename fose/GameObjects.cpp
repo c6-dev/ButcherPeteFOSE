@@ -263,3 +263,93 @@ TESIdleForm* AnimData::GetPlayedIdle() const
 	}
 	return nullptr;
 }
+
+Calendar* Calendar::GetSingleton()
+{
+	return reinterpret_cast<Calendar*>(0x1079F68);
+}
+
+
+UInt32 Calendar::GetYear() const
+{
+	if (pGameYear) return pGameYear->GetValue();
+	return 77;
+}
+
+
+UInt32 Calendar::GetMonth() const
+{
+	if (pGameMonth) return pGameMonth->GetValue();
+	return 7;
+} 
+
+
+UInt32 Calendar::GetDay() const
+{
+	if (pGameDay) return pGameDay->GetValue();
+	return 17;
+}
+
+
+float Calendar::GetHour() const
+{
+	if (pGameHour) return pGameHour->GetValue();
+	return 12.f;
+}
+
+
+float Calendar::GetMinutesPassed() const
+{
+	return GetGameDaysPassed() * 24 * 60;
+}
+
+
+UInt32 Calendar::GetHoursPassed() const
+{
+	return GetGameDaysPassed() * 24;
+}
+
+
+float Calendar::GetGameDaysPassed() const
+{
+	if (pGameDaysPassed) return pGameDaysPassed->GetValue();
+	return 1.f;
+}
+
+
+Calendar::Season Calendar::GetSeason() const
+{
+	Season eEason = SPRING;
+	switch (GetMonth())
+	{
+	case 0:
+	case 1:
+	case 11:
+		eEason = WINTER;
+		break;
+	case 2:
+	case 3:
+	case 4:
+		eEason = SPRING;
+		break;
+	case 5:
+	case 6:
+	case 7:
+		eEason = SUMMER;
+		break;
+	case 8:
+	case 9:
+	case 10:
+		eEason = FALL;
+		break;
+	default:
+		return eEason;
+	}
+	return eEason;
+}
+
+
+float Calendar::GetTimeScale() const
+{
+	return pTimeScale->GetValue();
+}

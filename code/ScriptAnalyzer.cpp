@@ -404,7 +404,7 @@ ScriptParsing::GlobalVariableToken::GlobalVariableToken(Script::RefVariable* ref
 
 std::string ScriptParsing::GlobalVariableToken::ToString()
 {
-	return global->name.CStr();
+	return global->strEditorID.CStr();
 }
 
 ScriptParsing::CommandCallToken::CommandCallToken(CommandInfo* cmdInfo, UInt32 opcode, Script::RefVariable* callingRef,

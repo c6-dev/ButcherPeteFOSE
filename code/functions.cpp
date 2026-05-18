@@ -39,6 +39,44 @@ TESObjectREFR* s_tempPosMarker;
 
 extern bool bCombatMusicDisabled;
 
+const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+float GetDaysPassed(int bgnYear, int bgnMonth, int bgnDay)
+{
+	Calendar* calendar = Calendar::GetSingleton();
+	int totalDays = 0, iter;
+	int iYear = calendar->GetYear(), iMonth = calendar->GetMonth(), iDay = calendar->GetDay();
+	iYear -= bgnYear;
+	if (iYear > 0)
+	{
+		totalDays = kDaysPerMonth[bgnMonth] - bgnDay;
+		for (iter = bgnMonth + 1; iter < 12; iter++) totalDays += kDaysPerMonth[iter];
+		iYear--;
+		if (iYear) totalDays += (365 * iYear);
+		for (iter = 0; iter < iMonth; iter++) totalDays += kDaysPerMonth[iter];
+		totalDays += iDay - 1;
+	}
+	else if (bgnMonth < iMonth)
+	{
+		totalDays = kDaysPerMonth[bgnMonth] - bgnDay;
+		for (iter = bgnMonth + 1; iter < iMonth; iter++) totalDays += kDaysPerMonth[iter];
+		totalDays += iDay - 1;
+	}
+	else totalDays = iDay - bgnDay;
+	return static_cast<float>(totalDays) + calendar->GetHour() * (1 / 24.0F);
+}
+
+bool Cmd_GetGameDaysPassed_Execute(COMMAND_ARGS)
+{
+	int bgnYear = 2277, bgnMonth = 8, bgnDay = 17;
+	if (ExtractArgs(EXTRACT_ARGS, &bgnYear, &bgnMonth, &bgnDay) && (bgnMonth <= 12))
+	{
+		*result = GetDaysPassed(bgnYear, bgnMonth - 1, bgnDay);
+	}
+	if (IsConsoleMode()) Console_Print("GetGameDaysPassed >> %.3f", *result);
+	return true;
+}
+
 bool Cmd_FailQuest_Execute(COMMAND_ARGS)
 {
 	TESQuest* quest;

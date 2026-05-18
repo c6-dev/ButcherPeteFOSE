@@ -182,6 +182,7 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(fAtan2);
 	REG_CMD(DecompileScript);
 	REG_CMD(FailQuest);
+	REG_CMD(GetGameDaysPassed);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

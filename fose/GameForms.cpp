@@ -337,3 +337,19 @@ TESIdleForm* TESIdleForm::FindIdle(Actor* animActor)
 		if (*idles) result = (*idles)->FindIdle(animActor);
 	return result;
 }
+
+
+UInt8 TESGlobal::GetType() const
+{
+	return ucType;
+}
+
+float TESGlobal::GetValue() const
+{
+	return fValue;
+}
+
+void TESGlobal::SetValue(float afValue)
+{
+	fValue = afValue;
+}

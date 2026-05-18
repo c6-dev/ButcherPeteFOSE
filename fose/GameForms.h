@@ -1778,17 +1778,30 @@ public:
 	TESGlobal();
 	~TESGlobal();
 
-	enum
+	enum DataType
 	{
-		kType_Short = 's',
-		kType_Long = 'l',
-		kType_Float = 'f'
+		DATA_SHORT = 's',
+		DATA_LONG = 'l',
+		DATA_FLOAT = 'f'
 	};
 
-	BSString name; // 18
-	UInt8 type; // 20
-	UInt8 pad21[3]; // 21
-	float data; // 24
+	BSString strEditorID;
+	uint8_t ucType;
+
+	union
+	{
+		int32_t iValue;
+		uint32_t uiValue;
+		int16_t sValue;
+		uint16_t usValue;
+		float fValue;
+	};
+
+
+	UInt8 GetType() const;
+
+	float GetValue() const;
+	void SetValue(float afValue);
 };
 
 static_assert(sizeof(TESGlobal) == 0x28);

@@ -2182,3 +2182,49 @@ struct RadioEntry
 	TESObjectREFR* pReference;
 	// TODO
 };
+
+
+class Date
+{
+public:
+	UInt16 usDate;
+	UInt16 usYear;
+};
+
+class Calendar
+{
+public:
+	enum Season : int
+	{
+		NONE = -1,
+		SPRING = 0,
+		SUMMER = 1,
+		FALL = 2,
+		WINTER = 3,
+		COUNT = 4,
+	};
+
+	TESGlobal* pGameYear;
+	TESGlobal* pGameMonth;
+	TESGlobal* pGameDay;
+	TESGlobal* pGameHour;
+	TESGlobal* pGameDaysPassed;
+	TESGlobal* pTimeScale;
+	UInt32 uiMidnightsPassed;
+	bool bGameLoaded;
+
+	static Calendar* GetSingleton();
+
+	UInt32 GetYear() const;
+	UInt32 GetMonth() const;
+	UInt32 GetDay() const;
+	float GetHour() const;
+	float GetMinutesPassed() const;
+	UInt32 GetHoursPassed() const;
+	float GetGameDaysPassed() const;
+	Season GetSeason() const;
+	float GetTimeScale() const;
+};
+
+static_assert(sizeof(Date) == 0x4);
+static_assert(sizeof(Calendar) == 0x20);
