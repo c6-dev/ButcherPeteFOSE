@@ -41,6 +41,30 @@ extern bool bCombatMusicDisabled;
 
 const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+
+bool Cmd_IsNight_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESClimate* climate = nullptr;
+	ExtractArgs(EXTRACT_ARGS, &climate);
+	Sky* sky = Sky::Get();
+	const float gameHour = sky->fCurrentGameHour;
+	float sunrise, sunset;
+	if (climate && IS_TYPE(climate, TESClimate))
+	{
+		sunrise = climate->sunriseEnd / 6.0F;
+		sunset = climate->sunsetBegin / 6.0F;
+	}
+	else
+	{
+		sunrise = ThisCall<double>(0x57A490, sky);
+		sunset = ThisCall<double>(0x57A4D0, sky);
+	}
+	if (sunset <= gameHour || (sunrise >= gameHour)) *result = 1;
+	if (IsConsoleMode()) Console_Print("IsNight >> %.f", *result);
+	return true;
+}
+
 float GetDaysPassed(int bgnYear, int bgnMonth, int bgnDay)
 {
 	Calendar* calendar = Calendar::GetSingleton();

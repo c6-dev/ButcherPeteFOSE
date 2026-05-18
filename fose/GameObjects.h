@@ -2123,7 +2123,9 @@ public:
 	BYTE unk020[(0xCC - 0x20)]; // 020
 	float windSpeed; // 0CC
 	float windAngle; // 0D0
-	BYTE unkD4[0x100 - 0xD4]; // D4
+	BYTE unkD4[0xEC - 0xD4]; // D4
+	float fCurrentGameHour; // EC
+	BYTE unkD0[0x100 - 0xF0]; // F0
 	float fFlash; // 0x100
 	UInt32 uiFlashTime; // 0x104
 	BYTE unk104[0x12C - 0x108]; // 108
@@ -2146,6 +2148,7 @@ public:
 
 static_assert(sizeof(Sky) == 0x12C);
 static_assert(offsetof(Sky, fFlash) == 0x100);
+static_assert(offsetof(Sky, fCurrentGameHour) == 0xEC);
 
 class CAsyncStream
 {
