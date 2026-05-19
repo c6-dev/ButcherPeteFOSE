@@ -184,6 +184,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(FailQuest);
 	REG_CMD(GetGameDaysPassed);
 	REG_CMD(IsNight);
+	REG_CMD(SetModelPath);
+	REG_CMD(IsModelPath);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

@@ -41,6 +41,54 @@ extern bool bCombatMusicDisabled;
 
 const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+bool Cmd_IsModelPath_Execute(COMMAND_ARGS)
+{
+	*result = -1;
+	char pathToCheck[0x100]{};
+	TESForm* form = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &pathToCheck, &form))
+	{
+		if (form == nullptr && thisObj)
+		{
+			form = thisObj->baseForm;
+		}
+
+		if (auto model = DYNAMIC_CAST(form, TESForm, TESModel))
+		{
+			*result = 0;
+			if (!stricmp(model->GetPath(), pathToCheck))
+			{
+				*result = 1;
+			}
+		}
+	}
+	if (IsConsoleMode()) Console_Print("IsModelPath >> %.f", *result);
+
+	return true;
+}
+
+bool Cmd_SetModelPath_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	char newPath[0x100]{};
+	TESForm* form = nullptr;
+	if (ExtractArgs(EXTRACT_ARGS, &newPath, &form))
+	{
+		if (form == nullptr && thisObj)
+		{
+			form = thisObj->baseForm;
+		}
+
+		if (auto model = DYNAMIC_CAST(form, TESForm, TESModel))
+		{
+			model->SetPath(newPath);
+			*result = 1;
+		}
+	}
+
+	return true;
+}
+
 
 bool Cmd_IsNight_Execute(COMMAND_ARGS)
 {

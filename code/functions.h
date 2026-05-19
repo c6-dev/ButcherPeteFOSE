@@ -124,6 +124,8 @@ DEFINE_COMMAND_PLUGIN(DecompileScript, 0, kParams_OneForm_OneOptionalString);
 DEFINE_COMMAND_PLUGIN(FailQuest, 0, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(GetGameDaysPassed, 0, kParams_ThreeOptionalInts);
 DEFINE_COMMAND_PLUGIN(IsNight, 0, kParams_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(SetModelPath, 0, kParams_OneString_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(IsModelPath, 0, kParams_OneString_OneOptionalForm);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 
