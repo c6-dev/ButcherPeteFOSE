@@ -51,6 +51,7 @@ jobs:
 
     - name: Delete Old Continuous Release
       id: delete_old_release
+      continue-on-error: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
