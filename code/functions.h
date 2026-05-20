@@ -123,7 +123,9 @@ DEFINE_COMMAND_PLUGIN(fAtan2, 0, kParams_TwoFloats);
 DEFINE_COMMAND_PLUGIN(DecompileScript, 0, kParams_OneForm_OneOptionalString);
 DEFINE_COMMAND_PLUGIN(FailQuest, 0, kParams_OneForm);
 DEFINE_COMMAND_PLUGIN(GetGameDaysPassed, 0, kParams_ThreeOptionalInts);
-DEFINE_COMMAND_PLUGIN(IsNight, 0, kParams_OneOptionalForm);
+DEFINE_CMD_ALT_COND_PLUGIN(IsNight, BloodyTears, "Returns true if it's night according to the current (or specified) climate.",
+                           false, kParams_OneOptionalForm);
+
 DEFINE_COMMAND_PLUGIN(SetModelPath, 0, kParams_OneString_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(IsModelPath, 0, kParams_OneString_OneOptionalForm);
 

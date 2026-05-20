@@ -5,6 +5,8 @@
 #include "GameSettings.h"
 #include "patches.h"
 
+#include "PluginAPI.h"
+
 std::unordered_map<UInt32, char*> markerIconMap;
 
 auto defaultMarkerList = (char**)0xF6B13C;
@@ -510,11 +512,64 @@ void WritePatches()
 	WriteRelJump(0x6BDCD5, UInt32(FixNewGameMusic));
 }
 
+// Eval stub for the editor, indicates that this is a condition function. Same as NVSE
+bool __cdecl DefaultEval(COMMAND_ARGS_EVAL)
+{
+	return true;
+}
+
+// restores the eval pointer for condition functions in the editor command table, which FOSE sets to null
+// only the known ButcherPete opcodes are defined, since there is no easy way of identifying valid condition functions
+// with the eval pointer being set to null. Other opcodes can be added, provided that the source plugin defines the _Eval for use at runtime.
+void FixConditionFunctions()
+{
+	UInt32 startAddr = *(UInt32*)0x00406D4C;
+	UInt32 endAddr = *(UInt32*)0x004A594D;
+	auto start = reinterpret_cast<const CommandInfo*>(startAddr);
+	auto end = reinterpret_cast<const CommandInfo*>(endAddr);
+
+	for (const CommandInfo* it = start; it < end; ++it)
+	{
+		if (!it) continue;
+		auto writable = const_cast<CommandInfo*>(it);
+		if (!writable) continue;
+
+		switch (writable->opcode)
+		{
+		case 0x22A0: // IsNight
+			writable->eval = DefaultEval;
+			break;
+		default:
+			break;
+		}
+	}
+
+	return StdCall(0x51E730);
+}
+
+void __stdcall EditorDeferredInit()
+{
+	FixConditionFunctions();
+}
+
+// fixes the condition function dropdown population, which truncates the opcode, causing the selection to reset for new functions
+int __fastcall ConditionListOpcodeHook(UInt32 ECX, UInt32 EDX, UInt32 opCode)
+{
+	_asm {
+		mov eax, opCode
+		add eax, 0x01000
+		push eax
+		mov eax, 0x4A59A0
+		call eax
+		}
+}
 void WriteEditorPatches()
 {
 	{
-		// SafeWriteBuf expects a non-const void*; copy the string into a mutable buffer
 		char buf[] = "GetButcherPeteVersion\0";
 		SafeWriteBuf(0xD4A838, buf, sizeof(buf));
+		WriteRelCall(0x4A6B04, (UInt32)ConditionListOpcodeHook);
+		// runs in the editor main loop after FOSE and plugins have loaded
+		WriteRelCall(0x448428, (UInt32)EditorDeferredInit);
 	}
 }

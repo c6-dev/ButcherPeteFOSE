@@ -8,7 +8,7 @@
 
 #define REG_CMD(name) fose->RegisterCommand(&kCommandInfo_##name)
 
-IDebugLog g_log("butcher_pete.log");
+IDebugLog gLog("butcher_pete.log");
 
 PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 

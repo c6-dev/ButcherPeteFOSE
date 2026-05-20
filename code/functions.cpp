@@ -41,6 +41,8 @@ extern bool bCombatMusicDisabled;
 
 const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
+
+
 bool Cmd_IsModelPath_Execute(COMMAND_ARGS)
 {
 	*result = -1;
@@ -89,12 +91,10 @@ bool Cmd_SetModelPath_Execute(COMMAND_ARGS)
 	return true;
 }
 
-
-bool Cmd_IsNight_Execute(COMMAND_ARGS)
+bool Cmd_IsNight_Eval(COMMAND_ARGS_EVAL)
 {
 	*result = 0;
-	TESClimate* climate = nullptr;
-	ExtractArgs(EXTRACT_ARGS, &climate);
+	auto climate = static_cast<TESClimate*>(arg1);
 	Sky* sky = Sky::Get();
 	const float gameHour = sky->fCurrentGameHour;
 	float sunrise, sunset;
@@ -109,6 +109,15 @@ bool Cmd_IsNight_Execute(COMMAND_ARGS)
 		sunset = ThisCall<double>(0x57A4D0, sky);
 	}
 	if (sunset <= gameHour || (sunrise >= gameHour)) *result = 1;
+	return true;
+}
+
+bool Cmd_IsNight_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESClimate* climate = nullptr;
+	ExtractArgs(EXTRACT_ARGS, &climate);
+	Cmd_IsNight_Eval(nullptr, climate, nullptr, result);
 	if (IsConsoleMode()) Console_Print("IsNight >> %.f", *result);
 	return true;
 }
