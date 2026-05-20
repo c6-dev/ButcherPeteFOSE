@@ -70,7 +70,7 @@ jobs:
         allowUpdates: true
         removeArtifacts: true
         generateReleaseNotes: true
-        artifacts: ButcherPeteFOSE-Release-${{ env.artifact_timestamp }}.zip,ButcherPeteFOSE-Debug-${{ env.artifact_timestamp }}.zip
+        artifacts: ButcherPeteFOSE-Release-${{ env.artifact_timestamp }},ButcherPeteFOSE-Debug-${{ env.artifact_timestamp }}
         body: |
           Continuous release generated from the latest push to development branch.
 
