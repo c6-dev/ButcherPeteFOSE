@@ -533,7 +533,15 @@ void FixConditionFunctions()
 		if (!it) continue;
 		auto writable = const_cast<CommandInfo*>(it);
 		if (!writable) continue;
-
+		// TODO implement _Eval for these and add the opcodes to the switch:
+		// IsOwned
+		// GetPCCanFastTravel
+		// GetRadiationLevelAlt
+		// GetLockedAlt
+		// GetIsRagdolled
+		// IsInWater
+		// IsIdlePlayingEx
+		// IsSpellTargetAlt
 		switch (writable->opcode)
 		{
 		case 0x22A0: // IsNight
