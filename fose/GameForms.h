@@ -329,7 +329,8 @@ enum ObjectVtbl
 	kVtbl_NiAVObject = 0xE20B2C,
 	kVtbl_bhkSimpleShapePhantom = 0xDCE334,
 	kVtbl_NiNode = 0xE213CC,
-	kVtbl_NiPointLight = 0xE23624
+	kVtbl_NiPointLight = 0xE23624,
+	kVtbl_TESSound = 0xDE078C
 };
 
 #define IS_TYPE(form, type) (*(UInt32*)form == kVtbl_##type)

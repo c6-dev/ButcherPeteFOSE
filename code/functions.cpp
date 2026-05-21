@@ -46,6 +46,32 @@ auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
 
 auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
 
+bool Cmd_PlaySoundFade_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	float fTime = 0;
+	TESSound* sound;
+	if (ExtractArgs(EXTRACT_ARGS, &sound, &fTime) && sound && IS_TYPE(sound, TESSound))
+	{
+		TESObjectREFR* ref = thisObj;
+		if (ref == nullptr)
+		{
+			ref = static_cast<TESObjectREFR*>(PlayerCharacter::GetSingleton());
+		}
+		if (ref->Get3DSimple())
+		{
+			uint32_t uiFlags = BSAudioManager::kAudioFlags_3D | BSAudioManager::kAudioFlags_100;
+			Sound handle = BSWin32Audio::GetSingleton()->GetSoundHandleByFormID(sound->refID, uiFlags);
+			handle.SetPosition(ref->GetPos());
+			handle.SetObjectToFollow(ref->Get3DSimple());
+			uint32_t time = fTime * 1000.0;
+			handle.FadeInPlay(time);
+			*result = 1;
+		}
+	}
+	return true;
+}
+
 bool __fastcall HasEnableParentHook(void* ecx)
 {
 	return false;

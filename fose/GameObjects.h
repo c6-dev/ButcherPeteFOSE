@@ -1270,6 +1270,11 @@ public:
 	bool CanHaveSound() const;
 	void AttachSound(bool bAttach);
 	__m128 __vectorcall GetTranslatedPos(const NiVector3& posMods) const;
+
+	__forceinline NiNode* Get3DSimple() const
+	{
+		return loadedData ? loadedData->rootNode : nullptr;
+	}
 };
 
 static_assert(offsetof(TESObjectREFR, baseForm) == 0x01C);
@@ -1906,6 +1911,40 @@ class BSAudioManager
 {
 public:
 	virtual void Destroy(bool doFree);
+
+	// let's hope these are the same
+	enum AudioFlags : UInt32
+	{
+		kAudioFlags_2D = 0x1,
+		kAudioFlags_3D = 0x2,
+		kAudioFlags_IsVoice = 0x4,
+		kAudioFlags_IsFootsteps = 0x8,
+		kAudioFlags_Loop = 0x10,
+		kAudioFlags_SystemSound = 0x20,
+		kAudioFlags_RandomFrequencyShift = 0x40,
+		kAudioFlags_80 = 0x80,
+		kAudioFlags_100 = 0x100,
+		kAudioFlags_IsMusic = 0x800,
+		kAudioFlags_RegionSound_MuteWhenSubmerged = 0x1000,
+		kAudioFlags_MaybeUnderwater = 0x2000,
+		kAudioFlags_Impact = 0x4000,
+		kAudioFlags_Cached = 0x8000,
+		kAudioFlags_DontCache = 0x10000,
+		kAudioFlags_20000 = 0x20000,
+		kAudioFlags_FirstPerson = 0x40000,
+		kAudioFlags_Modulated = 0x80000,
+		kAudioFlags_IsRadio = 0x100000,
+		kAudioFlags_IgnoreTimescale = 0x200000,
+		kAudioFlags_Radio400000 = 0x400000,
+		kAudioFlags_IsMusic2 = 0x800000,
+		kAudioFlags_1000000 = 0x1000000,
+		kAudioFlags_EnvelopeFast = 0x2000000,
+		kAudioFlags_EnvelopeSlow = 0x4000000,
+		kAudioFlags_2DRadius = 0x8000000,
+		kAudioFlags_BeamEmitter = 0x10000000,
+		kAudioFlags_20000000 = 0x20000000,
+		kAudioFlags_AnimationDriven = 0x40000000,
+	};
 
 	// 10
 	struct AudioRequest

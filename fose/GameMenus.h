@@ -7,6 +7,54 @@
 #include "GameRTTI.h"
 class BSGameSound;
 class BSWin32AudioListener;
+
+struct Sound
+{
+	UInt32 soundKey;
+	UInt8 byte04;
+	UInt8 pad05[3];
+	UInt32 unk08;
+
+	Sound() : soundKey(0xFFFFFFFF), byte04(0), unk08(0)
+	{
+	}
+
+	void Play()
+	{
+		ThisCall(0xBD00C0, this, 0);
+	}
+
+	UInt32 GetDuration()
+	{
+		return ThisCall<UInt32>(0xBD0270, this);
+	}
+
+	bool SetPosition(NiPoint3 akPosition)
+	{
+		return ThisCall<bool>(0xBD0290, this, akPosition);
+	}
+
+	void SetObjectToFollow(NiAVObject* apObject)
+	{
+		ThisCall(0xBD0470, this, apObject);
+	}
+
+	bool FadeInPlay(UInt32 auiMilliseconds)
+	{
+		return ThisCall<bool>(0xBD03E0, this, auiMilliseconds);
+	}
+
+	Sound& operator=(Sound other)
+	{
+		soundKey = other.soundKey;
+		byte04 = other.byte04;
+		unk08 = other.unk08;
+		return *this;
+	}
+};
+
+static_assert(sizeof(Sound) == 0xC);
+
 class BSWin32Audio
 {
 public:
@@ -33,41 +81,17 @@ public:
 	void					(*unk34)(void);	// 034
 
 	static BSWin32Audio* GetSingleton() { return *(BSWin32Audio**)0x11790C8; };
+
+	Sound GetSoundHandleByFormID(UInt32 auiFormID, UInt32 aeAudioFlags)
+	{
+		Sound kHandle;
+		ThisCall(0xBCFBB0, this, &kHandle, auiFormID, aeAudioFlags);
+		return kHandle;
+	}
 };
 
 // 0C
-struct Sound
-{
-	UInt32 soundKey;
-	UInt8 byte04;
-	UInt8 pad05[3];
-	UInt32 unk08;
 
-	Sound() : soundKey(0xFFFFFFFF), byte04(0), unk08(0) {}
-
-	Sound(const char* soundPath, UInt32 flags)
-	{
-		ThisCall(0xBCFCD0, BSWin32Audio::GetSingleton(), this, soundPath, flags);
-	}
-
-	void Play()
-	{
-		ThisCall(0xBD00C0, this, 0);
-	}
-
-	UInt32 GetDuration() {
-		return ThisCall<UInt32>(0xBD0270, this);
-	}
-
-	Sound& operator= (Sound other)
-	{
-		soundKey = other.soundKey;
-		byte04 = other.byte04;
-		unk08 = other.unk08;
-		return *this;
-	}
-};
-static_assert(sizeof(Sound) == 0xC);
 
 enum MenuSpecialKeyboardInputCode
 {
