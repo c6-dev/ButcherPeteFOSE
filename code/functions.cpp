@@ -917,6 +917,26 @@ bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool IsSpellTargetAlt(Actor* actor, MagicItem* magicItem)
+{
+	for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next)
+	{
+		if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !
+			activeEff->bTerminated)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Cmd_IsSpellTargetAlt_Eval(COMMAND_ARGS_EVAL)
+{
+	if (IsSpellTargetAlt(static_cast<Actor*>(thisObj), static_cast<MagicItem*>(arg1))) *result = 1;
+	return true;
+}
+
+
 bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 {
 	*result = 0;
@@ -924,15 +944,8 @@ bool Cmd_IsSpellTargetAlt_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &magicItem) && thisObj->IsActor())
 	{
 		auto actor = static_cast<Actor*>(thisObj);
-		for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next)
-		{
-			if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !
-				activeEff->bTerminated)
-			{
-				*result = 1;
-				break;
-			}
-		}
+		if (IsSpellTargetAlt(actor, magicItem)) *result = 1;
+		
 	}
 	if (IsConsoleMode()) Console_Print("IsSpellTargetAlt >> %.f", *result);
 	return true;
@@ -1266,6 +1279,16 @@ bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool Cmd_IsIdlePlayingEx_Eval(COMMAND_ARGS_EVAL)
+{
+	AnimData* animData = thisObj->GetAnimData();
+	if (animData && (animData->GetPlayedIdle() == static_cast<TESIdleForm*>(arg1)))
+	{
+		*result = 1;
+	}
+	return true;
+}
+
 bool Cmd_GetPlayedIdle_Execute(COMMAND_ARGS)
 {
 	if (AnimData* animData = thisObj->GetAnimData())
@@ -1322,6 +1345,16 @@ bool Cmd_GetCreatureType_Execute(COMMAND_ARGS)
 }
 
 bool Cmd_IsInWater_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	if ((thisObj->IsActor()) && static_cast<Actor*>(thisObj)->inWater)
+	{
+		*result = 1;
+	}
+	return true;
+}
+
+bool Cmd_IsInWater_Eval(COMMAND_ARGS_EVAL)
 {
 	*result = 0;
 	if ((thisObj->IsActor()) && static_cast<Actor*>(thisObj)->inWater)
@@ -1759,6 +1792,12 @@ bool Cmd_GetIsRagdolled_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool Cmd_GetIsRagdolled_Eval(COMMAND_ARGS_EVAL)
+{
+	*result = 0;
+	if (thisObj->IsActor() && (static_cast<Actor*>(thisObj)->GetKnockedState() == 1)) *result = 1;
+	return true;
+}
 bool Cmd_GetKillXP_Execute(COMMAND_ARGS)
 {
 	if (thisObj->IsActor())
@@ -2130,7 +2169,7 @@ static bool IsUnlockedOrHacked(TESObjectREFR* obj)
 	return isUnlocked;
 }
 
-bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS)
+bool Cmd_GetLockedAlt_Eval(COMMAND_ARGS_EVAL)
 {
 	*result = 0;
 	if (thisObj->baseForm->typeID == kFormType_Terminal)
@@ -2148,6 +2187,13 @@ bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS)
 	{
 		Console_Print("GetLockedAlt >> %.f", *result);
 	}
+	return true;
+}
+
+bool Cmd_GetLockedAlt_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	Cmd_GetLockedAlt_Eval(thisObj, nullptr, nullptr, result);
 	return true;
 }
 
@@ -2348,6 +2394,58 @@ static SInt32 GetFactionRank(Actor* actor, TESFaction* faction)
 	return ThisCall<SInt32>(0x44F6A0, &actor->GetActorBase()->baseData, faction, actor == PlayerCharacter::GetSingleton());
 }
 
+bool Cmd_IsOwned_Eval(COMMAND_ARGS_EVAL)
+{
+	*result = 0.0;
+	auto actor = static_cast<Actor*>(arg1);
+
+	if (!thisObj) return true;
+
+	if (!actor) return true;
+
+	SInt32 requiredRank = 0;
+
+	TESForm* owner = GetOwner(&thisObj->extraDataList);
+
+	if (owner)
+	{
+		requiredRank = GetRequiredRank(&thisObj->extraDataList);
+		if (requiredRank == -1) requiredRank = 0;
+	}
+	else
+	{
+		owner = GetCellOwner(thisObj->parentCell);
+		if (owner)
+		{
+			requiredRank = GetRequiredRank(&thisObj->parentCell->extraDataList);
+			if (requiredRank == -1) requiredRank = 0;
+		}
+	}
+
+	if (owner)
+	{
+		if (owner->refID == actor->baseForm->refID)
+		{
+			*result = 1.0;
+		}
+		else
+		{
+			auto faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
+			if (faction)
+			{
+				*result = (GetFactionRank(actor, faction) >= requiredRank) ? 1.0 : 0.0;
+			}
+		}
+	}
+
+	if (IsConsoleMode())
+	{
+		Console_Print("IsOwned >> %.f", *result);
+	}
+	return true;
+}
+
+
 bool Cmd_IsOwned_Execute(COMMAND_ARGS)
 {
 	*result = 0;
@@ -2357,45 +2455,7 @@ bool Cmd_IsOwned_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &actor))
 	{
 		if (!actor) return true;
-
-		SInt32 requiredRank = 0;
-
-		TESForm* owner = GetOwner(&thisObj->extraDataList);
-
-		if (owner)
-		{
-			requiredRank = GetRequiredRank(&thisObj->extraDataList);
-			if (requiredRank == -1) requiredRank = 0;
-		}
-		else
-		{
-			owner = GetCellOwner(thisObj->parentCell);
-			if (owner)
-			{
-				requiredRank = GetRequiredRank(&thisObj->parentCell->extraDataList);
-				if (requiredRank == -1) requiredRank = 0;
-			}
-		}
-
-		if (owner)
-		{
-			if (owner->refID == actor->baseForm->refID)
-			{
-				*result = 1.0;
-			}
-			else
-			{
-				auto faction = DYNAMIC_CAST(owner, TESForm, TESFaction);
-				if (faction)
-				{
-					*result = (GetFactionRank(actor, faction) >= requiredRank) ? 1.0 : 0.0;
-				}
-			}
-		}
-	}
-	if (IsConsoleMode())
-	{
-		Console_Print("IsOwned >> %.f", *result);
+		Cmd_IsOwned_Eval(thisObj, actor, nullptr, result);
 	}
 	return true;
 }
@@ -2473,9 +2533,9 @@ bool Cmd_SetWorldspaceFlag_Execute(COMMAND_ARGS)
 	return true;
 }
 
-bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
+bool Cmd_GetPCCanFastTravel_Eval(COMMAND_ARGS_EVAL)
 {
-	// Credits to Jazz for the "silence QueueUIMessage" trick (see AddNoteNS).
+	// Credits to Jazz for the "silence QueueUIMessage" trick(see AddNoteNS).
 	SafeWrite8(0x61B850, 0xC3); // RETN
 	const auto canFastTravelAddr = GetRelJumpAddr(0x6680D3);
 	// call the function indirectly for compatibility with Stewie tweaks, kudos to Stewie.
@@ -2486,6 +2546,11 @@ bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
 		Console_Print("GetPCCanFastTravel >> %.f", *result);
 	}
 	return true;
+}
+
+bool Cmd_GetPCCanFastTravel_Execute(COMMAND_ARGS)
+{
+	return Cmd_GetPCCanFastTravel_Eval(thisObj, nullptr, nullptr, result);
 }
 
 static float GetRadiationLevel(Actor* actor, bool scaleByResist)
@@ -2514,6 +2579,11 @@ bool Cmd_GetRadiationLevelAlt_Execute(COMMAND_ARGS)
 	return true;
 }
 
+bool Cmd_GetRadiationLevelAlt_Eval(COMMAND_ARGS_EVAL)
+{
+	*result = GetRadiationLevel(static_cast<Actor*>(thisObj), true);
+	return true;
+}
 
 bool Hook_GetRadiationLevel_Eval(COMMAND_ARGS_EVAL)
 {

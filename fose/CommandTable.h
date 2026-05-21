@@ -115,70 +115,6 @@ struct ParamInfo
 #define EXTRACT_ARGS_EX		paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList
 #define PASS_FMTSTR_ARGS	paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList
 
-//Macro to make CommandInfo definitions a bit less tedious
-
-#define DEFINE_CMD_FULL(name, altName, description, refRequired, numParams, paramInfo, parser) \
-	extern bool Cmd_ ## name ## _Execute(COMMAND_ARGS); \
-	static CommandInfo (kCommandInfo_ ## name) = { \
-	#name, \
-	#altName, \
-	0, \
-	#description, \
-	refRequired, \
-	numParams, \
-	paramInfo, \
-	HANDLER(Cmd_ ## name ## _Execute), \
-	parser, \
-	NULL, \
-	0 \
-	};
-
-#define DEFINE_CMD_ALT(name, altName, description, refRequired, numParams, paramInfo) \
-	DEFINE_CMD_FULL(name, altName, description, refRequired, numParams, paramInfo, Cmd_Default_Parse)	
-
-#define DEFINE_CMD_ALT_EXP(name, altName, description, refRequired, paramInfo) \
-	DEFINE_CMD_FULL(name, altName, description, refRequired, (sizeof(paramInfo) / sizeof(ParamInfo)), paramInfo, Cmd_Expression_Parse)	
-
-#define DEFINE_COMMAND(name, description, refRequired, numParams, paramInfo) \
-	DEFINE_CMD_FULL(name, , description, refRequired, numParams, paramInfo, Cmd_Default_Parse)	
-
-#define DEFINE_CMD(name, description, refRequired, paramInfo) \
-	DEFINE_COMMAND(name, description, refRequired, (sizeof(paramInfo) / sizeof(ParamInfo)), paramInfo)
-
-#define DEFINE_COMMAND_EXP(name, description, refRequired, paramInfo) \
-	DEFINE_CMD_ALT_EXP(name, , description, refRequired, paramInfo)	
-
-#define DEFINE_COMMAND_ALT_PLUGIN(name, altName, description, refRequired, numParams, paramInfo) \
-	DEFINE_CMD_FULL(name, altName, description, refRequired, numParams, paramInfo, NULL)
-
-// for commands which can be used as conditionals
-#define DEFINE_CMD_ALT_COND_ANY(name, altName, description, refRequired, paramInfo, parser) \
-	extern bool Cmd_ ## name ## _Execute(COMMAND_ARGS); \
-	extern bool Cmd_ ## name ## _Eval(COMMAND_ARGS_EVAL); \
-	static CommandInfo (kCommandInfo_ ## name) = { \
-	#name,	\
-	#altName,		\
-	0,		\
-	#description,	\
-	refRequired,	\
-	(sizeof(paramInfo) / sizeof(ParamInfo)),	\
-	paramInfo,	\
-	HANDLER(Cmd_ ## name ## _Execute),	\
-	parser,	\
-	HANDLER_EVAL(Cmd_ ## name ## _Eval),	\
-	1	\
-	};
-
-#define DEFINE_CMD_ALT_COND(name, altName, description, refRequired, paramInfo) \
-	DEFINE_CMD_ALT_COND_ANY(name, altName, description, refRequired, paramInfo, Cmd_Default_Parse)
-
-#define DEFINE_CMD_ALT_COND_PLUGIN(name, altName, description, refRequired, paramInfo) \
-	DEFINE_CMD_ALT_COND_ANY(name, altName, description, refRequired, paramInfo, NULL)
-
-#define DEFINE_CMD_COND(name, description, refRequired, paramInfo) \
-	DEFINE_CMD_ALT_COND(name, , description, refRequired, paramInfo)
-
-
 #define DEFINE_COMMAND_PLUGIN(name, refRequired, paramInfo) \
 	extern bool Cmd_##name##_Execute(COMMAND_ARGS); \
 	static CommandInfo kCommandInfo_##name = { \
@@ -193,6 +129,25 @@ struct ParamInfo
 	nullptr, \
 	nullptr, \
 	0 \
+	};
+
+
+
+#define DEFINE_COMMAND_COND_PLUGIN(name, refRequired, paramInfo) \
+	extern bool Cmd_##name##_Execute(COMMAND_ARGS); \
+	extern bool Cmd_ ## name ## _Eval(COMMAND_ARGS_EVAL); \
+	static CommandInfo kCommandInfo_##name = { \
+	#name, \
+	nullptr, \
+	0, \
+	nullptr, \
+	refRequired, \
+	sizeof(paramInfo) / sizeof(ParamInfo), \
+	paramInfo, \
+	Cmd_##name##_Execute, \
+	nullptr, \
+	Cmd_##name##_Eval, \
+	1 \
 	};
 typedef bool (* Cmd_Execute)(COMMAND_ARGS);
 bool Cmd_Default_Execute(COMMAND_ARGS);

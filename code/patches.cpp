@@ -533,18 +533,18 @@ void FixConditionFunctions()
 		if (!it) continue;
 		auto writable = const_cast<CommandInfo*>(it);
 		if (!writable) continue;
-		// TODO implement _Eval for these and add the opcodes to the switch:
-		// IsOwned
-		// GetPCCanFastTravel
-		// GetRadiationLevelAlt
-		// GetLockedAlt
-		// GetIsRagdolled
-		// IsInWater
-		// IsIdlePlayingEx
-		// IsSpellTargetAlt
 		switch (writable->opcode)
 		{
+		case 0x2220: // IsOwned
+		case 0x2224: // GetPCCanFastTravel
+		case 0x2225: // GetRadiationLevelAlt
+		case 0x222D: // GetLockedAlt
+		case 0x2239: // GetIsRagdolled
+		case 0x2258: // IsInWater
+		case 0x225C: // IsIdlePlayingEx
+		case 0x226B: // IsSpellTargetAlt
 		case 0x22A0: // IsNight
+
 			writable->eval = DefaultEval;
 			break;
 		default:
