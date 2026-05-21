@@ -42,6 +42,40 @@ extern bool bCombatMusicDisabled;
 const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 
+auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
+
+auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
+
+bool __fastcall HasEnableParentHook(void* ecx)
+{
+	return false;
+}
+
+bool Cmd_DisableAlt_Execute(COMMAND_ARGS)
+{
+	// Modify code to skip over the "If this has an EnableParent" check.
+	WriteRelCall(0x523DAB, (UInt32)HasEnableParentHook);
+
+	const bool success = Cmd_Disable(PASS_COMMAND_ARGS);
+
+	// Undo code modification.
+	WriteRelCall(0x523DAB, 0x4E78E0);
+
+	return success;
+}
+
+bool Cmd_EnableAlt_Execute(COMMAND_ARGS)
+{
+	// Modify code to skip over the "If this has an EnableParent" check.
+	WriteRelCall(0x523C2D, (UInt32)HasEnableParentHook);
+
+	const bool success = Cmd_Enable(PASS_COMMAND_ARGS);
+
+	// Undo code modification.
+	WriteRelCall(0x523C2D, 0x4E78E0);
+
+	return success;
+}
 
 bool Cmd_IsModelPath_Execute(COMMAND_ARGS)
 {

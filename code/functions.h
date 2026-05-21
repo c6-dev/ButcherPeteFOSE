@@ -126,6 +126,8 @@ DEFINE_COMMAND_PLUGIN(GetGameDaysPassed, 0, kParams_ThreeOptionalInts);
 DEFINE_COMMAND_COND_PLUGIN(IsNight, 0, kParams_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(SetModelPath, 0, kParams_OneString_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(IsModelPath, 0, kParams_OneString_OneOptionalForm);
+DEFINE_COMMAND_PLUGIN(EnableAlt, 1, kParams_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(DisableAlt, 1, kParams_OneOptionalInt);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

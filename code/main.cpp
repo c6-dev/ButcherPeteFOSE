@@ -12,7 +12,7 @@ IDebugLog gLog("butcher_pete.log");
 
 PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 320;
+int g_version = 330;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -186,6 +186,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(IsNight);
 	REG_CMD(SetModelPath);
 	REG_CMD(IsModelPath);
+	REG_CMD(EnableAlt);
+	REG_CMD(DisableAlt);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));
