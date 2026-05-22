@@ -7,6 +7,7 @@
 #if RUNTIME
 
 
+struct AnimData;
 class BSFile;
 static constexpr UInt32 kTESObjectREFR_IsOffLimitsToPlayerAddr = 0x004DEBF0;
 
@@ -304,7 +305,7 @@ public:
 	virtual void Unk_6A(void);
 	virtual void Unk_6B(void);
 	virtual void Unk_6C(void);
-	virtual void Unk_6D(void);
+	virtual AnimData* GetAnimation(void);
 	virtual void Unk_6E(void);
 	virtual void Unk_6F(void);
 	virtual void Unk_70(void);
@@ -1518,6 +1519,12 @@ public:
 			       ? static_cast<MiddleHighProcess*>(baseProcess)->eKnockedState
 			       : -1;
 	}
+
+	AnimData* GetAnimation() const
+	{
+		if (this->baseProcess) return this->baseProcess->GetAnimation();
+		return nullptr;
+	}
 };
 
 static_assert(offsetof(Actor, cvOwner) == 0x0A0);
@@ -1648,10 +1655,12 @@ public:
 	UInt32 unk5E0; // 5E0
 	UInt32 unk5E4; // 5E4
 	BipedAnim* pBipedAnims1st; // 5E8
-	UInt32 unk5EC; // 5EC
+	AnimData* firstPersonAnimData; // 5EC
 	NiNode* node1stPerson; // 5F0
 	float eyeHeight; // 5F4
-	UInt32 unk5F8[(0x604 - 0x5F8) >> 2]; // 5F8
+	void* spInventoryMenu;
+	AnimData* pInventoryAnimation;
+	void* pInventoryWeaponEffect;
 	TESTopic* topic; // 604
 	UInt32 unk608[3]; // 608
 	TESQuest* quest; // 614
@@ -1692,6 +1701,8 @@ public:
 	UInt8 unk9A6[(0x9BC - 0x9A6)]; // 9A6
 
 	static PlayerCharacter* GetSingleton();
+	AnimData* GetAnimData(bool bFirstPerson) const;
+	AnimData* GetAnimData() const;
 };
 
 static_assert(sizeof(PlayerCharacter) == 0x9BC);

@@ -201,6 +201,12 @@ PlayerCharacter* PlayerCharacter::GetSingleton()
 	return *g_thePlayer;
 }
 
+AnimData* PlayerCharacter::GetAnimData() const
+{
+	if (this->pInventoryAnimation) return this->pInventoryAnimation;
+	if (this->bIs3rdPerson || !this->firstPersonAnimData) return GetAnimation();
+	return this->firstPersonAnimData;
+}
 
 float GetDistance(TESObjectREFR* ref1, TESObjectREFR* ref2) {
 	return (float)ThisCall<double>(0x4EDBF0, ref1, ref2, 0, 0);

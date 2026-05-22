@@ -129,6 +129,8 @@ DEFINE_COMMAND_PLUGIN(IsModelPath, 0, kParams_OneString_OneOptionalForm);
 DEFINE_COMMAND_PLUGIN(EnableAlt, 1, kParams_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(DisableAlt, 1, kParams_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(PlaySoundFade, 0, kParams_OneForm_OneFloat);
+DEFINE_COMMAND_PLUGIN(ForcePlayIdle, 1, kParams_OneForm_OneOptionalInt);
+DEFINE_COMMAND_PLUGIN(ForceStopIdle, 1, kParams_OneOptionalInt);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

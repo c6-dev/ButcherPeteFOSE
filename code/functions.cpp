@@ -41,10 +41,53 @@ extern bool bCombatMusicDisabled;
 
 const char kDaysPerMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-
 auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
 
 auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
+
+
+AnimData* GetAnimDataForPov(UInt32 playerPov, Actor* actor)
+{
+	if (actor == PlayerCharacter::GetSingleton() && playerPov)
+	{
+		if (playerPov == 1) return PlayerCharacter::GetSingleton()->baseProcess->GetAnimation();
+		if (playerPov == 2) return PlayerCharacter::GetSingleton()->firstPersonAnimData;
+		return nullptr;
+	}
+	return actor->GetAnimation();
+}
+
+bool Cmd_ForcePlayIdle_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESForm* form = nullptr;
+	UInt32 playerPov = 0;
+	auto* actor = reinterpret_cast<Actor*>(thisObj);
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &playerPov) || !actor->IsActor() || !actor->baseProcess) return true;
+	auto* idle = DYNAMIC_CAST(form, TESForm, TESIdleForm);
+	if (!idle) return true;
+	actor->baseProcess->SetForcedIdleForm(idle);
+	auto* animData = GetAnimDataForPov(playerPov, actor);
+	if (!animData) return true;
+	ThisCall<void>(0x4649F0, animData, idle, actor, idle->data.groupFlags & 0x3F, 3);
+	*result = 1;
+	return true;
+}
+
+bool Cmd_ForceStopIdle_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	UInt32 playerPov = 0;
+	if (!ExtractArgs(EXTRACT_ARGS, &playerPov)) return true;
+	auto* actor = DYNAMIC_CAST(thisObj, TESObjectREFR, Actor);
+	if (!actor) return true;
+	auto* animData = GetAnimDataForPov(playerPov, actor);
+	if (!animData) return true;
+
+	ThisCall<void>(0x460090, animData, true, false);
+	*result = 1;
+	return true;
+}
 
 bool Cmd_PlaySoundFade_Execute(COMMAND_ARGS)
 {

@@ -25,6 +25,8 @@ static ParamInfo kParams_OneString_OneFloat_OneOptionalInt[3] = {
 
 static ParamInfo kParams_OneForm_OneFloat[2] = {{"form", kParamType_AnyForm, 0}, {"float", kParamType_Float, 0}};
 
+static ParamInfo kParams_OneForm_OneOptionalInt[2] = {{"form", kParamType_AnyForm, 0}, {"integer", kParamType_Integer, 1}};
+
 static ParamInfo kParams_OneString_OneInt_OneOptionalInt[3] = {
 	{"string", kParamType_String, 0},
 	{"integer", kParamType_Integer, 0},

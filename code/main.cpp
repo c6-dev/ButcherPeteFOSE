@@ -189,6 +189,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(EnableAlt);
 	REG_CMD(DisableAlt);
 	REG_CMD(PlaySoundFade);
+	REG_CMD(ForcePlayIdle);
+	REG_CMD(ForceStopIdle);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));
