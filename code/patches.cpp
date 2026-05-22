@@ -448,6 +448,25 @@ __declspec(naked) void FixNewGameMusic()
 		}
 }
 
+float __fastcall CalculateDamageResistance(HitData* hitData)
+{
+	if (hitData->pWeapon && (hitData->pWeapon->weaponFlags1 & 1))
+	{
+		return 0.f;
+	}
+	return hitData->pTarget->avOwner.GetActorValue(eActorVal_DamageResistance);
+}
+
+__declspec(naked) void HitDataHook()
+{
+	__asm {
+		mov ecx, esi
+		call CalculateDamageResistance
+		mov eax, 0x7C29F1
+		jmp eax
+		}
+}
+
 void WritePatches()
 {
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook));
@@ -510,7 +529,10 @@ void WritePatches()
 	WriteRelCall(0x6EAE4E, (UInt32)DOFFOVHook);
 
 	WriteRelJump(0x6BDCD5, UInt32(FixNewGameMusic));
-}
+
+	// restore "ignores normal weapon resist" flag on weapons
+	WriteRelJump(0x7C29E8, (UInt32)HitDataHook);
+} 
 
 // Eval stub for the editor, indicates that this is a condition function. Same as NVSE
 bool __cdecl DefaultEval(COMMAND_ARGS_EVAL)

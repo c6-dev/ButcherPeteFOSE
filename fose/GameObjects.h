@@ -2270,3 +2270,35 @@ public:
 
 static_assert(sizeof(Date) == 0x4);
 static_assert(sizeof(Calendar) == 0x20);
+
+
+class HitData
+{
+public:
+	HitData();
+	~HitData();
+
+	Actor* pSource;
+	Actor* pTarget;
+	void* projectileOrExplosion;
+	UInt32 eWeaponSkill;
+	UInt32 eDamageLimb;
+	float fHealthDamage;
+	float fBaseWeaponDamage;
+	float fFatigueDamage;
+	float fLimbDamage;
+	float fBlockDTMod;
+	float fArmorDamage;
+	float fDamageToWeapon;
+	TESObjectWEAP* pWeapon;
+	float fHealthPercent;
+	NiPoint3 kImpactPos;
+	NiPoint3 kImpactAngle;
+	SpellItem* pCriticalEffect;
+	void* pVATSAction;
+	UInt32 uiFlags;
+	float fDamageMult;
+	uint32_t uiRefCount;
+};
+
+static_assert(sizeof(HitData) == 0x64);
