@@ -549,7 +549,7 @@ void FixConditionFunctions()
 	UInt32 endAddr = *(UInt32*)0x004A594D;
 	auto start = reinterpret_cast<const CommandInfo*>(startAddr);
 	auto end = reinterpret_cast<const CommandInfo*>(endAddr);
-
+	gLog.Message("Registering condition functions in GECK:\n");
 	for (const CommandInfo* it = start; it < end; ++it)
 	{
 		if (!it) continue;
@@ -566,7 +566,26 @@ void FixConditionFunctions()
 		case 0x225C: // IsIdlePlayingEx
 		case 0x226B: // IsSpellTargetAlt
 		case 0x22A0: // IsNight
-
+		case 0x22A8: // GetQuestFailedAlt
+		case 0x3117: // GetGameDifficulty (CE)
+		case 0x3119: // GetAlwaysRun (CE)
+		case 0x311A: // GetAutoMove (CE)
+		case 0x3126: // GetWaterImmersionPerc (CE)
+		case 0x3163: // IsButtonPressed (CE)
+		case 0x3164: // GetLeftStickX (CE)
+		case 0x3165: // GetLeftStickY (CE)
+		case 0x3166: // GetRightStickX (CE)
+		case 0x3167: // GetRightStickY (CE)
+		case 0x3168: // GetLeftTrigger (CE)
+		case 0x3169: // GetRightTrigger (CE)
+		case 0x317B: // IsRefInList (CE)
+		case 0x317F: // GetNoteRead (CE)
+		case 0x3195: // IsInAir (CE)
+		case 0x31A2: // IsButtonDisabled (CE)
+		case 0x31A5: // IsButtonHeld (CE)
+		case 0x31A8: // IsTriggerDisabled (CE)
+		case 0x31AB: // IsTriggerHeld (CE)
+			gLog.FormattedMessage("%s (0x%X)", writable->longName, writable->opcode);
 			writable->eval = DefaultEval;
 			break;
 		default:

@@ -3150,7 +3150,7 @@ public:
 		UInt8 pad[3];
 	};
 
-	UInt8 running; // 03C
+	UInt8 questFlags; // 03C
 	UInt8 priority; // 03D
 	UInt8 pad03E[2]; // 03E
 	float questDelayTime; // 040
@@ -3162,7 +3162,7 @@ public:
 	BSString editorName; // 064
 };
 
-static_assert(offsetof(TESQuest, running) == 0x03C);
+static_assert(offsetof(TESQuest, questFlags) == 0x03C);
 static_assert(offsetof(TESQuest, objectives) == 0x04C);
 static_assert(offsetof(TESQuest, conditions) == 0x54);
 static_assert(sizeof(TESQuest) == 0x6C);

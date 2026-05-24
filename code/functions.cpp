@@ -45,6 +45,24 @@ auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
 
 auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
 
+bool Cmd_GetQuestFailedAlt_Eval(COMMAND_ARGS_EVAL)
+{
+	*result = 0;
+	auto quest = static_cast<TESQuest*>(arg1);
+	*result = (quest->questFlags & 0x40) ? 1 : 0;
+	return true;
+}
+
+bool Cmd_GetQuestFailedAlt_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	TESQuest* quest;
+	if (ExtractArgs(EXTRACT_ARGS, &quest)) *result = Cmd_GetQuestFailedAlt_Eval(thisObj, quest, nullptr, result);
+	if (IsConsoleMode()) Console_Print("GetQuestFailed >> %.2f", *result);
+	return true;
+}
+
+
 
 AnimData* GetAnimDataForPov(UInt32 playerPov, Actor* actor)
 {
