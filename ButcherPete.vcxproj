@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -97,7 +97,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ForcedIncludeFiles>common\IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MinimalRebuild />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
