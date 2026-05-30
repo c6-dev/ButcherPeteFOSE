@@ -7,6 +7,9 @@
     <Filter Include="common">
       <UniqueIdentifier>{177f0224-8768-4111-8b06-dc3c64d4ae96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="features">
+      <UniqueIdentifier>{48c863ed-771f-47db-b397-c7562fe43960}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="fose\GameAPI.cpp">
@@ -67,11 +70,24 @@
     <ClCompile Include="code\main.cpp" />
     <ClCompile Include="code\functions.cpp" />
     <ClCompile Include="code\patches.cpp" />
-    <ClCompile Include="code\custom_terminal_models.cpp" />
     <ClCompile Include="code\jip_nif.cpp" />
-    <ClCompile Include="code\ScriptAnalyzer.cpp" />
     <ClCompile Include="fose\GameScript.cpp">
       <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="code\CustomGameSettings.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ScriptAnalyzer.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\custom_terminal_models.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\ItemConditionBuffer.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
+    <ClCompile Include="code\NewConditionFunctions.cpp">
+      <Filter>features</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,11 +169,24 @@
     <ClInclude Include="code\main.h" />
     <ClInclude Include="code\functions.h" />
     <ClInclude Include="code\patches.h" />
-    <ClInclude Include="code\custom_terminal_models.h" />
     <ClInclude Include="code\jip_nif.h" />
-    <ClInclude Include="code\ScriptAnalyzer.h" />
     <ClInclude Include="fose\GameScript.h">
       <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomGameSettings.hpp">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ScriptAnalyzer.h">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\custom_terminal_models.h">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ItemConditionBuffer.hpp">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\NewConditionFunctions.hpp">
+      <Filter>features</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

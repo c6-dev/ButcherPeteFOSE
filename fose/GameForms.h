@@ -3726,11 +3726,23 @@ public:
 	TESEnchantableForm enchantable; // 054
 	BGSPreloadable preloadable; // 064
 	TESImageSpaceModifiableForm imageSpaceModForm; // 068
-
-	UInt32 unk06C[(0xA4 - 0x70) >> 2];
+	TESForm* pImpactPlacedObject;
+	float fForce;
+	float fDamage;
+	float fRadius;
+	TESObjectLIGH* pLight;
+	TESSound* pSound1;
+	uint32_t uiFlags;
+	float fImageSpaceRadius;
+	BGSImpactDataSet* pImpactDataSet;
+	TESSound* pSound2;
+	float fRadiationLevel;
+	float fDissipationTime;
+	float fRadiationRadius;
+	uint8_t ucSoundLevel;
 };
 
-static_assert(sizeof(BGSExplosion) == 0xA4);
+static_assert(sizeof(BGSExplosion) == 0xA8);
 
 // BGSDebris (24)
 class BGSDebris : public TESForm

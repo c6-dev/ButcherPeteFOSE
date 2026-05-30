@@ -117,9 +117,12 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="code\CustomGameSettings.cpp" />
     <ClCompile Include="code\custom_terminal_models.cpp" />
+    <ClCompile Include="code\ItemConditionBuffer.cpp" />
     <ClCompile Include="code\jip_nif.cpp" />
     <ClCompile Include="code\main.cpp" />
+    <ClCompile Include="code\NewConditionFunctions.cpp" />
     <ClCompile Include="code\ScriptAnalyzer.cpp" />
     <ClCompile Include="common\IDebugLog.cpp" />
     <ClCompile Include="common\IErrors.cpp" />
@@ -151,13 +154,16 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\custom_terminal_models.h" />
+    <ClInclude Include="code\ItemConditionBuffer.hpp" />
     <ClInclude Include="code\jip_nif.h" />
     <ClInclude Include="code\main.h" />
+    <ClInclude Include="code\NewConditionFunctions.hpp" />
     <ClInclude Include="code\ScriptAnalyzer.h" />
     <ClInclude Include="common\IDebugLog.h" />
     <ClInclude Include="common\IErrors.h" />
     <ClInclude Include="common\IPrefix.h" />
     <ClInclude Include="common\ITypes.h" />
+    <ClInclude Include="CustomGameSettings.hpp" />
     <ClInclude Include="fose\CommandTable.h" />
     <ClInclude Include="fose\GameAPI.h" />
     <ClInclude Include="fose\GameBSExtraData.h" />
