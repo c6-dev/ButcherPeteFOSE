@@ -508,3 +508,55 @@ public:
 };
 static_assert(offsetof(ComputersMenu, pTargetRef) == 0xAC);
 
+
+// 100 TODO
+class InventoryMenu : Menu // 1002
+{
+public:
+	BYTE gap28[0x60 - 0x28];
+	UInt32 filter; // 060
+	BYTE gap64[0x100 - 0x64];
+
+
+	__forceinline static InventoryMenu* Get()
+	{
+		return *(InventoryMenu**)0x1076860;
+	}
+};
+
+static_assert(sizeof(InventoryMenu) == 0x100);
+
+// E8 TODO
+class ContainerMenu : Menu // 1008
+{
+public:
+	BYTE gap28[0x78 - 0x28];
+	UInt32 leftFilter; // 078
+	UInt32 rightFilter; // 07C
+	BYTE gap80[0xE8 - 0x80];
+
+	__forceinline static ContainerMenu* Get()
+	{
+		return *(ContainerMenu**)0x10760A4;
+	}
+};
+
+static_assert(sizeof(ContainerMenu) == 0xE8);
+
+
+// 10C TODO
+class BarterMenu : Menu // 1053
+{
+public:
+	BYTE gap28[0x88 - 0x28];
+	UInt32 leftFilter; // 088
+	UInt32 rightFilter; // 08C
+	BYTE gap90[0x10C - 0x90];
+
+	__forceinline static BarterMenu* Get()
+	{
+		return *(BarterMenu**)0x1075E6C;
+	}
+};
+
+static_assert(sizeof(BarterMenu) == 0x10C);

@@ -132,6 +132,7 @@ DEFINE_COMMAND_PLUGIN(PlaySoundFade, 0, kParams_OneForm_OneFloat);
 DEFINE_COMMAND_PLUGIN(ForcePlayIdle, 1, kParams_OneForm_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(ForceStopIdle, 1, kParams_OneOptionalInt);
 DEFINE_COMMAND_COND_PLUGIN(GetQuestFailedAlt, 0, kParams_OneQuest);
+DEFINE_COMMAND_PLUGIN(GetMenuItemFilter, 0, kParams_OneInt_OneOptionalInt);
 
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 

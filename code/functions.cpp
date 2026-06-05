@@ -45,6 +45,39 @@ auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
 
 auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
 
+
+bool Cmd_GetMenuItemFilter_Execute(COMMAND_ARGS)
+{
+	*result = -1;
+	UInt32 menuID, useRef = 0;
+	if (!ExtractArgs(EXTRACT_ARGS, &menuID, &useRef)) return true;
+	switch (menuID)
+	{
+	case kMenuType_Inventory:
+		if (InventoryMenu::Get()) *result = static_cast<int>(InventoryMenu::Get()->filter) + 1;
+		break;
+	case kMenuType_Container:
+		if (ContainerMenu::Get())
+		{
+			*result = useRef
+				          ? static_cast<int>(ContainerMenu::Get()->rightFilter)
+				          : static_cast<int>(ContainerMenu::Get()->leftFilter);
+		}
+		break;
+	case kMenuType_Barter:
+		if (BarterMenu::Get())
+		{
+			*result = useRef ? static_cast<int>(BarterMenu::Get()->rightFilter) : static_cast<int>(BarterMenu::Get()->leftFilter);
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (IsConsoleMode()) Console_Print("GetMenuItemFilter >> %.f", *result);
+	return true;
+}
+
 bool Cmd_GetQuestFailedAlt_Eval(COMMAND_ARGS_EVAL)
 {
 	*result = 0;
