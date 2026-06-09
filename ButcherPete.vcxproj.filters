@@ -89,6 +89,12 @@
     <ClCompile Include="code\NewConditionFunctions.cpp">
       <Filter>features</Filter>
     </ClCompile>
+    <ClCompile Include="fose\GameSound.cpp">
+      <Filter>fose</Filter>
+    </ClCompile>
+    <ClCompile Include="code\SkyFixes.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -186,6 +192,12 @@
       <Filter>features</Filter>
     </ClInclude>
     <ClInclude Include="code\NewConditionFunctions.hpp">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="fose\GameSound.h">
+      <Filter>fose</Filter>
+    </ClInclude>
+    <ClInclude Include="code\SkyFixes.hpp">
       <Filter>features</Filter>
     </ClInclude>
   </ItemGroup>

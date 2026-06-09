@@ -155,7 +155,7 @@ bool Cmd_PlaySoundFade_Execute(COMMAND_ARGS)
 		if (ref->Get3DSimple())
 		{
 			uint32_t uiFlags = BSAudioManager::kAudioFlags_3D | BSAudioManager::kAudioFlags_100;
-			Sound handle = BSWin32Audio::GetSingleton()->GetSoundHandleByFormID(sound->refID, uiFlags);
+			BSSoundHandle handle = BSWin32Audio::GetSingleton()->GetSoundHandleByFormID(sound->refID, uiFlags);
 			handle.SetPosition(ref->GetPos());
 			handle.SetObjectToFollow(ref->Get3DSimple());
 			uint32_t time = fTime * 1000.0;
@@ -731,7 +731,7 @@ bool Cmd_SetWindDirection_Execute(COMMAND_ARGS)
 		Sky* currentSky = Sky::Get();
 		if (currentSky)
 		{
-			currentSky->windAngle = windDirection * -0.01745329238F;
+			currentSky->fWindAngle = windDirection * -0.01745329238F;
 		}
 	}
 	return true;
@@ -743,7 +743,7 @@ bool Cmd_GetWindDirection_Execute(COMMAND_ARGS)
 	Sky* currentSky = Sky::Get();
 	if (currentSky)
 	{
-		*result = currentSky->windAngle * -57.29577951308232;
+		*result = currentSky->fWindAngle * -57.29577951308232;
 	}
 	if (IsConsoleMode()) Console_Print("GetWindDirection >> %.2f", *result);
 	return true;
@@ -1129,7 +1129,7 @@ bool Cmd_GetCellImageSpace_Execute(COMMAND_ARGS)
 bool Cmd_GetCurrentClimate_Execute(COMMAND_ARGS)
 {
 	Sky* currentSky = Sky::Get();
-	TESClimate* climate = currentSky->currClimate;
+	TESClimate* climate = currentSky->pCurrentClimate;
 	if (climate) *(UInt32*)result = climate->refID;
 	if (IsConsoleMode())
 	{
@@ -1144,7 +1144,7 @@ bool Cmd_SetCurrentClimate_Execute(COMMAND_ARGS)
 	if (ExtractArgs(EXTRACT_ARGS, &climate) && IS_TYPE(climate, TESClimate))
 	{
 		Sky* currentSky = Sky::Get();
-		currentSky->currClimate = climate;
+		currentSky->pCurrentClimate = climate;
 	}
 	return true;
 }
@@ -1153,7 +1153,7 @@ bool Cmd_RefreshCurrentClimate_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	Sky* currentSky = Sky::Get();
-	TESClimate* climate = s_forcedClimate ? s_forcedClimate : currentSky->currClimate;
+	TESClimate* climate = s_forcedClimate ? s_forcedClimate : currentSky->pCurrentClimate;
 	currentSky->RefreshClimate(climate, true);
 	*result = 1;
 	return true;

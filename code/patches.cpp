@@ -10,6 +10,7 @@
 #include "ItemConditionBuffer.hpp"
 #include "NewConditionFunctions.hpp"
 #include "PluginAPI.h"
+#include "SkyFixes.hpp"
 
 std::unordered_map<UInt32, char*> markerIconMap;
 
@@ -538,8 +539,10 @@ void WritePatches()
 	// restore "ignores normal weapon resist" flag on weapons
 	WriteRelJump(0x7C29E8, (UInt32)HitDataHook);
 
+
 	ItemConditionBuffer::Init();
-	CustomGameSettings::Init(); 
+	CustomGameSettings::Init();
+	SkyFixes::Init();
 }
 
 

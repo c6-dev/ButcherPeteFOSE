@@ -124,6 +124,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="code\main.cpp" />
     <ClCompile Include="code\NewConditionFunctions.cpp" />
     <ClCompile Include="code\ScriptAnalyzer.cpp" />
+    <ClCompile Include="code\SkyFixes.cpp" />
     <ClCompile Include="common\IDebugLog.cpp" />
     <ClCompile Include="common\IErrors.cpp" />
     <ClCompile Include="fose\GameAPI.cpp" />
@@ -137,6 +138,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClCompile Include="fose\GameRTTI.cpp" />
     <ClCompile Include="fose\GameScript.cpp" />
     <ClCompile Include="fose\GameSettings.cpp" />
+    <ClCompile Include="fose\GameSound.cpp" />
     <ClCompile Include="fose\GameTiles.cpp" />
     <ClCompile Include="fose\GameTypes.cpp" />
     <ClCompile Include="fose\havok.cpp" />
@@ -159,6 +161,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="code\main.h" />
     <ClInclude Include="code\NewConditionFunctions.hpp" />
     <ClInclude Include="code\ScriptAnalyzer.h" />
+    <ClInclude Include="code\SkyFixes.hpp" />
     <ClInclude Include="common\IDebugLog.h" />
     <ClInclude Include="common\IErrors.h" />
     <ClInclude Include="common\IPrefix.h" />
@@ -178,6 +181,7 @@ copy ""$(TargetDir)$(TargetName).pdb"" "$(LOCALAPPDATA)\ModOrganizer\Fallout 3\m
     <ClInclude Include="fose\GameRTTI.h" />
     <ClInclude Include="fose\GameScript.h" />
     <ClInclude Include="fose\GameSettings.h" />
+    <ClInclude Include="fose\GameSound.h" />
     <ClInclude Include="fose\GameTiles.h" />
     <ClInclude Include="fose\GameTypes.h" />
     <ClInclude Include="fose\havok.h" />

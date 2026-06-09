@@ -2,21 +2,14 @@
 
 #include "GameForms.h"
 #include "GameBSExtraData.h"
+#include "GameSound.h"
 #include "netimmerse.h"
 #include "havok.h"
-#if RUNTIME
 
 
-struct AnimData;
+class Sky;
 class BSFile;
-static constexpr UInt32 kTESObjectREFR_IsOffLimitsToPlayerAddr = 0x004DEBF0;
-
-
-#else
-
-static const UInt32 kTESObjectREFR_IsOffLimitsToPlayerAddr = 0;
-
-#endif
+struct AnimData;
 
 enum
 {
@@ -1148,9 +1141,6 @@ struct AnimData;
 class TESObjectREFR : public TESForm
 {
 public:
-	MEMBER_FN_PREFIX(TESObjectREFR);
-	DEFINE_MEMBER_FN(IsOffLimitsToPlayer, bool, kTESObjectREFR_IsOffLimitsToPlayerAddr);
-
 	TESObjectREFR();
 	~TESObjectREFR();
 	virtual void Unk_4E(void); // GetStartingPosition(Position, Rotation, WorldOrCell)
@@ -2157,28 +2147,118 @@ public:
 
 static_assert(sizeof(BSTreeManager) == 0x20);
 
+struct SkySound
+{
+	BSSoundHandle sound;
+	TESWeather* pWeather;
+	UInt32 eSoundType;
+	UInt32 id;
+	UInt32 uiData;
+};
+
+class SkyObject
+{
+public:
+	virtual ~SkyObject();
+	virtual NiNode* GetRoot() const;
+	virtual void Initialize(NiNode* apRoot);
+	virtual void Update(Sky* apSky, float afValue);
+
+	NiPointer<NiNode> spRoot;
+};
+
+static_assert(sizeof(SkyObject) == 0x8);
+
+class Clouds : public SkyObject
+{
+public:
+	DWORD spClouds[4];
+	DWORD spTransTexture[4];
+	NiColor pColors[4];
+	UInt16 usNumLayers;
+	bool bForceTransTextureUpdate;
+
+	void ForceTransTextureUpdate();
+};
+
+static_assert(sizeof(Clouds) == 0x5C);
+
 class Sky
 {
 public:
 	virtual Sky* Destructor(bool doFree);
 
-	NiNode* niNode004; // 004
-	NiNode* niNode008; // 008
-	TESClimate* currClimate; // 00C
-	TESWeather* currWeather; // 010
-	TESWeather* transWeather; // 014	Previous weather, gradually fading, on weather transition
-	TESWeather* defaultWeather;
-	// 018	Picked from currClimate weathers list. currClimate is set to this unless there's a regional weather
-	TESWeather* overrideWeather; // 01C
-	BYTE unk020[(0xCC - 0x20)]; // 020
-	float windSpeed; // 0CC
-	float windAngle; // 0D0
-	BYTE unkD4[0xEC - 0xD4]; // D4
-	float fCurrentGameHour; // EC
-	BYTE unkD0[0x100 - 0xF0]; // F0
-	float fFlash; // 0x100
-	UInt32 uiFlashTime; // 0x104
-	BYTE unk104[0x12C - 0x108]; // 108
+	enum Mode : UInt32
+	{
+		SM_NONE = 0x0,
+		SM_INTERIOR = 0x1,
+		SM_SKYDOME_ONLY = 0x2,
+		SM_FULL = 0x3,
+	};
+
+	enum Flags : UInt32
+	{
+		REFRESH_WEATHER = 0x1,
+		FORCED_UPDATE = 0x2,
+		UNDERWATER = 0x4,
+		REFRESH_ACCELERATION = 0x8,
+		FAST_TRAVEL = 0x10,
+		REFRESH_MOON = 0x20,
+		REFRESH_CLIMATE = 0x40,
+		HIDE_SKY = 0x80,
+		REFRESH_SUNRISE_BEGIN = 0x100,
+		REFRESH_SUNRISE_END = 0x200,
+		REFRESH_SUNSET_BEGIN = 0x400,
+		REFRESH_SUNSET_END = 0x800,
+		REFRESH_SUNRISE_COLOR = 0x1000,
+		REFRESH_SUNSET_COLOR = 0x2000,
+	};
+
+
+	void* spRoot;
+	NiNode* spMoonsRoot;
+	TESClimate* pCurrentClimate;
+	TESWeather* pCurrentWeather;
+	TESWeather* pLastWeather;
+	TESWeather* pDefaultWeather;
+	TESWeather* pOverrideWeather;
+	void* pAtmosphere;
+	void* pStars;
+	void* pSun;
+	Clouds* pClouds;
+	void* pMasser;
+	void* pSecunda;
+	void* pPrecipitation;
+	NiColor kColors[10];
+	NiColor kWaterFogColor;
+	NiColor kColorSunFog;
+	float fWindSpeed;
+	float fWindAngle;
+	float fFogNearPlane;
+	float fFogFarPlane;
+	UInt32 unk0DC;
+	UInt32 unk0E0;
+	UInt32 fFogHeight;
+	float fFogPower;
+	float fCurrentGameHour;
+	float fLastWeatherUpdate;
+	float fCurrentWeatherPct;
+	Mode eMode;
+	tList<SkySound>* pSkySoundList;
+	float fFlash;
+	UInt32 uiFlashTime;
+	UInt32 uiLastMoonPhaseUpdate;
+	float fWindowReflectionTimer;
+	float fAccelBeginPct;
+	UInt32 unk114;
+	Flags uiFlags;
+	void* pFadeInIMODCurrent;
+	void* pFadeOutIMODCurrent;
+	void* pFadeInIMODLast;
+	void* pFadeOutIMODLast;
+	float f12_0;
+	float f23_99;
+	float f0_0;
 
 	__forceinline static Sky* Get()
 	{
@@ -2196,9 +2276,10 @@ public:
 	}
 };
 
-static_assert(sizeof(Sky) == 0x12C);
+static_assert(sizeof(Sky) == 0x138);
 static_assert(offsetof(Sky, fFlash) == 0x100);
 static_assert(offsetof(Sky, fCurrentGameHour) == 0xEC);
+static_assert(offsetof(Sky, pCurrentWeather) == 0x10);
 
 class CAsyncStream
 {
