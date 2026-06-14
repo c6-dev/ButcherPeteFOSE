@@ -84,6 +84,9 @@ namespace CustomGameSettings
 	extern CustomGameSetting fDamageGunWeapCondBuffer;
 	extern CustomGameSetting fDamageMeleeWeapCondBuffer;
 	extern CustomGameSetting fArmorRatingCondBuffer;
+	extern CustomGameSetting fPlayerGunshotVolumeMult;
+	extern CustomGameSetting fNPCGunshotVolumeMult;
+	extern CustomGameSetting fProjectileImpactVolumeMult;
 
 	void Init();
 };

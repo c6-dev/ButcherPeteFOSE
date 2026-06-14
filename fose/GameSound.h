@@ -6,12 +6,11 @@ class BSWin32AudioListener;
 
 struct BSSoundHandle
 {
-	UInt32 soundKey;
-	UInt8 byte04;
-	UInt8 pad05[3];
-	UInt32 unk08;
+	SInt32 uiSoundID;
+	bool bAssumeSuccess;
+	UInt32 uiState;
 
-	BSSoundHandle() : soundKey(0xFFFFFFFF), byte04(0), unk08(0)
+	BSSoundHandle() : uiSoundID(-1), bAssumeSuccess(false), uiState(0)
 	{
 	}
 
@@ -19,9 +18,9 @@ struct BSSoundHandle
 	bool Stop();
 	bool Release();
 
-	void Play()
+	bool Play()
 	{
-		ThisCall(0xBD00C0, this, 0);
+		return ThisCall<bool>(0xBD00C0, this, 0);
 	}
 
 	UInt32 GetDuration()
@@ -44,12 +43,17 @@ struct BSSoundHandle
 		return ThisCall<bool>(0xBD03E0, this, auiMilliseconds);
 	}
 
+	bool SetVolume(float volume)
+	{
+		return ThisCall<bool>(0xBD01C0, this, volume);
+	}
+
 
 	BSSoundHandle& operator=(BSSoundHandle other)
 	{
-		soundKey = other.soundKey;
-		byte04 = other.byte04;
-		unk08 = other.unk08;
+		uiSoundID = other.uiSoundID;
+		bAssumeSuccess = other.bAssumeSuccess;
+		uiState = other.uiState;
 		return *this;
 	}
 };

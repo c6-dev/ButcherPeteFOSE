@@ -10,6 +10,7 @@
 #include "ItemConditionBuffer.hpp"
 #include "NewConditionFunctions.hpp"
 #include "PluginAPI.h"
+#include "ScaleGunshotVolume.hpp"
 #include "SkyFixes.hpp"
 
 std::unordered_map<UInt32, char*> markerIconMap;
@@ -543,6 +544,7 @@ void WritePatches()
 	ItemConditionBuffer::Init();
 	CustomGameSettings::Init();
 	SkyFixes::Init();
+	ScaleGunshotVolume::Init();
 }
 
 

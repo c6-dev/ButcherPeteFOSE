@@ -95,6 +95,9 @@
     <ClCompile Include="code\SkyFixes.cpp">
       <Filter>features</Filter>
     </ClCompile>
+    <ClCompile Include="code\ScaleGunshotVolume.cpp">
+      <Filter>features</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fose\GameAPI.h">
@@ -179,9 +182,6 @@
     <ClInclude Include="fose\GameScript.h">
       <Filter>fose</Filter>
     </ClInclude>
-    <ClInclude Include="CustomGameSettings.hpp">
-      <Filter>features</Filter>
-    </ClInclude>
     <ClInclude Include="code\ScriptAnalyzer.h">
       <Filter>features</Filter>
     </ClInclude>
@@ -198,6 +198,12 @@
       <Filter>fose</Filter>
     </ClInclude>
     <ClInclude Include="code\SkyFixes.hpp">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\ScaleGunshotVolume.hpp">
+      <Filter>features</Filter>
+    </ClInclude>
+    <ClInclude Include="code\CustomGameSettings.hpp">
       <Filter>features</Filter>
     </ClInclude>
   </ItemGroup>
