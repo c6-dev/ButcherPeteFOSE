@@ -473,6 +473,30 @@ __declspec(naked) void HitDataHook()
 		}
 }
 
+float __fastcall CalculateDamageToArmor(HitData* hitData)
+{
+	if (hitData->pTarget->IsCreature()) return 0.f;
+	float baseDR = std::min<float>(hitData->pTarget->GetArmorDamageResistance(), 100.f);
+	auto gs_fMaxArmorRating = (Setting*)0xF61E8C;
+	auto gs_fDamageToArmorPercentage = (Setting*)0xF5FC18;
+
+	float dr = std::min<float>(baseDR / 100.f, gs_fMaxArmorRating->data.f / 100.f);
+
+	return hitData->fHealthDamage * dr * gs_fDamageToArmorPercentage->data.f;
+}
+
+void __declspec(naked) CalculateDamageToArmorHook()
+{
+	__asm {
+		fstp st
+		mov ecx, esi
+		call CalculateDamageToArmor
+		fstp dword ptr[esp+0x8]
+		mov eax, 0x7C2A78
+		jmp eax
+		}
+}
+
 
 void WritePatches()
 {
@@ -539,6 +563,8 @@ void WritePatches()
 
 	// restore "ignores normal weapon resist" flag on weapons
 	WriteRelJump(0x7C29E8, (UInt32)HitDataHook);
+
+	WriteRelJump(0x7C2A59, (UInt32)CalculateDamageToArmorHook);
 
 
 	ItemConditionBuffer::Init();

@@ -1429,7 +1429,7 @@ public:
 	virtual void Unk_109(void);
 	virtual void Unk_10A(void);
 	virtual void Unk_10B(void);
-	virtual void Unk_10C(void);
+	virtual float GetArmorDamageResistance(void);
 	virtual void Unk_10D(void);
 	virtual bool IsTrespassing(void);
 	virtual void Unk_10F(void);
