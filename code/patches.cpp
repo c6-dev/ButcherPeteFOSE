@@ -475,7 +475,7 @@ __declspec(naked) void HitDataHook()
 
 float __fastcall CalculateDamageToArmor(HitData* hitData)
 {
-	if (hitData->pTarget->IsCreature()) return 0.f;
+	if (!hitData->pTarget->IsPC()) return 0.f;
 	float baseDR = std::min<float>(hitData->pTarget->GetArmorDamageResistance(), 100.f);
 	auto gs_fMaxArmorRating = (Setting*)0xF61E8C;
 	auto gs_fDamageToArmorPercentage = (Setting*)0xF5FC18;

@@ -1376,8 +1376,8 @@ public:
 	virtual void Unk_D4(void);
 	virtual void Unk_D5(void);
 	virtual void Unk_D6(void);
-	virtual void Unk_D7(void);
-	virtual bool IsPlayerRef(void);
+	virtual bool IsPC(void);
+	virtual void Unk_D8(void);
 	virtual void Unk_D9(void);
 	virtual void Unk_DA(void);
 	virtual void Unk_DB(void);
