@@ -156,7 +156,7 @@ bool Cmd_PlaySoundFade_Execute(COMMAND_ARGS)
 		{
 			uint32_t uiFlags = BSAudioManager::kAudioFlags_3D | BSAudioManager::kAudioFlags_100;
 			BSSoundHandle handle = BSWin32Audio::GetSingleton()->GetSoundHandleByFormID(sound->refID, uiFlags);
-			handle.SetPosition(ref->GetPos());
+			handle.SetPosition(ref->GetLocationOnReference());
 			handle.SetObjectToFollow(ref->Get3DSimple());
 			uint32_t time = fTime * 1000.0;
 			handle.FadeInPlay(time);
@@ -348,7 +348,7 @@ bool Cmd_DecompileScript_Execute(COMMAND_ARGS)
 	if (fileExtensionArg[0]) fileExtension = std::string(fileExtensionArg);
 	else fileExtension = "gek";
 
-	std::string formName = form->GetEditorID();
+	std::string formName = form->GetFormEditorID();
 	if (formName.empty()) formName = FormatString("%08X", form->refID & 0x00FFFFFF);
 
 	if (IS_ID(form, Script))
@@ -1073,7 +1073,7 @@ bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
 
 bool IsSpellTargetAlt(Actor* actor, MagicItem* magicItem)
 {
-	for (auto iter = actor->magicTarget.GetEffectList()->Head(); iter; iter = iter->next)
+	for (auto iter = actor->GetEffectList()->Head(); iter; iter = iter->next)
 	{
 		if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !
 			activeEff->bTerminated)
@@ -1424,7 +1424,7 @@ bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 	TESIdleForm* idleAnim;
 	if (ExtractArgs(EXTRACT_ARGS, &idleAnim))
 	{
-		AnimData* animData = thisObj->GetAnimData();
+		AnimData* animData = thisObj->GetAnimation();
 		if (animData && (animData->GetPlayedIdle() == idleAnim))
 		{
 			*result = 1;
@@ -1435,7 +1435,7 @@ bool Cmd_IsIdlePlayingEx_Execute(COMMAND_ARGS)
 
 bool Cmd_IsIdlePlayingEx_Eval(COMMAND_ARGS_EVAL)
 {
-	AnimData* animData = thisObj->GetAnimData();
+	AnimData* animData = thisObj->GetAnimation();
 	if (animData && (animData->GetPlayedIdle() == static_cast<TESIdleForm*>(arg1)))
 	{
 		*result = 1;
@@ -1445,7 +1445,7 @@ bool Cmd_IsIdlePlayingEx_Eval(COMMAND_ARGS_EVAL)
 
 bool Cmd_GetPlayedIdle_Execute(COMMAND_ARGS)
 {
-	if (AnimData* animData = thisObj->GetAnimData())
+	if (AnimData* animData = thisObj->GetAnimation())
 	{
 		if (TESIdleForm* idleAnim = animData->GetPlayedIdle())
 		{
@@ -1461,7 +1461,7 @@ bool Cmd_PlayIdleEx_Execute(COMMAND_ARGS)
 	auto actor = static_cast<Actor*>(thisObj);
 	if (actor->baseProcess && !actor->baseProcess->uiProcessLevel && ExtractArgs(EXTRACT_ARGS, &idleAnim))
 	{
-		if (AnimData* animData = thisObj->GetAnimData())
+		if (AnimData* animData = thisObj->GetAnimation())
 		{
 			if (!idleAnim)
 			{
@@ -1874,7 +1874,7 @@ bool Cmd_RefreshIdle_Execute(COMMAND_ARGS)
 	{
 		actor->baseProcess->ResetQueuedIdleFlags();
 		actor->baseProcess->SetForcedIdleForm(nullptr);
-		if (stopAnim > 0) ThisCall<void>(0x460090, actor->GetAnimData(), 1, 1); // SpecialIdleFree
+		if (stopAnim > 0) ThisCall<void>(0x460090, actor->GetAnimation(), 1, 1); // SpecialIdleFree
 		*result = 1;
 	}
 	return true;
@@ -2141,7 +2141,7 @@ bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS)
 {
 	TESObjectREFR* form;
 	char iconPath[MAX_PATH];
-	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->GetIsReference() || form->baseForm
+	if (!ExtractArgs(EXTRACT_ARGS, &form, &iconPath) || (!IS_TYPE(form, BGSListForm) && (!form->IsReference() || form->baseForm
 		->refID != 0x10 || !GetExtraType(form->extraDataList, MapMarker)))) return true;
 	if (IS_TYPE(form, BGSListForm))
 	{
@@ -2149,7 +2149,7 @@ bool Cmd_SetCustomMapMarkerIcon_Execute(COMMAND_ARGS)
 		while (iterator)
 		{
 			auto ref = static_cast<TESObjectREFR*>(iterator->data);
-			if (ref->GetIsReference() && ref->baseForm->refID == 0x10 && GetExtraType(ref->extraDataList, MapMarker))
+			if (ref->IsReference() && ref->baseForm->refID == 0x10 && GetExtraType(ref->extraDataList, MapMarker))
 			{
 				SetMapMarkerIcon(ref, iconPath);
 			}
@@ -2369,7 +2369,7 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS)
 		NiPoint3 pos(player->kCamera1stPos);
 		if (!g_camera1st)
 		{
-			pos = player->GetPos();
+			pos = player->GetLocationOnReference();
 			double scaledHeight = ThisCall<double>(0x4E6D80, player);
 			pos.z = scaledHeight * player->eyeHeight + pos.z;
 		}
@@ -2378,7 +2378,7 @@ bool Cmd_GetCrosshairRefEx_Execute(COMMAND_ARGS)
 			pos += player->camera3rdPos;
 		}
 		auto zMatrix = NiMatrix33();
-		zMatrix.MakeZRotation(player->AdjustRot(0));
+		zMatrix.MakeZRotation(player->GetHeading(false));
 		auto xMatrix = NiMatrix33();
 		xMatrix.MakeXRotation(player->rotation.x);
 
@@ -2656,7 +2656,8 @@ bool Cmd_AddItemOwnership_Execute(COMMAND_ARGS)
 				pExtraDataList->Add(pXScript);
 			}
 		}
-		thisObj->AddItem(pItem, pExtraDataList, NumItems);
+		auto boundObj = DYNAMIC_CAST(pItem, TESForm, TESBoundObject);
+		thisObj->AddObjecttoContainer(boundObj, pExtraDataList, NumItems);
 		*result = 1;
 	}
 	return true;

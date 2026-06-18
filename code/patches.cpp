@@ -108,7 +108,8 @@ TESPackage* __fastcall GetAIPackageHook(Actor* actor)
 	auto package = ThisCall<TESPackage*>(0x766020, actor);
 	if (IsConsoleMode())
 	{
-		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetEditorID(), package->type,
+		Console_Print("Current Package: 0x%X (%s)\nPackage Type: %d (%s)", package->refID, package->GetFormEditorID(),
+		              package->type,
 		              GetPackageTypeName(package->type));
 	}
 	return package;
@@ -260,10 +261,10 @@ double __fastcall CreatureGetTotalArmorDR(Creature* apThis)
 	UInt32 eIndex = 18; // Damage Resistance
 	float fInternalValue = 0.f;
 	bool bFound = false;
-	float v6 = apThis->InternalGetActorValue(eIndex, bFound);
+	float v6 = apThis->GetBaseValueOverride(eIndex, bFound);
 	if (bFound) fInternalValue = v6;
 
-	apThis->fTotalArmorDR = apThis->avOwner.GetActorValueDamage(eIndex) + apThis->avOwner.GetPermActorValue(eIndex) +
+	apThis->fTotalArmorDR = apThis->GetActorValueDamage(eIndex) + apThis->GetPermActorValue(eIndex) +
 		fInternalValue;
 
 	return apThis->fTotalArmorDR;
@@ -460,7 +461,7 @@ float __fastcall CalculateDamageResistance(HitData* hitData)
 	{
 		return 0.f;
 	}
-	return hitData->pTarget->avOwner.GetActorValue(eActorVal_DamageResistance);
+	return hitData->pTarget->GetActorValue(eActorVal_DamageResistance);
 }
 
 __declspec(naked) void HitDataHook()
@@ -475,8 +476,8 @@ __declspec(naked) void HitDataHook()
 
 float __fastcall CalculateDamageToArmor(HitData* hitData)
 {
-	if (!hitData->pTarget->IsPC()) return 0.f;
-	float baseDR = std::min<float>(hitData->pTarget->GetArmorDamageResistance(), 100.f);
+	if (!hitData->pTarget->IsPc()) return 0.f;
+	float baseDR = std::min<float>(hitData->pTarget->GetArmorRating(), 100.f);
 	auto gs_fMaxArmorRating = (Setting*)0xF61E8C;
 	auto gs_fDamageToArmorPercentage = (Setting*)0xF5FC18;
 

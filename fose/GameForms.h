@@ -1,5 +1,7 @@
 #pragma once
 
+class TESBoundObject;
+class TESContainer;
 class BGSEncounterZone;
 class TESImageSpaceModifier;
 static constexpr UInt32 _TESValueForm_SetValue = 0x0045BE20;
@@ -399,12 +401,10 @@ public:
 	BaseFormComponent();
 	~BaseFormComponent();
 
-	virtual void Init(void);
-	virtual void Free(void);
-	virtual void CopyFromBase(BaseFormComponent* component);
-	virtual bool CompareWithBase(BaseFormComponent* src);
-
-	//	void		** _vtbl;	// 000
+	virtual void InitializeDataComponent();
+	virtual void ClearDataComponent();
+	virtual void CopyComponent(BaseFormComponent* apSource);
+	virtual bool CompareComponent(BaseFormComponent* apOther);
 };
 
 class BGSDestructibleObjectForm;
@@ -414,84 +414,82 @@ class TESForm : public BaseFormComponent
 {
 public:
 	TESForm();
-	~TESForm();
+	virtual ~TESForm();
+	virtual void InitializeData();
+	virtual void ClearData();
+	virtual bool ProcessBeforeSave(); 
+	virtual bool Load(ModInfo* apFile);
+	virtual bool LoadPartial(ModInfo* apFile);
+	virtual bool Save(ModInfo* apFile);
+	virtual void SaveAlt(); // Writes data
+	virtual bool LoadEdit(ModInfo* apFile);
+	virtual bool SaveEdit(ModInfo* apFile);
+	virtual bool SavesBefore(void* apForm);
+	virtual bool SavesBeforeAlt(TESForm* apForm);
+	virtual TESForm* CreateDuplicateForm(bool abCreateEditorID, void* apCopyMap);
+	virtual void PostDuplicateProcess(void* apCopyMap);
+	virtual void AddChange(UInt32 auiChangedFlags);
+	virtual void RemoveChange(UInt32 auiChangedFlags);
+	virtual UInt32 GetSaveSize(UInt32 auiChangedFlags);
+	virtual void SaveGameBGS(void* apBuffer);
+	virtual void SaveGameTES(UInt32 auiChangedFlags);
+	virtual void LoadGameBGS(void* apBuffer);
+	virtual void LoadGameTES(UInt32 auiChangedFlags, UInt32 auiCurrentFlags);
+	virtual void InitLoadGameBGS(void* apBuffer);
+	virtual void InitLoadGameTES(UInt32 auiFlags, UInt32 auiOldFlags);
+	virtual void FinishInitLoadGameTES(UInt32 auiFlags, UInt32 auiOldFlags);
+	virtual void RevertBGS(void* apBuffer);
+	virtual void RevertTES(UInt32 auiChangedFlags);
+	virtual void LoadQueuedFormData(uint16_t ausSize);
+	virtual bool FindInFileFast(ModInfo* apFile);
+	virtual void CheckSaveGame(void* apBuffer);
+	virtual void FinishLoadGameBGS(void* apBuffer);
+	virtual void InitItem();
+	virtual UInt32 GetSavedFormType();
+	virtual void GetFormDetailedString(BSString& arDest);
+	virtual bool GetQuestObject();
+	virtual bool GetHasSpokenFlag();
+	virtual bool GetHavokDeath();
+	virtual bool GetRandomAnim();
+	virtual bool GetNeedtoChangeProcess();
+	virtual bool GetDangerous();
+	virtual bool GetHasPLSpecTex();
+	virtual bool GetObstacle();
+	virtual bool GetContinuousBroadcast();
+	virtual bool GetOnLocalMap();
+	virtual void SetCastsShadows(bool abShadowCaster);
+	virtual NiColor* GetEmittanceColor();
+	virtual void SetDelete(bool abDeleted);
+	virtual void SetAltered(bool abAltered);
+	virtual void SetQuestObject(bool abQuestObject);
+	virtual void SetHasSpokenFlag(bool abTalkedTo);
+	virtual void SetHavokDeath(bool abDied);
+	virtual void SetNeedToChangeProcess(bool abChange);
+	virtual void SaveObjectBound();
+	virtual void LoadObjectBound(ModInfo* apFile);
+	virtual bool IsBoundObject();
+	virtual bool IsObject();
+	virtual bool IsMagicItem();
+	virtual bool IsReference();
+	virtual bool IsArmorAddon();
+	virtual bool IsActorBase();
+	virtual bool IsMobileObject();
+	virtual bool IsActor();
+	virtual UInt32 GetRefCount();
+	virtual void Copy(TESForm* apCopy);
+	virtual bool Compare(TESForm* apForm);
+	virtual bool BelongsInGroup(void* apGroupFORM, bool abAllowParentGroups, bool abCurrentOnly);
+	virtual void CreateGroupData(void* apForm, void* apOutGroupFORM);
+	virtual bool IsParentForm();
+	virtual bool IsParentFormTree();
+	virtual bool IsFormTypeChild(uint8_t aucFormType);
+	virtual bool Activate(TESObjectREFR* apItemActivated, TESObjectREFR* apActionRef, bool abSound, TESBoundObject* apObjectToGet,
+	                      int32_t aiCount);
+	virtual void SetFormID(UInt32 auiID, bool abUpdateFile);
+	virtual const char* GetObjectTypeName();
+	virtual const char* GetFormEditorID();
+	virtual bool SetFormEditorID(const char* apID);
 
-	virtual void* Destroy(bool noDealloc);
-	virtual void Unk_05(void);
-	virtual void Unk_06(void);
-	virtual bool Unk_07(void);
-	virtual bool LoadForm(ModInfo* modInfo);
-	virtual bool Unk_09(void);
-	virtual void Unk_0A(void* arg);
-	virtual void SaveForm(void); // saves in same format as in .esp
-	// data buffer and buffer size stored in globals when done, doesn't return anything
-	virtual bool LoadForm2(ModInfo* modInfo); // just calls LoadForm
-	virtual void Unk_0D(void* arg); // does some saving stuff, then calls Fn0A
-	virtual bool Unk_0E(void* arg); // updates current form info ptr, returns
-	virtual bool Sort(TESForm* form); // returns if the argument is "greater or equal" to this form
-	virtual void* Unk_10(void* arg0, void* arg1); // makes a new form, 
-	virtual void Unk_11(void* arg);
-	virtual void MarkAsModified(UInt32 flags); // enable changed flag?
-	virtual void Unk_13(UInt32 flags); // disable changed flag?
-	virtual UInt32 GetSaveSize(UInt32 changedFlags); // bytes taken by the delta flags for this form
-	virtual void Unk_15(void* arg); // collect referenced forms?
-	virtual void SaveGame(UInt32 changedFlags);
-	virtual void LoadGame(void* arg); // load from arg
-	virtual void LoadGame2(UInt32 changedFlags); // load from TESSaveLoadGame
-	virtual void Unk_19(void* arg);
-	virtual void Unk_1A(void* arg0, void* arg1);
-	virtual void Unk_1B(void* arg0, void* arg1);
-	virtual void Revert(UInt32 changedFlags); // reset changes in form
-	virtual void Unk_1D(void* arg);
-	virtual void Unk_1E(void* arg);
-	virtual bool Unk_1F(void* arg);
-	virtual void Unk_20(void* arg);
-	virtual void Unk_21(void* arg);
-	virtual void InitItem(void);
-	virtual UInt32 GetTypeID(void);
-	virtual void GetDebugName(BSString* dst);
-	virtual bool IsQuestItem(void);
-	// Unk_26 though Unk_36 get or set flag bits
-	virtual bool Unk_26(void); // 00000040
-	virtual bool Unk_27(void); // 00010000
-	virtual bool Unk_28(void); // 00010000
-	virtual bool Unk_29(void); // 00020000
-	virtual bool Unk_2A(void); // 00020000
-	virtual bool Unk_2B(void); // 00080000
-	virtual bool Unk_2C(void); // 02000000
-	virtual bool Unk_2D(void); // 40000000
-	virtual bool Unk_2E(void); // 00000200
-	virtual void Unk_2F(bool set); // 00000200
-	virtual bool Unk_30(void); // returns false
-	virtual void Unk_31(bool set); // 00000020 then calls Fn12
-	virtual void Unk_32(bool set); // 00000002 with a lot of housekeeping
-	virtual void SetQuestItem(bool set); // 00000400 then calls Fn12
-	virtual void Unk_34(bool set); // 00000040 then calls Fn12
-	virtual void Unk_35(bool set); // 00010000 then calls Fn12
-	virtual void Unk_36(bool set); // 00020000
-	virtual void Unk_37(void); // write esp format
-	virtual void Unk_38(ModInfo* modInfo); // read esp format
-	virtual bool Unk_39(void);
-	virtual bool Unk_3A(void);
-	virtual bool Unk_3B(void);
-	virtual bool GetIsReference(void); // is REFR
-	virtual bool Unk_3D(void);
-	virtual bool Unk_3E(void);
-	virtual bool Unk_3F(void);
-	virtual bool IsActor(void);
-	virtual UInt32 Unk_41(void);
-	virtual void CopyFrom(const TESForm* form);
-	virtual bool Compare(TESForm* form);
-	virtual bool Unk_44(void* arg); // does some comparisons against things in the form info list that are always 0
-	virtual void Unk_45(void* dst, void* arg1); // init dst with info from form info list
-	virtual bool Unk_46(void);
-	virtual bool Unk_47(void);
-	virtual bool Unk_48(UInt32 formType); // returns if the same FormType is passed in
-	virtual bool Unk_49(void* arg0, void* arg1, void* arg2, void* arg3, void* arg4);
-	virtual void SetRefID(UInt32 refID, bool generateID);
-	virtual char* GetName2(void);
-	virtual char* GetEditorID(void);
-	virtual bool SetEditorID(const char* edid); // simply returns true at run-time
 	// 4E
 
 	enum
@@ -538,6 +536,7 @@ public:
 	}
 
 	UInt8 GetOverridingModIdx() const;
+	TESContainer* GetContainer() const;
 };
 
 struct Condition
@@ -1906,7 +1905,7 @@ public:
 	void SetFlag(UInt32 flag, bool bMod)
 	{
 		factionFlags = bMod ? (factionFlags | flag) : (factionFlags & ~flag);
-		MarkAsModified(kModified_FactionFlags);
+		AddChange(kModified_FactionFlags);
 	}
 
 	bool IsHidden()
@@ -2360,7 +2359,21 @@ public:
 };
 
 // TESObjectCONT (98)
-class TESObjectCONT;
+class TESObjectCONT : public TESBoundAnimObject, public TESContainer, public TESFullName, public TESModelTextureSwap,
+                      public TESScriptableForm, public TESWeightForm, public BGSDestructibleObjectForm, public BGSOpenCloseForm
+{
+public:
+	TESObjectCONT();
+	~TESObjectCONT();
+
+
+	uint32_t unk88;
+	TESSound* pOpenSound;
+	TESSound* pCloseSound;
+	UInt8 ucContainerFlags;
+};
+
+static_assert(sizeof(TESObjectCONT) == 0x98);
 
 // TESObjectDOOR (90)
 class TESObjectDOOR;

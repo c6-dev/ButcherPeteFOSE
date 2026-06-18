@@ -248,7 +248,7 @@ ScriptParsing::ScriptNameStatement::ScriptNameStatement(const ScriptIterator& co
 
 std::string ScriptParsing::ScriptNameStatement::ToString()
 {
-	return ScriptLine::ToString() + " " + std::string(context.script->GetEditorID());
+	return ScriptLine::ToString() + " " + std::string(context.script->GetFormEditorID());
 }
 
 ScriptParsing::BeginStatement::BeginStatement(const ScriptIterator& contextParam) : ScriptStatement(contextParam)
@@ -327,7 +327,7 @@ std::string ScriptParsing::ScriptVariableToken::ToString()
 	}
 	std::string varName = varInfo->name.CStr();
 	if (varName.empty()) varName = GetBackupName();
-	if (ref) return std::string(ref->GetEditorID()) + '.' + varName;
+	if (ref) return std::string(ref->GetFormEditorID()) + '.' + varName;
 	return varName;
 }
 
@@ -387,7 +387,7 @@ std::string ScriptParsing::RefToken::ToString()
 		{
 			return "Player";
 		}
-		auto* editorId = refVariable->form->GetEditorID();
+		auto* editorId = refVariable->form->GetFormEditorID();
 		if (!editorId || strlen(editorId) == 0) return FormatString("<%X>", refVariable->form->refID);
 		return editorId;
 	}

@@ -52,25 +52,6 @@ TESFullName* TESForm::GetFullName()
 	return fullName;
 }
 
-bool TESForm::IsCloned() const
-{
-	return GetModIndex() == 0xff;
-}
-
-TESForm* TESForm::CloneForm(bool bPersist) const
-{
-	TESForm* clone = NULL;
-	clone = (TESForm*)CreateFormInstance(typeID);
-	if (clone) {
-		clone->CopyFrom(this);
-		AddFormToDataHandler(clone);
-		if (bPersist) {
-			AddFormToCreatedBaseObjectsList(clone);
-		}
-	}
-	return clone;
-}
-
 
 EffectItem* EffectItemList::ItemAt(UInt32 whichItem)
 {

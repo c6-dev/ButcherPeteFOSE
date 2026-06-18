@@ -212,7 +212,7 @@ float GetDistance(TESObjectREFR* ref1, TESObjectREFR* ref2) {
 	return (float)ThisCall<double>(0x4EDBF0, ref1, ref2, 0, 0);
 }
 float GetThresholdedAV(Actor* actor, int avCode) {
-	return ThisCall<float>(0x5A28E0, &actor->avOwner, avCode);
+	return ThisCall<float>(0x5A28E0, actor, avCode);
 }
 
 float Actor::GetRadiationLevel(bool scaleByResist)
