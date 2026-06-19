@@ -38,30 +38,18 @@ class ActiveEffect;
 class MagicTarget
 {
 public:
-	/*000*/
-	virtual bool ApplyEffect(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect, bool arg4);
-	/*004*/
-	virtual Actor* GetActor();
-	/*008*/
-	virtual tList<ActiveEffect>* GetEffectList();
-	/*00C*/
-	virtual bool Unk_03();
-	/*010*/
-	virtual bool CannotBeHit();
-	/*014*/
-	virtual void Unk_05(ActiveEffect* activeEffect);
-	/*018*/
-	virtual void Unk_06(ActiveEffect* activeEffect);
-	/*01C*/
-	virtual void Unk_07(MagicCaster* magicCaster, ActiveEffect* activeEffect);
-	/*020*/
-	virtual void Unk_08(MagicCaster* magicCaster, ActiveEffect* activeEffect);
-	/*024*/
-	virtual float GetEffectMagnitudeModifier(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect);
-	/*028*/
-	virtual void Unk_0A(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect, bool arg4);
-	/*02C*/
-	virtual bool Unk_0B(MagicCaster* magicCaster, MagicItem* magicItem, ActiveEffect* activeEffect);
+	virtual bool AddTarget(MagicCaster* apCaster, MagicItem* apItem, ActiveEffect* apEffect, bool);
+	virtual TESObjectREFR* GetTargetStatsObject();
+	virtual tList<ActiveEffect>* GetActiveEffectList();
+	virtual bool MagicTargetIsActor();
+	virtual bool IsInvulnerable();
+	virtual void EffectAdded(ActiveEffect* apEffect);
+	virtual void EffectRemoved(ActiveEffect* apEffect);
+	virtual void EffectAbsorbed(MagicCaster* apCaster, ActiveEffect* apEffect);
+	virtual void EffectReflected(MagicCaster* apCaster, ActiveEffect* apEffect);
+	virtual float CheckResistance(MagicCaster* apCaster, MagicItem* apItem, ActiveEffect* apEffect);
+	virtual bool CheckAbsorb(MagicCaster* apCaster, MagicItem* apItem, ActiveEffect* apEffect, bool);
+	virtual bool CheckReflect(MagicCaster* apCaster, MagicItem* apItem, ActiveEffect* apEffect);
 
 	struct SpellInfo
 	{
@@ -144,7 +132,6 @@ class BaseProcess
 {
 public:
 	BaseProcess();
-	~BaseProcess();
 
 	struct CachedValues
 	{
@@ -167,32 +154,29 @@ public:
 			kCached_Height = 0x8000,
 			kCached_IsGhost = 0x10000000,
 			kCached_Health = 0x20000000,
-			kCached_Fatigue = 0x40000000,
-			kCached_SurvivalSkillMult = 0x80000000,
+			kCached_Fatigue = 0x40000000
 		};
 
-		float radius;
-		float widthX;
-		float widthY;
-		float height;
-		float DPS;
-		float medicineSkillMult;
-		float survivalSkillMult;
-		float paralysis;
-		float healRate;
-		float fatigueReturnRate;
-		float perceptionCondition;
-		float eyeHeight;
-		int SetAggression;
-		int unk34;
-		float walkSpeed;
-		float runSpeedMult;
-		unsigned __int8 hasNoCrippledLegs;
-		unsigned __int8 pad41[3];
-		unsigned int flags;
+		float fRadius;
+		float fWidth;
+		float fLength;
+		float fHeight;
+		float fDPS;
+		float fMedicineSkillMult;
+		float fParalysis;
+		float fHealRate;
+		float fFatigueReturnRate;
+		float fPerceptionCondition;
+		float fEyeHeight;
+		int iSetAggression;
+		int uiAssistance;
+		float fWalkSpeed;
+		float fRunSpeedMult;
+		unsigned __int8 bHasNoCrippledLegs;
+		unsigned int uiFlags;
 	};
 
-	virtual void Destroy(bool noDealloc);
+	virtual ~BaseProcess();
 	virtual void Unk_01(void);
 	virtual void Unk_02(void);
 	virtual void Unk_03(void);
@@ -1352,8 +1336,42 @@ public:
 	MagicCaster();
 	~MagicCaster();
 
-	UInt32 vtabl;
-	UInt32 unk004[2]; // 004
+	virtual void CastAbility(SpellItem* apAbility, bool abLoadCast);
+	virtual void CastAddiction(SpellItem* apAddiction, bool abLoadCast);
+	virtual void CastRadiation(SpellItem* apRadiation, bool abLoadCast);
+	virtual void CastSpellImmediate(MagicItem* apMagicItem, bool, MagicTarget* apTarget, float afEffectivenessMult,
+	                                bool abAdjustOnlyHostileEffectiveness);
+	virtual void TransferDisease(SpellItem* apDisease, MagicTarget* apTarget, bool a4);
+	virtual void CastWornEnchantment(MagicItem* apSpell, TESBoundObject* apSource, bool abLoadCast);
+	virtual MagicTarget* GetTouchTarget();
+	virtual void StartAim();
+	virtual void StartCast();
+	virtual void SpellCast(MagicItem* apSpell, bool);
+	virtual bool CheckCast(MagicItem* apSpell, float*, uint32_t* apReason, bool);
+	virtual TESObjectREFR* GetCasterStatsObject();
+	virtual NiNode* GetMagicNode();
+	virtual MagicItem* GetCurrentSpell();
+	virtual bool TargetSelf(ActiveEffect* apActiveEffect);
+	virtual float GetMagicEffectivenessModifier(bool, float);
+	virtual void SetCurrentSpell(MagicItem* apMagicItem);
+	virtual MagicTarget* GetDesiredTarget();
+	virtual void SetDesiredTarget(MagicTarget* apTarget);
+	virtual ActiveEffect* CreateActiveEffect(MagicItem* apMagicItem, EffectItem* apEffectItem, TESBoundObject* apObject);
+
+	enum State
+	{
+		NO_SPELL = 0,
+		AIM = 1,
+		CAST = 2,
+		RELEASE = 3,
+		FIND_TARGETS = 4,
+		ERR_SPELL_DISABLED = 5,
+		ERR_ALREADY_CASTING = 6,
+		ERR_CANNOT_CAST = 7
+	};
+
+	void* pLight;
+	State eState;
 };
 
 static_assert(sizeof(MagicCaster) == 0x00C);

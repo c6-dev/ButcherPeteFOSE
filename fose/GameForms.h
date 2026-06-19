@@ -1438,21 +1438,17 @@ public:
 class ActorValueOwner
 {
 public:
-	ActorValueOwner();
-	~ActorValueOwner();
-
-	virtual UInt32 GetBaseActorValueInt(UInt32 avCode); // GetBaseActorValueInt (used from Eval) result in EAX
-	virtual float GetBaseActorValue(UInt32 avCode); // GetBaseActorValueInt internal, result in st
-	virtual int GetActorValueInt(UInt32 avCode); // GetActorValue internal, result in EAX
-	virtual float GetActorValue(UInt32 avCode); // GetActorValue (used from Eval) result in EAX
-	virtual float GetTempActorValue(UInt32 avCode); // GetBaseActorValue04 (internal) result in st
-	virtual float GetActorValueDamage(UInt32 avCode);
-	virtual float GetPermActorValue(UInt32 avCode);
-	// GetDamageActorValue or GetModifiedActorValue		called from Fn_08, result in st, added to Fn_01
-	virtual UInt32 GetNormalizedPermanentAV(UInt32 avCode); // Manipulate GetPermanentActorValue, maybe convert to integer.
-	virtual float GetPermanentActorValue(UInt32 avCode); // GetPermanentActorValue (used from Eval) result in EAX
-	virtual void* Fn_09(void); // GetActorBase (= this - 0x100) or GetActorBase (= this - 0x0A4)
-	virtual UInt16 GetLevel(); // GetLevel (from ActorBase)
+	virtual int32_t GetBaseActorValueI(UInt32 aeIndex);
+	virtual float GetBaseActorValueF(UInt32 aeIndex);
+	virtual int32_t GetActorValueI(UInt32 aeIndex);
+	virtual float GetActorValueF(UInt32 aeIndex);
+	virtual float GetTemporaryModifier(UInt32 aeIndex);
+	virtual float GetDamageModifier(UInt32 aeIndex);
+	virtual float GetPermanentModifier(UInt32 aeIndex);
+	virtual int32_t GetPermanentActorValueI(UInt32 aeIndex);
+	virtual float GetPermanentActorValueF(UInt32 aeIndex);
+	virtual TESForm* GetAsForm();
+	virtual uint16_t GetActorLevel();
 };
 
 static_assert(sizeof(ActorValueOwner) == 0x004);
@@ -1463,22 +1459,22 @@ public:
 	CachedValuesOwner();
 	~CachedValuesOwner();
 
-	virtual float Fn_00(void);
-	virtual float Fn_01(void);
-	virtual float Fn_02(void);
-	virtual float Fn_03(void);
-	virtual float Fn_04(void);
-	virtual float Fn_05(void);
-	virtual float Fn_06(void);
-	virtual float Fn_07(void);
-	virtual float Fn_08(void);
-	virtual float Fn_09(void);
-	virtual float Fn_0A(void);
-	virtual UInt32 Fn_0B(void);
-	virtual UInt32 Fn_0C(void);
-	virtual float Fn_0D(void);
-	virtual float Fn_0E(void);
-	virtual bool Fn_0F(void);
+	virtual float CalculateCachedRadius();
+	virtual float CalculateCachedWidth();
+	virtual float CalculateCachedLength();
+	virtual float CalculateCachedHeight();
+	virtual float CalculateCachedDamagePerSecond();
+	virtual float CalculateCachedMedicineMult();
+	virtual float CalculateCachedParalysis();
+	virtual float CalculateCachedHealRate();
+	virtual float CalculateCachedFatigueReturnRate();
+	virtual float CalculateCachedPerceptionCondition();
+	virtual float CalculateCachedEyeLevel();
+	virtual UInt32 CalculateCachedAggression();
+	virtual UInt32 CalculateCachedAssistance();
+	virtual float CalculateCachedWalkSpeedMult();
+	virtual float CalculateCachedRunSpeedMult();
+	virtual bool CalculateCachedNoCrippledLegs();
 };
 
 static_assert(sizeof(CachedValuesOwner) == 0x004);

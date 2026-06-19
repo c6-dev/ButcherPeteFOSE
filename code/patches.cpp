@@ -264,7 +264,7 @@ double __fastcall CreatureGetTotalArmorDR(Creature* apThis)
 	float v6 = apThis->GetBaseValueOverride(eIndex, bFound);
 	if (bFound) fInternalValue = v6;
 
-	apThis->fTotalArmorDR = apThis->GetActorValueDamage(eIndex) + apThis->GetPermActorValue(eIndex) +
+	apThis->fTotalArmorDR = apThis->GetDamageModifier(eIndex) + apThis->GetPermanentModifier(eIndex) +
 		fInternalValue;
 
 	return apThis->fTotalArmorDR;
@@ -461,7 +461,7 @@ float __fastcall CalculateDamageResistance(HitData* hitData)
 	{
 		return 0.f;
 	}
-	return hitData->pTarget->GetActorValue(eActorVal_DamageResistance);
+	return hitData->pTarget->GetActorValueF(eActorVal_DamageResistance);
 }
 
 __declspec(naked) void HitDataHook()

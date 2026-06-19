@@ -1073,7 +1073,7 @@ bool Cmd_ForceClimate_Execute(COMMAND_ARGS)
 
 bool IsSpellTargetAlt(Actor* actor, MagicItem* magicItem)
 {
-	for (auto iter = actor->GetEffectList()->Head(); iter; iter = iter->next)
+	for (auto iter = actor->GetActiveEffectList()->Head(); iter; iter = iter->next)
 	{
 		if (ActiveEffect* activeEff = iter->data; activeEff && (activeEff->magicItem == magicItem) && activeEff->bActive && !
 			activeEff->bTerminated)
