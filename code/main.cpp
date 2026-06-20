@@ -12,7 +12,7 @@ IDebugLog gLog("butcher_pete.log");
 
 PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 340;
+int g_version = 350;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
