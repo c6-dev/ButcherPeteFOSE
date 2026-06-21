@@ -2,6 +2,7 @@
 
 #include "GameForms.h"
 #include "GameBSExtraData.h"
+#include "GameExtraData.h"
 #include "GameSound.h"
 #include "netimmerse.h"
 #include "havok.h"
@@ -258,8 +259,8 @@ public:
 	virtual void Unk_4F(void);
 	virtual void Unk_50(void);
 	virtual void Unk_51(void);
-	virtual void* GetWeaponInfo();
-	virtual void* GetAmmoInfo();
+	virtual ExtraContainerChanges::EntryData* GetWeaponInfo();
+	virtual ExtraContainerChanges::EntryData* GetAmmoInfo();
 	virtual void Unk_54(void);
 	virtual void Unk_55(void);
 	virtual void Unk_56(void);
@@ -1488,7 +1489,7 @@ public:
 	virtual uint8_t GetPerkRank(BGSPerk* apPerk, bool abTeammate);
 	virtual void AddPerkEntry(void* apPerkEntry, bool abTeammate);
 	virtual void RemovePerkEntry(void* apPerkEntry, bool abTeammate);
-	virtual BSSimpleList<void*>* GetPerkEntryList(uint8_t ucID, bool abTeammate);
+	virtual void* GetPerkEntryList(uint8_t ucID, bool abTeammate);
 	virtual void StartAnimOn1stPerson(uint16_t aeAnimGroup, UInt32 aeActionFlags);
 	virtual bool IsImmobile();
 	virtual void HandleHealthDamage(Actor* apAttacker, float afDamage);

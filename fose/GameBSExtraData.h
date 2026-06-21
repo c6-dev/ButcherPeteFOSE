@@ -13,8 +13,7 @@ public:
 
 	static BSExtraData* Create(UInt8 xType, UInt32 size, UInt32 vtbl);
 
-//	void		** _vtbl;	// 000
-	UInt8		type;		// 004
+	UInt8 type; // 004
 	UInt8		pad[3];		// 005
 	BSExtraData	* next;		// 008
 };

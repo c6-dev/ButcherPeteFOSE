@@ -1,4 +1,4 @@
-#include "Utilities.h"
+#pragma once
 #include "GameBSExtraData.h"
 #include "GameForms.h"
 #include "GameScript.h"
@@ -336,16 +336,12 @@ public:
 		EntryData(ListNode<ExtraDataList>* extend, SInt32 count, TESForm* item) :
 			extendData((ExtendDataList*)extend), countDelta(count), type(item) {}
 
-		void Cleanup();
-		void Destroy();
-		void RemoveCannotWear();
-		float GetItemHealthPerc(bool arg1 = true);
-		ExtraDataList* GetEquippedExtra();
-		float CalculateWeaponDamage(float condition, TESForm* ammo);
-		float GetValue();
+		EntryData(TESBoundObject* apObject, int32_t aiNumber = 0);
+		~EntryData();
+
+		
 		static EntryData* Create(TESForm* item, SInt32 count = 1);
 		EntryData* Copy(EntryData* from);
-		float GetWeight();
 		ExtendDataList* Add(ExtraDataList* newList);
 	};
 
@@ -366,29 +362,17 @@ public:
 		UInt8			pad[3];
 
 		static Data* Create(TESObjectREFR* owner);
-		float GetInventoryWeight();
-		ExtraContainerChanges::EntryData* GetEntryDataEquippedItem(UInt32 bodyPart, bool a2 = false);
 	};
 
 	Data* data;	// 00C
 
 	EntryData* GetByType(TESForm* type);
 
-	void DebugDump();
-	void Cleanup();	// clean up unneeded extra data from each EntryData
-
 	static ExtraContainerChanges* Create();
-
-	// find the equipped item whose form matches the passed matcher
-	struct FoundEquipData {
-		TESForm* pForm;
-		ExtraDataList* pExtraData;
-	};
-	FoundEquipData FindEquipped(FormMatcher& matcher) const;
 };
 typedef ExtraContainerChanges::EntryData ContChangesEntry;
 typedef ExtraContainerChanges::Data InventoryChanges;
-typedef ExtraContainerChanges::FoundEquipData EquipData;
+
 // 00C
 class ExtraWorn : public BSExtraData
 {
@@ -497,7 +481,7 @@ public:
 	ExtraOwnership();
 	virtual ~ExtraOwnership();
 
-	TESForm*	owner;	//maybe this should be a union {TESFaction*; TESNPC*} but it would be more unwieldy to access and modify
+	TESForm* owner;
 	static ExtraOwnership* Create();
 };
 
@@ -531,8 +515,6 @@ public:
 
 	SInt16	count;	// 00C
 	UInt8	pad[2];	// 00E
-
-	static ExtraCount* Create();	
 };
 
 // 010
@@ -542,9 +524,9 @@ public:
 	ExtraHealth();
 	virtual ~ExtraHealth();
 	float health;
-
-	static ExtraHealth* Create();
 };
+
+static_assert(sizeof(ExtraHealth) == 0x10);
 
 // 010
 class ExtraUses : public BSExtraData
@@ -553,7 +535,6 @@ public:
 	ExtraUses();
 	~ExtraUses();
 	UInt32 unk0;
-	static ExtraUses* Create();
 };
 
 // 010
@@ -592,7 +573,6 @@ public:
 	};
 
 	Data*	data;		// 00C
-	static ExtraLock* Create();
 };
 
 // 010
@@ -612,7 +592,7 @@ public:
 		UInt32			unk2;
 	};
 
-	Data *	data;	// 00C
+	Data* data; // 00C
 };
 
 // 010
@@ -854,6 +834,7 @@ public:
 	virtual ~ExtraHotkey();
 
 	UInt8	index;		// 00C (is 0-7)
+
 	static ExtraHotkey* Create();
 };
 

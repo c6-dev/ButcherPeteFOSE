@@ -876,15 +876,10 @@ public:
 	UInt32 CountItems() const;
 	const char* GetNthEIName(UInt32 whichEffect) const;
 
-	//	bool HasNonHostileItem() const;
-	//	UInt32 CountHostileItems() const;
-	//	UInt32 AddItem(EffectItem* effectItem);
-	//	UInt32 AddItemCopy(EffectItem* effectItem);
-	//	UInt32 CopyItemFrom(EffectItemList& fromList, UInt32 whichItem);
-	//	bool RemoveItem(UInt32 whichItem);
+	UInt32 unk0C; // 0C
 };
 
-static_assert(sizeof(EffectItemList) == 0xC);
+static_assert(sizeof(EffectItemList) == 0x10);
 
 // 1C
 class MagicItem : public TESFullName
@@ -908,8 +903,6 @@ public:
 	virtual void Unk_0F(void); // pure virtual
 
 	EffectItemList list; // 00C
-	UInt32 unk018; // 018
-	// perhaps types are no longer correct!
 	enum EType
 	{
 		kType_None = 0,

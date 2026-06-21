@@ -198,12 +198,24 @@ public:
 		Iterator(tList* _list, Item* _item) : m_curr(&_list->m_listHead) { Find(_item); }
 	};
 
-	const Iterator Begin() const { return Iterator(Head()); }
-	const Iterator begin() const { return Iterator(Head()); }
+	const Iterator Begin() const
+	{
+		return begin();
+	}
+
+	const Iterator End() const
+	{
+		return end();
+	}
+
+	const Iterator begin() const
+	{
+		return Iterator(Head());
+	}
 
 	const Iterator end() const
 	{
-		return Iterator(static_cast<Node*>(nullptr));
+		return Iterator();
 	}
 
 	UInt32 Count() const
@@ -746,11 +758,21 @@ template <class T>
 class BSSimpleList
 {
 public:
-	BSSimpleList<T>();
-	~BSSimpleList<T>();
+	BSSimpleList<T>()
+	{
+	};
+
+	~BSSimpleList<T>()
+	{
+	};
 	
 	void**		_vtbl;
 	tList<T>	list;
+
+	signed int Size()
+	{
+		return list.Count();
+	};
 };
 
 static_assert(sizeof(BSSimpleList<void*>) == 0xC);
