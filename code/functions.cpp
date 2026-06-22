@@ -117,7 +117,7 @@ bool Cmd_ForcePlayIdle_Execute(COMMAND_ARGS)
 	if (!ExtractArgs(EXTRACT_ARGS, &form, &playerPov) || !actor->IsActor() || !actor->baseProcess) return true;
 	auto* idle = DYNAMIC_CAST(form, TESForm, TESIdleForm);
 	if (!idle) return true;
-	actor->baseProcess->SetForcedIdleForm(idle);
+	actor->baseProcess->SetCurrentProcessIdle(idle);
 	auto* animData = GetAnimDataForPov(playerPov, actor);
 	if (!animData) return true;
 	ThisCall<void>(0x4649F0, animData, idle, actor, idle->data.groupFlags & 0x3F, 3);
@@ -1870,10 +1870,10 @@ bool Cmd_RefreshIdle_Execute(COMMAND_ARGS)
 	UInt32 stopAnim = 0;
 	auto actor = static_cast<Actor*>(thisObj);
 	ExtractArgs(EXTRACT_ARGS, &stopAnim);
-	if (actor->baseProcess->GetForcedIdleForm())
+	if (actor->baseProcess->GetCurrentProcessIdle())
 	{
-		actor->baseProcess->ResetQueuedIdleFlags();
-		actor->baseProcess->SetForcedIdleForm(nullptr);
+		actor->baseProcess->ClearPostAnimationActions();
+		actor->baseProcess->SetCurrentProcessIdle(nullptr);
 		if (stopAnim > 0) ThisCall<void>(0x460090, actor->GetAnimation(), 1, 1); // SpecialIdleFree
 		*result = 1;
 	}
@@ -2716,7 +2716,7 @@ static float GetRadiationLevel(Actor* actor, bool scaleByResist)
 		{
 			if (actor == PlayerCharacter::GetSingleton())
 			{
-				return hiProc->fWaterRadsSec + hiProc->rads238 + hiProc->GetRadsSec();
+				return hiProc->fWaterRadsSec + hiProc->rads238 + hiProc->GetRadiationDelta();
 			}
 			return actor->GetRadiationLevel(scaleByResist);
 		}
