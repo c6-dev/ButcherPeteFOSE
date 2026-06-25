@@ -9,11 +9,11 @@ namespace ScaleGunshotVolume
 	{
 		if (isPlayer)
 		{
-			ThisCall<bool>(0xBD01C0, sound, CustomGameSettings::fPlayerGunshotVolumeMult.Float());
+			sound->SetVolume(CustomGameSettings::fPlayerGunshotVolumeMult.Float());
 		}
 		else 
 		{
-			ThisCall<bool>(0xBD01C0, sound, CustomGameSettings::fNPCGunshotVolumeMult.Float());
+			sound->SetVolume(CustomGameSettings::fNPCGunshotVolumeMult.Float());
 		}
 	}
 
@@ -37,8 +37,6 @@ namespace ScaleGunshotVolume
 	void Init()
 	{
 		WriteRelJump(0x6C643D, (UInt32)SetGunshotVolumeHook);
-		//	WriteRelCall(0x6C5249, (UInt32)ScaleCollisionVolume);
-		//	WriteRelCall(0x6C5281, (UInt32)ScaleCollisionVolume);
 		WriteRelCall(0x7CD6BA, (UInt32)ScaleCollisionVolume);
 		WriteRelCall(0x7CD70E, (UInt32)ScaleCollisionVolume);
 	}

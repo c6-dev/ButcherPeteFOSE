@@ -12,7 +12,7 @@ namespace CustomGameSettings
 	CustomGameSetting fNPCGunshotVolumeMult;
 	CustomGameSetting fProjectileImpactVolumeMult;
 
-	void InitSettings()
+	void Init()
 	{
 		fDamageGunWeapCondBuffer.Initialize("fDamageGunWeapCondBuffer", 1.0f);
 		fDamageMeleeWeapCondBuffer.Initialize("fDamageMeleeWeapCondBuffer", 1.0f);
@@ -20,11 +20,5 @@ namespace CustomGameSettings
 		fPlayerGunshotVolumeMult.Initialize("fPlayerGunshotVolumeMult", 1.0f);
 		fNPCGunshotVolumeMult.Initialize("fNPCGunshotVolumeMult", 1.0f);
 		fProjectileImpactVolumeMult.Initialize("fProjectileImpactVolumeMult", 1.0f);
-	}
-
-	void Init()
-	{
-		WriteRelCall(0xCABF68, (UInt32)InitSettings);
-		// hooking the collection init in a random gmst - effectively a nullsub after at least one gmst has been initialized
 	}
 }

@@ -49,7 +49,7 @@ public:
 	GameSettingCollection();
 	virtual ~GameSettingCollection();
 
-	virtual void	Unk_01(void);
+	virtual void* Add(Setting* setting);
 	virtual void	Unk_02(void);
 	virtual void	Unk_03(void);
 	virtual void	Unk_04(void);

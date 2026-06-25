@@ -498,9 +498,15 @@ void __declspec(naked) CalculateDamageToArmorHook()
 		}
 }
 
+void __cdecl DeferredInit() //BGSMoviePlayer::Create(), before TESMain::InitTES() and loading data
+{
+	CustomGameSettings::Init();
+	CdeclCall(0x6E2570);
+}
 
 void WritePatches()
 {
+	WriteRelCall(0x6EE8CE, (UInt32)DeferredInit);
 	WriteRelJump(0x437736, UInt32(uGridsLoadingCrashHook));
 	// fix crash when loading a save with increased ugrids after lowering them
 	WriteRelJump(0x4FDD9F, 0x4FDDB9); // increase grass render distance
@@ -569,7 +575,6 @@ void WritePatches()
 
 
 	ItemConditionBuffer::Init();
-	CustomGameSettings::Init();
 	SkyFixes::Init();
 	ScaleGunshotVolume::Init();
 }
