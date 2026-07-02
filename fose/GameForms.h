@@ -3781,7 +3781,110 @@ public:
 	TESImageSpaceModifier();
 	~TESImageSpaceModifier();
 
-	UInt32 unk018[(0x728 - 0x18) >> 2]; // 018
+
+	struct NiFloatKeyPair
+	{
+		NiFloatKey kKeys[2];
+	};
+
+	struct NiColorKeyPair
+	{
+		NiColorKey kKey[2];
+	};
+	struct TImageSpaceModifierData
+	{
+		bool bAnimatable;
+		float fDuration;
+		UInt32 ppuiKeySize[21][2];
+		UInt32 uiTintColorKeySize;
+		UInt32 uiBlurKeySize;
+		UInt32 uiDoubleKeySize;
+		UInt32 uiRadialBlurStrengthKeySize;
+		UInt32 uiRadialBlurRampupKeySize;
+		UInt32 uiRadialBlurStartKeySize;
+		bool bUseTargetForRadialBlur;
+		float RadialBlurCenter[2];
+		UInt32 uiDepthOfFieldStrengthKeySize;
+		UInt32 uiDepthOfFieldDistanceKeySize;
+		UInt32 uiDepthOfFieldRangeKeySize;
+		bool bUseTargetForDepthOfField;
+		char ucDepthOfFieldMode;
+		UInt32 uiRadialBlurRampDownKeySize;
+		UInt32 uiRadialBlurDownStartKeySize;
+		UInt32 uiFadeColorKeySize;
+		UInt32 uiMotionBlurStrengthKeySize;
+	};
+
+	TImageSpaceModifierData kData;
+
+	NiFloatInterpolator kEyeAdaptSpeedInterpolator[2];
+	NiFloatInterpolator kBlurRadiusInterpolator[2];
+	NiFloatInterpolator kEmissiveMultInterpolator[2];
+	NiFloatInterpolator kTargetLumInterpolator[2];
+	NiFloatInterpolator kUpperLumClampInterpolator[2];
+	NiFloatInterpolator kBrightScaleInterpolator[2];
+	NiFloatInterpolator kBrightClampInterpolator[2];
+	NiFloatInterpolator kLumRampNoTexInterpolator[2];
+	NiFloatInterpolator kLumRampMinInterpolator[2];
+	NiFloatInterpolator kLumRampMaxInterpolator[2];
+	NiFloatInterpolator kSunlightInterpolator[2];
+	NiFloatInterpolator kGrassDimmerInterpolator[2];
+	NiFloatInterpolator kTreeDimmerInterpolator[2];
+	NiFloatInterpolator kSkinDimmerInterpolator[2];
+	NiFloatInterpolator kBloomBlurRadiusInterpolator[2];
+	NiFloatInterpolator kBloomAlphaMultInteriorInterpolator[2];
+	NiFloatInterpolator kBloomAlphaMultExteriorInterpolator[2];
+	NiFloatInterpolator kBrightnessInterpolator[2];
+	NiFloatInterpolator kSaturationInterpolator[2];
+	NiFloatInterpolator kContrastInterpolator[2];
+	NiFloatInterpolator kContrastAvgLumInterpolator[2];
+	NiFloatInterpolator kBlurInterpolator;
+	NiFloatInterpolator kDoubleInterpolator;
+	NiColorInterpolator kTintColorInterpolator;
+	NiColorInterpolator kFadeColorInterpolator;
+	NiFloatInterpolator kRadialBlurStrengthInterpolator;
+	NiFloatInterpolator kRadialBlurRampUpInterpolator;
+	NiFloatInterpolator kRadialBlurStartInterpolator;
+	NiFloatInterpolator kRadialBlurRampDownInterpolator;
+	NiFloatInterpolator kRadialBlurDownStartInterpolator;
+	NiFloatInterpolator kDepthOfFieldStrengthInterpolator;
+	NiFloatInterpolator kDepthOfFieldDistanceInterpolator;
+	NiFloatInterpolator kDepthOfFieldRangeInterpolator;
+	NiFloatInterpolator kMotionBlurStrengthInterpolator;
+	NiFloatKeyPair* pEyeAdaptSpeedKeys[2];
+	NiFloatKeyPair* pBlurRadiusKeys[2];
+	NiFloatKeyPair* pSkinDimmerKeys[2];
+	NiFloatKeyPair* pEmissiveMultKeys[2];
+	NiFloatKeyPair* pTargetLumKeys[2];
+	NiFloatKeyPair* pUpperLumClampKeys[2];
+	NiFloatKeyPair* pBrightScaleKeys[2];
+	NiFloatKeyPair* pBrightClampKeys[2];
+	NiFloatKeyPair* pLumRampNoTexKeys[2];
+	NiFloatKeyPair* pLumRampMinKeys[2];
+	NiFloatKeyPair* pLumRampMaxKeys[2];
+	NiFloatKeyPair* pSunlightKeys[2];
+	NiFloatKeyPair* pGrassDimmerKeys[2];
+	NiFloatKeyPair* pTreeDimmerKeys[2];
+	NiFloatKeyPair* pBloomBlurRadiusKeys[2];
+	NiFloatKeyPair* pBloomAlphaMultInteriorKeys[2];
+	NiFloatKeyPair* pBloomAlphaMultExteriorKeys[2];
+	NiFloatKeyPair* pSaturationKeys[2];
+	NiFloatKeyPair* pContrastKeys[2];
+	NiFloatKeyPair* pContrastAvgLumKeys[2];
+	NiFloatKeyPair* pBrightnessKeys[2];
+	NiFloatKeyPair* pBlurKeys;
+	NiFloatKeyPair* pDoubleVisionKeys; 
+	NiColorKeyPair* pTintColorKeys;
+	NiColorKeyPair* pFadeColorKeys;
+	NiFloatKeyPair* pRadialBlurStrengthKeys;
+	NiFloatKeyPair* pRadialBlurRampUpKeys;
+	NiFloatKeyPair* pRadialBlurStartKeys;
+	NiFloatKeyPair* pRadialBlurRampDownKeys;
+	NiFloatKeyPair* pRadialBlurDownKeys;
+	NiFloatKeyPair* pDepthOfFieldStrengthKeys;
+	NiFloatKeyPair* pDepthOfFieldDistanceKeys;
+	NiFloatKeyPair* pDepthOfFieldRangeKeys;
+	NiFloatKeyPair* pMotionBlurStrengthKeys;
 };
 
 static_assert(sizeof(TESImageSpaceModifier) == 0x728);

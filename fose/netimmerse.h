@@ -132,6 +132,63 @@ public:
     class className; \
     typedef NiPointer<className> className##Ptr;
 
+class NiAnimationKey : public NiMemObject
+{
+public:
+	NiAnimationKey() : m_fTime(0)
+	{
+	};
+
+	~NiAnimationKey()
+	{
+	}
+
+	enum KeyType
+	{
+		NOINTERP,
+		LINKEY,
+		BEZKEY,
+		TCBKEY,
+		EULERKEY,
+		STEPKEY,
+		NUMKEYTYPES
+	};
+	float m_fTime;
+};
+
+class NiFloatKey : public NiAnimationKey
+{
+public:
+	float m_fValue;
+	float ms_fDefault;
+};
+
+class NiColorA : public NiMemObject
+{
+public:
+	NiColorA() : r(0), g(0), b(0), a(0)
+	{
+	}
+
+	NiColorA(float _r, float _g, float _b, float _a) : r(_r), g(_g), b(_b), a(_a)
+	{
+	}
+
+	float r;
+	float g;
+	float b;
+	float a;
+};
+
+class NiColorKey : public NiAnimationKey
+{
+public:
+	NiColorKey() = default;
+	~NiColorKey() = default;
+
+	NiColorA m_Color;
+};
+
 class NiGlobalStringTable : public NiMemObject
 {
 public:
@@ -836,6 +893,102 @@ public:
 	virtual NiControllerManager* IsControllerManager() const;
 };
 
+class NiInterpolator : public NiObject
+{
+public:
+	NiInterpolator();
+	~NiInterpolator() override;
+
+	virtual bool UpdateTransform(float afTime, void* apTarget, UInt32& arValue);
+	virtual bool UpdateColorA(float afTime, void* apTarget, NiColorA& arValue);
+	virtual bool UpdatePoint3(float afTime, void* apTarget, NiPoint3& arValue);
+	virtual bool UpdateQuaternion(float afTime, void* apTarget, NiQuaternion& arValue);
+	virtual bool UpdateFloat(float afTime, void* apTarget, float& arValue);
+	virtual bool UpdateBool(float afTime, void* apTarget, bool& arValue);
+	virtual bool IsBoolValueSupported() const;
+	virtual bool IsFloatValueSupported() const;
+	virtual bool IsQuaternionValueSupported() const;
+	virtual bool IsPoint3ValueSupported() const;
+	virtual bool IsColorAValueSupported() const;
+	virtual bool IsTransformValueSupported() const;
+	virtual void Collapse();
+	virtual void GetActiveTimeRange(float& arBeginKeyTime, float& arEndKeyTime) const;
+	virtual void GuaranteeTimeRange(float afStartTime, float afEndTime);
+	virtual NiInterpolator* GetSequenceInterpolator(float afStartTime, float afEndTime);
+	virtual bool ResolveDependencies();
+	virtual bool SetUpDependencies();
+	virtual bool AlwaysUpdate() const;
+	virtual void* IsNiBoolInterpolator() const;
+
+	float m_fLastTime;
+};
+
+class NiKeyBasedInterpolator : public NiInterpolator
+{
+public:
+	NiKeyBasedInterpolator();
+	~NiKeyBasedInterpolator() override;
+
+	virtual UInt16 GetKeyChannelCount() const;
+	virtual UInt32 GetKeyCount(UInt16 ausChannel) const;
+	virtual UInt32 GetKeyType(UInt16 ausChannel) const;
+	virtual UInt32 GetKeyContent(UInt16 ausChannel) const;
+	virtual NiAnimationKey* GetKeyArray(UInt16 ausChannel) const;
+	virtual unsigned char GetKeyStride(UInt16 ausChannel) const;
+	virtual bool GetChannelPosed(UInt16 ausChannel) const;
+};
+
+class NiColorData : public NiObject
+{
+public:
+	NiColorData();
+	~NiColorData() override;
+
+	uint32_t m_uiNumKeys;
+	NiColorKey* m_pkKeys;
+	NiColorKey::KeyType m_eType;
+	uint8_t m_ucKeySize;
+};
+
+static_assert(sizeof(NiColorData) == 0x18);
+
+class NiColorInterpolator : public NiKeyBasedInterpolator
+{
+public:
+	NiColorInterpolator();
+	~NiColorInterpolator() override;
+
+	NiColorA m_kColorValue;
+	NiPointer<NiColorData> m_spColorData;
+	uint32_t m_uiLastIdx;
+};
+
+static_assert(sizeof(NiColorInterpolator) == 0x24);
+
+class NiFloatData : public NiObject
+{
+public:
+	NiFloatData();
+	~NiFloatData() override;
+
+	uint32_t m_uiNumKeys;
+	NiFloatKey* m_pkKeys;
+	NiFloatKey::KeyType m_eType;
+	uint8_t m_ucKeySize;
+};
+
+class NiFloatInterpolator : public NiKeyBasedInterpolator
+{
+public:
+	NiFloatInterpolator();
+	~NiFloatInterpolator() override;
+
+	float m_fFloatValue;
+	NiPointer<NiFloatData> m_spFloatData;
+	uint32_t m_uiLastIdx;
+};
+
+static_assert(sizeof(NiFloatInterpolator) == 0x18);
 
 class NiUpdateData
 {

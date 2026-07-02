@@ -46,6 +46,341 @@ auto Cmd_Disable = (bool(__cdecl*)(COMMAND_ARGS))0x523D40;
 auto Cmd_Enable = (bool(__cdecl*)(COMMAND_ARGS))0x523BD0;
 
 
+bool Cmd_GetImageSpaceTrait_Execute(COMMAND_ARGS)
+{
+	TESImageSpace* imgSpace;
+	UInt32 traitID;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &imgSpace, &traitID) && (traitID <= 32))
+	{
+		if ((traitID >= 21) && (traitID <= 31) && ((traitID <= 23) || (traitID >= 29)))
+		{
+			*result = imgSpace->fTraitValues[traitID] * 255;
+		}
+		else
+		{
+			*result = imgSpace->fTraitValues[traitID];
+		}
+	}
+	if (IsConsoleMode()) Console_Print("GetImageSpaceTrait >> %.3f", *result);
+	return true;
+}
+
+bool Cmd_SetImageSpaceTrait_Execute(COMMAND_ARGS)
+{
+	TESImageSpace* imgSpace;
+	UInt32 traitID;
+	float value;
+	*result = 0;
+	if (ExtractArgs(EXTRACT_ARGS, &imgSpace, &traitID, &value) && (traitID <= 32))
+	{
+		if ((traitID >= 21) && (traitID <= 31) && ((traitID <= 23) || (traitID >= 29)))
+		{
+			imgSpace->fTraitValues[traitID] = value * (1 / 255.f);
+		}
+		else
+		{
+			imgSpace->fTraitValues[traitID] = value;
+		}
+
+		*result = 1;
+	}
+	return true;
+}
+
+bool Cmd_GetImageSpaceModTrait_Execute(COMMAND_ARGS)
+{
+	TESImageSpaceModifier* imod;
+	UInt32 traitID;
+	if (ExtractArgs(EXTRACT_ARGS, &imod, &traitID) && (traitID <= 67))
+	{
+		switch (traitID)
+		{
+		case 0:
+			*result = imod->kData.fDuration;
+			break;
+		case 1:
+			*result = imod->kData.RadialBlurCenter[0];
+			break;
+		case 2:
+			*result = imod->kData.RadialBlurCenter[1];
+			break;
+		case 3:
+			*result = imod->pEyeAdaptSpeedKeys[0]->kKeys->m_fValue;
+			break;
+		case 4:
+			*result = imod->pEyeAdaptSpeedKeys[1]->kKeys->m_fValue;
+			break;
+		case 5:
+			*result = imod->pBlurRadiusKeys[0]->kKeys->m_fValue;
+			break;
+		case 6:
+			*result = imod->pBlurRadiusKeys[1]->kKeys->m_fValue;
+			break;
+		case 7:
+			*result = imod->pSkinDimmerKeys[0]->kKeys->m_fValue;
+			break;
+		case 8:
+			*result = imod->pSkinDimmerKeys[1]->kKeys->m_fValue;
+			break;
+		case 9:
+			*result = imod->pEmissiveMultKeys[0]->kKeys->m_fValue;
+			break;
+		case 10:
+			*result = imod->pEmissiveMultKeys[1]->kKeys->m_fValue;
+			break;
+		case 11:
+			*result = imod->pTargetLumKeys[0]->kKeys->m_fValue;
+			break;
+		case 12:
+			*result = imod->pTargetLumKeys[1]->kKeys->m_fValue;
+			break;
+		case 13:
+			*result = imod->pUpperLumClampKeys[0]->kKeys->m_fValue;
+			break;
+		case 14:
+			*result = imod->pUpperLumClampKeys[1]->kKeys->m_fValue;
+			break;
+		case 15:
+			*result = imod->pBrightScaleKeys[0]->kKeys->m_fValue;
+			break;
+		case 16:
+			*result = imod->pBrightScaleKeys[1]->kKeys->m_fValue;
+			break;
+		case 17:
+			*result = imod->pBrightClampKeys[0]->kKeys->m_fValue;
+			break;
+		case 18:
+			*result = imod->pBrightClampKeys[1]->kKeys->m_fValue;
+			break;
+		case 19:
+			*result = imod->pLumRampNoTexKeys[0]->kKeys->m_fValue;
+			break;
+		case 20:
+			*result = imod->pLumRampNoTexKeys[1]->kKeys->m_fValue;
+			break;
+		case 21:
+			*result = imod->pLumRampMinKeys[0]->kKeys->m_fValue;
+			break;
+		case 22:
+			*result = imod->pLumRampMinKeys[1]->kKeys->m_fValue;
+			break;
+		case 23:
+			*result = imod->pLumRampMaxKeys[0]->kKeys->m_fValue;
+			break;
+		case 24:
+			*result = imod->pLumRampMaxKeys[1]->kKeys->m_fValue;
+			break;
+		case 25:
+			*result = imod->pSunlightKeys[0]->kKeys->m_fValue;
+			break;
+		case 26:
+			*result = imod->pSunlightKeys[1]->kKeys->m_fValue;
+			break;
+		case 27:
+			*result = imod->pGrassDimmerKeys[0]->kKeys->m_fValue;
+			break;
+		case 28:
+			*result = imod->pGrassDimmerKeys[1]->kKeys->m_fValue;
+			break;
+		case 29:
+			*result = imod->pTreeDimmerKeys[0]->kKeys->m_fValue;
+			break;
+		case 30:
+			*result = imod->pTreeDimmerKeys[1]->kKeys->m_fValue;
+			break;
+		case 31:
+			*result = imod->pBloomBlurRadiusKeys[0]->kKeys->m_fValue;
+			break;
+		case 32:
+			*result = imod->pBloomBlurRadiusKeys[1]->kKeys->m_fValue;
+			break;
+		case 33:
+			*result = imod->pBloomAlphaMultInteriorKeys[0]->kKeys->m_fValue;
+			break;
+		case 34:
+			*result = imod->pBloomAlphaMultInteriorKeys[1]->kKeys->m_fValue;
+			break;
+		case 35:
+			*result = imod->pBloomAlphaMultExteriorKeys[0]->kKeys->m_fValue;
+			break;
+		case 36:
+			*result = imod->pBloomAlphaMultExteriorKeys[1]->kKeys->m_fValue;
+			break;
+		case 37:
+			*result = imod->pSaturationKeys[0]->kKeys->m_fValue;
+			break;
+		case 38:
+			*result = imod->pSaturationKeys[1]->kKeys->m_fValue;
+			break;
+		case 39:
+			*result = imod->pContrastKeys[0]->kKeys->m_fValue;
+			break;
+		case 40:
+			*result = imod->pContrastKeys[1]->kKeys->m_fValue;
+			break;
+		case 41:
+			*result = imod->pContrastAvgLumKeys[0]->kKeys->m_fValue;
+			break;
+		case 42:
+			*result = imod->pContrastAvgLumKeys[1]->kKeys->m_fValue;
+			break;
+		case 43:
+			*result = imod->pBrightnessKeys[0]->kKeys->m_fValue;
+			break;
+		case 44:
+			*result = imod->pBrightnessKeys[1]->kKeys->m_fValue;
+			break;
+		case 45:
+			*result = imod->pBlurKeys->kKeys->m_fValue;
+			break;
+		case 46:
+			*result = imod->pDoubleVisionKeys->kKeys->m_fValue;
+			break;
+		case 47:
+			*result = imod->pTintColorKeys->kKey->m_Color.r * 255;
+			break;
+		case 48:
+			*result = imod->pTintColorKeys->kKey->m_Color.g * 255;
+			break;
+		case 49:
+			*result = imod->pTintColorKeys->kKey->m_Color.b * 255;
+			break;
+		case 50:
+			*result = imod->pTintColorKeys->kKey->m_Color.a * 255;
+			break;
+		case 51:
+			*result = imod->pFadeColorKeys->kKey->m_Color.r * 255;
+			break;
+		case 52:
+			*result = imod->pFadeColorKeys->kKey->m_Color.g * 255;
+			break;
+		case 53:
+			*result = imod->pFadeColorKeys->kKey->m_Color.b * 255;
+			break;
+		case 54:
+			*result = imod->pFadeColorKeys->kKey->m_Color.a * 255;
+			break;
+		case 55:
+			*result = imod->pRadialBlurStrengthKeys->kKeys->m_fValue;
+			break;
+		case 56:
+			*result = imod->pRadialBlurRampUpKeys->kKeys->m_fValue;
+			break;
+		case 57:
+			*result = imod->pRadialBlurStartKeys->kKeys->m_fValue;
+			break;
+		case 58:
+			*result = imod->pRadialBlurRampDownKeys->kKeys->m_fValue;
+			break;
+		case 59:
+			*result = imod->pRadialBlurDownKeys->kKeys->m_fValue;
+			break;
+		case 60:
+			*result = imod->pDepthOfFieldStrengthKeys->kKeys->m_fValue;
+			break;
+		case 61:
+			*result = imod->pDepthOfFieldDistanceKeys->kKeys->m_fValue;
+			break;
+		case 62:
+			*result = imod->pDepthOfFieldRangeKeys->kKeys->m_fValue;
+			break;
+		case 63:
+			*result = imod->pMotionBlurStrengthKeys->kKeys->m_fValue;
+			break;
+		case 64:
+			*result = imod->kData.bAnimatable;
+			break;
+		case 65:
+			*result = imod->kData.bUseTargetForRadialBlur;
+			break;
+		case 66:
+			*result = imod->kData.bUseTargetForDepthOfField;
+			break;
+		case 67:
+			*result = imod->kData.ucDepthOfFieldMode;
+			break;
+		default:
+			break;
+		}
+	}
+	if (IsConsoleMode()) Console_Print("GetImageSpaceModTrait >> %.3f", *result);
+	return true;
+}
+
+bool Cmd_SetImageSpaceModTrait_Execute(COMMAND_ARGS)
+{
+	TESImageSpaceModifier* imod;
+	UInt32 traitID;
+	float value;
+	if (ExtractArgs(EXTRACT_ARGS, &imod, &traitID, &value) && (traitID <= 67))
+	{
+		/*	if (traitID <= 2)
+			{
+				switch (traitID)
+				{
+				case 0:
+					imod->duration = value;
+					break;
+				case 1:
+					imod->radialBlurCentreX = value;
+					break;
+				case 2:
+					imod->radialBlurCentreY = value;
+					break;
+				}
+			}
+			else if (traitID > 63)
+			{
+				UInt8 iVal = static_cast<UInt8>(value) & 3;
+				switch (traitID - 64)
+				{
+				case 0:
+					imod->animable = iVal;
+					break;
+				case 1:
+					imod->radBlurUseTarget = iVal;
+					break;
+				case 2:
+					imod->DoFUseTarget = iVal;
+					break;
+				case 3:
+					imod->DoFMode = iVal;
+					break;
+				}
+			}
+			else if (traitID <= 46)
+			{
+				traitID -= 3;
+				imod->fltIntrpl1[traitID].value = value;
+				imod->data654[traitID]->value = value;
+			}
+			else if (traitID <= 50)
+			{
+				traitID -= 47;
+				value *= 1 / 255.0F;
+				imod->clrIntrpl[0].value[traitID] = value;
+				imod->data704[0]->value[traitID] = value;
+			}
+			else if (traitID <= 54)
+			{
+				traitID -= 51;
+				value *= 1 / 255.0F;
+				imod->clrIntrpl[1].value[traitID] = value;
+				imod->data704[1]->value[traitID] = value;
+			}
+			else
+			{
+				traitID -= 55;
+				imod->fltIntrpl2[traitID].value = value;
+				imod->data70C[traitID]->value = value;
+			}*/
+	}
+	return true;
+}
+
+
+
 bool Cmd_GetMenuItemFilter_Execute(COMMAND_ARGS)
 {
 	*result = -1;

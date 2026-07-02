@@ -193,6 +193,8 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(ForceStopIdle);
 	REG_CMD(GetQuestFailedAlt);
 	REG_CMD(GetMenuItemFilter);
+	REG_CMD(GetImageSpaceModTrait);
+	
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));

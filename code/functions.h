@@ -133,7 +133,10 @@ DEFINE_COMMAND_PLUGIN(ForcePlayIdle, 1, kParams_OneForm_OneOptionalInt);
 DEFINE_COMMAND_PLUGIN(ForceStopIdle, 1, kParams_OneOptionalInt);
 DEFINE_COMMAND_COND_PLUGIN(GetQuestFailedAlt, 0, kParams_OneQuest);
 DEFINE_COMMAND_PLUGIN(GetMenuItemFilter, 0, kParams_OneInt_OneOptionalInt);
-
+DEFINE_COMMAND_PLUGIN(GetImageSpaceTrait, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetImageSpaceTrait, 0, kParams_OneForm_OneInt_OneFloat);
+DEFINE_COMMAND_PLUGIN(GetImageSpaceModTrait, 0, kParams_OneForm_OneInt);
+DEFINE_COMMAND_PLUGIN(SetImageSpaceModTrait, 0, kParams_OneForm_OneInt_OneFloat);
 bool Hook_ListAddForm_Execute(COMMAND_ARGS);
 
 bool Hook_ListAddReference_Execute(COMMAND_ARGS);
