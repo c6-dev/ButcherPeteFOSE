@@ -90,8 +90,9 @@ bool Cmd_SetImageSpaceTrait_Execute(COMMAND_ARGS)
 
 bool Cmd_GetImageSpaceModTrait_Execute(COMMAND_ARGS)
 {
-	TESImageSpaceModifier* imod;
+	TESImageSpaceModifier* imod = nullptr;
 	UInt32 traitID;
+	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &imod, &traitID) && (traitID <= 67))
 	{
 		switch (traitID)
@@ -310,71 +311,222 @@ bool Cmd_GetImageSpaceModTrait_Execute(COMMAND_ARGS)
 
 bool Cmd_SetImageSpaceModTrait_Execute(COMMAND_ARGS)
 {
-	TESImageSpaceModifier* imod;
+	TESImageSpaceModifier* imod = nullptr;
 	UInt32 traitID;
 	float value;
+	*result = 0;
 	if (ExtractArgs(EXTRACT_ARGS, &imod, &traitID, &value) && (traitID <= 67))
 	{
-		/*	if (traitID <= 2)
-			{
-				switch (traitID)
-				{
-				case 0:
-					imod->duration = value;
-					break;
-				case 1:
-					imod->radialBlurCentreX = value;
-					break;
-				case 2:
-					imod->radialBlurCentreY = value;
-					break;
-				}
-			}
-			else if (traitID > 63)
-			{
-				UInt8 iVal = static_cast<UInt8>(value) & 3;
-				switch (traitID - 64)
-				{
-				case 0:
-					imod->animable = iVal;
-					break;
-				case 1:
-					imod->radBlurUseTarget = iVal;
-					break;
-				case 2:
-					imod->DoFUseTarget = iVal;
-					break;
-				case 3:
-					imod->DoFMode = iVal;
-					break;
-				}
-			}
-			else if (traitID <= 46)
-			{
-				traitID -= 3;
-				imod->fltIntrpl1[traitID].value = value;
-				imod->data654[traitID]->value = value;
-			}
-			else if (traitID <= 50)
-			{
-				traitID -= 47;
-				value *= 1 / 255.0F;
-				imod->clrIntrpl[0].value[traitID] = value;
-				imod->data704[0]->value[traitID] = value;
-			}
-			else if (traitID <= 54)
-			{
-				traitID -= 51;
-				value *= 1 / 255.0F;
-				imod->clrIntrpl[1].value[traitID] = value;
-				imod->data704[1]->value[traitID] = value;
-			}
-			else
-			{
-				traitID -= 55;
-				imod->fltIntrpl2[traitID].value = value;
-				imod->data70C[traitID]->value = value;
-			}*/
+		switch (traitID)
+		{
+		case 0:
+			imod->kData.fDuration = value;
+			break;
+		case 1:
+			imod->kData.RadialBlurCenter[0] = value;
+			break;
+		case 2:
+			imod->kData.RadialBlurCenter[1] = value;
+			break;
+		case 3:
+			imod->pEyeAdaptSpeedKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 4:
+			imod->pEyeAdaptSpeedKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 5:
+			imod->pBlurRadiusKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 6:
+			imod->pBlurRadiusKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 7:
+			imod->pSkinDimmerKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 8:
+			imod->pSkinDimmerKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 9:
+			imod->pEmissiveMultKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 10:
+			imod->pEmissiveMultKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 11:
+			imod->pTargetLumKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 12:
+			imod->pTargetLumKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 13:
+			imod->pUpperLumClampKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 14:
+			imod->pUpperLumClampKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 15:
+			imod->pBrightScaleKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 16:
+			imod->pBrightScaleKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 17:
+			imod->pBrightClampKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 18:
+			imod->pBrightClampKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 19:
+			imod->pLumRampNoTexKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 20:
+			imod->pLumRampNoTexKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 21:
+			imod->pLumRampMinKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 22:
+			imod->pLumRampMinKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 23:
+			imod->pLumRampMaxKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 24:
+			imod->pLumRampMaxKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 25:
+			imod->pSunlightKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 26:
+			imod->pSunlightKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 27:
+			imod->pGrassDimmerKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 28:
+			imod->pGrassDimmerKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 29:
+			imod->pTreeDimmerKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 30:
+			imod->pTreeDimmerKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 31:
+			imod->pBloomBlurRadiusKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 32:
+			imod->pBloomBlurRadiusKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 33:
+			imod->pBloomAlphaMultInteriorKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 34:
+			imod->pBloomAlphaMultInteriorKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 35:
+			imod->pBloomAlphaMultExteriorKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 36:
+			imod->pBloomAlphaMultExteriorKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 37:
+			imod->pSaturationKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 38:
+			imod->pSaturationKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 39:
+			imod->pContrastKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 40:
+			imod->pContrastKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 41:
+			imod->pContrastAvgLumKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 42:
+			imod->pContrastAvgLumKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 43:
+			imod->pBrightnessKeys[0]->kKeys->m_fValue = value;
+			break;
+		case 44:
+			imod->pBrightnessKeys[1]->kKeys->m_fValue = value;
+			break;
+		case 45:
+			imod->pBlurKeys->kKeys->m_fValue = value;
+			break;
+		case 46:
+			imod->pDoubleVisionKeys->kKeys->m_fValue = value;
+			break;
+		case 47:
+			imod->pTintColorKeys->kKey->m_Color.r = value * (1 / 255.f);
+			break;
+		case 48:
+			imod->pTintColorKeys->kKey->m_Color.g = value * (1 / 255.f);
+			break;
+		case 49:
+			imod->pTintColorKeys->kKey->m_Color.b = value * (1 / 255.f);
+			break;
+		case 50:
+			imod->pTintColorKeys->kKey->m_Color.a = value * (1 / 255.f);
+			break;
+		case 51:
+			imod->pFadeColorKeys->kKey->m_Color.r = value * (1 / 255.f);
+			break;
+		case 52:
+			imod->pFadeColorKeys->kKey->m_Color.g = value * (1 / 255.f);
+			break;
+		case 53:
+			imod->pFadeColorKeys->kKey->m_Color.b = value * (1 / 255.f);
+			break;
+		case 54:
+			imod->pFadeColorKeys->kKey->m_Color.a = value * (1 / 255.f);
+			break;
+		case 55:
+			imod->pRadialBlurStrengthKeys->kKeys->m_fValue = value;
+			break;
+		case 56:
+			imod->pRadialBlurRampUpKeys->kKeys->m_fValue = value;
+			break;
+		case 57:
+			imod->pRadialBlurStartKeys->kKeys->m_fValue = value;
+			break;
+		case 58:
+			imod->pRadialBlurRampDownKeys->kKeys->m_fValue = value;
+			break;
+		case 59:
+			imod->pRadialBlurDownKeys->kKeys->m_fValue = value;
+			break;
+		case 60:
+			imod->pDepthOfFieldStrengthKeys->kKeys->m_fValue = value;
+			break;
+		case 61:
+			imod->pDepthOfFieldDistanceKeys->kKeys->m_fValue = value;
+			break;
+		case 62:
+			imod->pDepthOfFieldRangeKeys->kKeys->m_fValue = value;
+			break;
+		case 63:
+			imod->pMotionBlurStrengthKeys->kKeys->m_fValue = value;
+			break;
+		case 64:
+			imod->kData.bAnimatable = static_cast<UInt8>(value) & 3;
+			break;
+		case 65:
+			imod->kData.bUseTargetForRadialBlur = static_cast<UInt8>(value) & 3;
+			break;
+		case 66:
+			imod->kData.bUseTargetForDepthOfField = static_cast<UInt8>(value) & 3;
+			break;
+		case 67:
+			imod->kData.ucDepthOfFieldMode = static_cast<UInt8>(value) & 3;
+			break;
+		default:
+			break;
+		}
+		*result = 1;
 	}
 	return true;
 }

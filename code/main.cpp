@@ -12,7 +12,7 @@ IDebugLog gLog("butcher_pete.log");
 
 PluginHandle g_pluginHandle = kPluginHandle_Invalid;
 
-int g_version = 360;
+int g_version = 370;
 
 char* s_strArgBuffer;
 char* s_strValBuffer;
@@ -182,7 +182,7 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(fAtan2);
 	REG_CMD(DecompileScript);
 	REG_CMD(FailQuest);
-	REG_CMD(GetGameDaysPassed);
+	REG_CMD(GetGameDaysPassed); 
 	REG_CMD(IsNight);
 	REG_CMD(SetModelPath);
 	REG_CMD(IsModelPath);
@@ -194,7 +194,9 @@ bool FOSEPlugin_Load(const FOSEInterface* fose)
 	REG_CMD(GetQuestFailedAlt);
 	REG_CMD(GetMenuItemFilter);
 	REG_CMD(GetImageSpaceModTrait);
-	
+	REG_CMD(SetImageSpaceModTrait);
+	REG_CMD(GetImageSpaceTrait);
+	REG_CMD(SetImageSpaceTrait);
 
 	s_strArgBuffer = static_cast<char*>(malloc(0x4000));
 	s_strValBuffer = static_cast<char*>(malloc(0x10000));
